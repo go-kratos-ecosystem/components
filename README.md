@@ -15,8 +15,7 @@ go get github.com/go-packagist/go-kratos-components
 
 ## Components
 
-- contrib
-  - [timezone](contrib/timezone)
+- [timezone](timezone)
 - log
   - [stack](log/stack)
   - [syslog](log/syslog)
