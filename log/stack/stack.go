@@ -18,18 +18,18 @@ func IgnoreExceptions() Option {
 }
 
 func New(loggers []log.Logger, opts ...Option) log.Logger {
-	logger := stackLogger{
+	logger := &stackLogger{
 		loggers: loggers,
 	}
 
 	for _, opt := range opts {
-		opt(&logger)
+		opt(logger)
 	}
 
 	return logger
 }
 
-func (s stackLogger) Log(level log.Level, keyvals ...interface{}) error {
+func (s *stackLogger) Log(level log.Level, keyvals ...interface{}) error {
 	for _, logger := range s.loggers {
 		if err := logger.Log(level, keyvals...); err != nil {
 			if !s.ignoreExceptions {
