@@ -15,6 +15,9 @@ go get github.com/go-packagist/go-kratos-components
 
 ## Components
 
+- [debug](debug)
+- [env](env)
+- [ptr](ptr)
 - [timezone](timezone)
 - log
   - [stack](log/stack)
