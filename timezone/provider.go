@@ -17,7 +17,7 @@ func Local(name string) Option {
 	}
 }
 
-func Timezone(opts ...Option) func(ctx context.Context) error {
+func Provider(opts ...Option) func(ctx context.Context) error {
 	op := options{
 		local: "UTC",
 	}
