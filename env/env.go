@@ -9,7 +9,7 @@ var (
 	Stage Env = "stage"
 )
 
-var currentEnv Env = Prod
+var currentEnv = Prod
 
 func SetEnv(env Env) {
 	currentEnv = env
