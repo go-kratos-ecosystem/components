@@ -15,6 +15,10 @@ func SetEnv(env Env) {
 	currentEnv = env
 }
 
+func GetEnv() Env {
+	return currentEnv
+}
+
 func Is(envs ...Env) bool {
 	for _, env := range envs {
 		if currentEnv == env {

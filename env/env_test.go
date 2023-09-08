@@ -29,10 +29,12 @@ func TestIs(t *testing.T) {
 	assert.True(t, IsUseString("dev", "prod"))
 	assert.True(t, Is("dev"))
 	assert.False(t, Is("prod"))
+	assert.Equal(t, Dev, GetEnv())
 
 	SetEnv(Prod)
 	assert.True(t, Is(Prod))
 	assert.False(t, Is(Dev))
+	assert.Equal(t, Prod, GetEnv())
 }
 
 func TestCustom(t *testing.T) {
