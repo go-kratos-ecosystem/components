@@ -139,3 +139,21 @@ func TestRedis_Forever(t *testing.T) {
 	assert.NoError(t, c.Forever(ctx, "int", 1))
 
 }
+
+func TestRedis_Add(t *testing.T) {
+	c := createStore()
+	defer c.Flush(ctx)
+	c.Flush(ctx)
+
+	if addable, ok := c.(cache.Addable); ok {
+		r1, err1 := addable.Add(ctx, "int", 1, time.Second*10)
+		assert.NoError(t, err1)
+		assert.True(t, r1)
+
+		r2, err2 := addable.Add(ctx, "int", 1, time.Second*10)
+		assert.NoError(t, err2)
+		assert.False(t, r2)
+	} else {
+		t.Errorf("Addable interface is not implemented")
+	}
+}

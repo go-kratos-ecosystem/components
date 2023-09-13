@@ -24,3 +24,7 @@ type Store interface {
 
 	GetPrefix() string
 }
+
+type Addable interface {
+	Add(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error)
+}

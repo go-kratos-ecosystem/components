@@ -52,6 +52,9 @@ type Store struct {
 	opt *options
 }
 
+var _ cache.Store = (*Store)(nil)
+var _ cache.Addable = (*Store)(nil)
+
 func New(opts ...Option) cache.Store {
 	o := &options{}
 	for _, opt := range opts {
@@ -125,4 +128,13 @@ func (s *Store) Flush(ctx context.Context) error {
 
 func (s *Store) GetPrefix() string {
 	return s.opt.prefix
+}
+
+func (s *Store) Add(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
+	if data, err := s.opt.serializer.Serialize(value); err != nil {
+		return false, err
+	} else {
+		result := s.opt.redis.SetNX(ctx, s.opt.prefix+key, data, ttl)
+		return result.Val(), result.Err()
+	}
 }
