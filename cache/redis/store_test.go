@@ -130,3 +130,12 @@ func TestRedis_Forget(t *testing.T) {
 	var notExistVal int
 	assert.Error(t, c.Get(ctx, "int", &notExistVal))
 }
+
+func TestRedis_Forever(t *testing.T) {
+	c := createStore()
+	defer c.Flush(ctx)
+	c.Flush(ctx)
+
+	assert.NoError(t, c.Forever(ctx, "int", 1))
+
+}
