@@ -112,7 +112,7 @@ func TestRedis_Get(t *testing.T) {
 func TestRedis_GetPrefix(t *testing.T) {
 	c := createStore()
 
-	assert.Equal(t, "test:", c.GetPrefix())
+	assert.Equal(t, "redis-test:", c.GetPrefix())
 }
 
 func TestRedis_Forget(t *testing.T) {
