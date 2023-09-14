@@ -8,6 +8,7 @@ import (
 
 var (
 	ErrKeyAlreadyExists = errors.New("cache: key already exists")
+	ErrKeyNotFound      = errors.New("cache: key not found")
 )
 
 type Repository interface {
