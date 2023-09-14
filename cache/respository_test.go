@@ -14,7 +14,7 @@ import (
 var ctx = context.Background()
 
 func createRedisRepository() cache.Repository {
-	return New(
+	return NewRepository(
 		redisCache.New(
 			redisCache.Prefix("repository"),
 			redisCache.Redis(
