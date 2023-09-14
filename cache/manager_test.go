@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"context"
 	"testing"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestManager_Connect(t *testing.T) {
+func TestManager(t *testing.T) {
 	m := NewManager(&Config{
 		Default: "test1",
 		Stores: map[string]cache.Store{
@@ -32,6 +33,10 @@ func TestManager_Connect(t *testing.T) {
 			),
 		},
 	})
+	m.Connect("test1").Flush(context.Background())
+	defer m.Connect("test1").Flush(context.Background())
+	m.Connect("test2").Flush(context.Background())
+	defer m.Connect("test2").Flush(context.Background())
 
 	var test1, test2, test3, test4 string
 
