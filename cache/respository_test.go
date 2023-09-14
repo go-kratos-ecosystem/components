@@ -14,7 +14,7 @@ import (
 var ctx = context.Background()
 
 func createRedisRepository() cache.Repository {
-	return New(
+	return NewRepository(
 		redisCache.New(
 			redisCache.Prefix("repository"),
 			redisCache.Redis(
@@ -29,11 +29,11 @@ func createRedisRepository() cache.Repository {
 func TestRepository_Add(t *testing.T) {
 	r := createRedisRepository()
 
-	added, err := r.Add(ctx, "test", 1, time.Second*10)
+	added, err := r.Add(ctx, "test", 1, time.Second*30)
 	assert.NoError(t, err)
 	assert.True(t, added)
 
-	added2, err2 := r.Add(ctx, "test", 1, time.Second*10)
+	added2, err2 := r.Add(ctx, "test", 1, time.Second*30)
 	assert.NoError(t, err2)
 	assert.False(t, added2)
 }
