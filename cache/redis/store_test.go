@@ -23,7 +23,7 @@ type person struct {
 
 func createStore() cache.Store {
 	return New(
-		Prefix("test"),
+		Prefix("redis-test"),
 		Redis(
 			redis.NewClient(&redis.Options{
 				Addr: addr,
