@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-packagist/go-kratos-components/contracts/cache"
+	"github.com/go-packagist/go-kratos-components/contract/cache"
 )
 
 type Repository struct {
