@@ -4,8 +4,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-packagist/go-kratos-components/contracts/cache"
-	serializerContract "github.com/go-packagist/go-kratos-components/contracts/serializer"
+	serializerContract "github.com/go-packagist/go-kratos-components/contract"
+	"github.com/go-packagist/go-kratos-components/contract/cache"
 	"github.com/go-packagist/go-kratos-components/serializer"
 	"github.com/redis/go-redis/v9"
 )

@@ -3,7 +3,7 @@ package cache
 import (
 	"sync"
 
-	"github.com/go-packagist/go-kratos-components/contracts/cache"
+	"github.com/go-packagist/go-kratos-components/contract/cache"
 )
 
 type Config struct {

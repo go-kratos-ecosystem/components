@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-packagist/go-kratos-components/contracts/cache"
+	"github.com/go-packagist/go-kratos-components/contract/cache"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 )
