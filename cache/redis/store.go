@@ -68,12 +68,14 @@ func New(opts ...Option) cache.Store {
 	}
 }
 
-func (s *Store) Has(ctx context.Context, key string) bool {
-	if result := s.opt.redis.Exists(ctx, s.opt.prefix+key); result.Err() == nil && result.Val() == 1 {
-		return true
+func (s *Store) Has(ctx context.Context, key string) (bool, error) {
+	if result := s.opt.redis.Exists(ctx, s.opt.prefix+key); result.Err() != nil {
+		return false, result.Err()
+	} else if result.Val() == 1 {
+		return true, nil
 	}
 
-	return false
+	return false, nil
 }
 
 func (s *Store) Get(ctx context.Context, key string, dest interface{}) error {

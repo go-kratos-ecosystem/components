@@ -2,28 +2,90 @@ package cache
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 
-	redisCache "github.com/go-packagist/go-kratos-components/cache/redis"
 	"github.com/go-packagist/go-kratos-components/contract/cache"
-	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 )
 
 var ctx = context.Background()
 
+type mockStore struct {
+	items map[string]interface{}
+	rw    sync.RWMutex
+}
+
+func newMockStore() cache.Store {
+	return &mockStore{
+		items: make(map[string]interface{}),
+	}
+}
+
+func (m *mockStore) Has(ctx context.Context, key string) (bool, error) {
+	m.rw.RLock()
+	defer m.rw.RUnlock()
+
+	_, ok := m.items[key]
+
+	return ok, nil
+}
+
+func (m *mockStore) Get(ctx context.Context, key string, dest interface{}) error {
+	m.rw.RLock()
+	defer m.rw.RUnlock()
+
+	if item, ok := m.items[key]; ok {
+		return valueOf(item, dest)
+	}
+
+	return cache.ErrKeyNotFound
+}
+
+func (m *mockStore) Put(ctx context.Context, key string, value interface{}, ttl time.Duration) error {
+	m.rw.Lock()
+	defer m.rw.Unlock()
+
+	m.items[key] = value
+
+	return nil
+}
+
+func (m *mockStore) Increment(ctx context.Context, key string, value int) (int, error) {
+	panic("implement me")
+}
+
+func (m *mockStore) Decrement(ctx context.Context, key string, value int) (int, error) {
+	panic("implement me")
+}
+
+func (m *mockStore) Forever(ctx context.Context, key string, value interface{}) error {
+	panic("implement me")
+}
+
+func (m *mockStore) Forget(ctx context.Context, key string) error {
+	panic("implement me")
+}
+
+func (m *mockStore) Flush(ctx context.Context) error {
+	panic("implement me")
+}
+
+func (m *mockStore) GetPrefix() string {
+	panic("implement me")
+}
+
+var _ cache.Store = (*mockStore)(nil)
+
 func createRedisRepository() cache.Repository {
-	return NewRepository(
-		redisCache.New(
-			redisCache.Prefix("repository"),
-			redisCache.Redis(
-				redis.NewClient(&redis.Options{
-					Addr: "127.0.0.1:6379",
-				}),
-			),
-		),
-	)
+	return NewRepository(newMockStore())
+}
+
+func TestRepository_Has(t *testing.T) {
+	r := createRedisRepository()
+
+	r.Has(ctx, "test")
 }
 
 func TestRepository_Add(t *testing.T) {

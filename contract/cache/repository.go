@@ -7,15 +7,14 @@ import (
 )
 
 var (
-	ErrKeyAlreadyExists = errors.New("cache: key already exists")
-	ErrKeyNotFound      = errors.New("cache: key not found")
+	ErrKeyNotFound = errors.New("cache: key not found")
 )
 
 type Repository interface {
 	Store
 	Addable
 
-	Missing(ctx context.Context, key string) bool
+	Missing(ctx context.Context, key string) (bool, error)
 	Delete(ctx context.Context, key string) error
 	Set(ctx context.Context, key string, value interface{}, ttl time.Duration) error
 	Remember(ctx context.Context, key string, dest interface{}, value func() interface{}, ttl time.Duration) error

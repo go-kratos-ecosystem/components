@@ -6,7 +6,7 @@ import (
 )
 
 type Store interface {
-	Has(ctx context.Context, key string) bool
+	Has(ctx context.Context, key string) (bool, error)
 
 	Get(ctx context.Context, key string, dest interface{}) error
 
