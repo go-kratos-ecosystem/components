@@ -78,18 +78,18 @@ func (m *mockStore) GetPrefix() string {
 
 var _ cache.Store = (*mockStore)(nil)
 
-func createRedisRepository() cache.Repository {
+func newMockRepository() cache.Repository {
 	return NewRepository(newMockStore())
 }
 
 func TestRepository_Has(t *testing.T) {
-	r := createRedisRepository()
+	r := newMockRepository()
 
 	r.Has(ctx, "test")
 }
 
 func TestRepository_Add(t *testing.T) {
-	r := createRedisRepository()
+	r := newMockRepository()
 
 	added, err := r.Add(ctx, "test", 1, time.Second*30)
 	assert.NoError(t, err)
@@ -101,7 +101,7 @@ func TestRepository_Add(t *testing.T) {
 }
 
 func TestRepository_Remember(t *testing.T) {
-	r := createRedisRepository()
+	r := newMockRepository()
 
 	var value string
 	err1 := r.Remember(ctx, "remember", &value, func() interface{} {

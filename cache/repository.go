@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/go-packagist/go-kratos-components/contract/cache"
+	"github.com/go-packagist/go-kratos-components/helper"
 )
 
 type Repository struct {
@@ -61,7 +62,7 @@ func (r *Repository) Remember(ctx context.Context, key string, dest interface{},
 			return err
 		}
 
-		return valueOf(valued, dest)
+		return helper.ValueOf(valued, dest)
 	}
 
 	return r.Get(ctx, key, dest)
