@@ -6,6 +6,19 @@ import (
 	"github.com/go-kratos/kratos/v2/errors"
 )
 
+// alias
+var (
+	IsBadRequest         = errors.IsBadRequest
+	IsUnauthorized       = errors.IsUnauthorized
+	IsForbidden          = errors.IsForbidden
+	IsNotFound           = errors.IsNotFound
+	IsConflict           = errors.IsConflict
+	IsInternalServer     = errors.IsInternalServer
+	IsServiceUnavailable = errors.IsServiceUnavailable
+	IsGatewayTimeout     = errors.IsGatewayTimeout
+	IsClientClosed       = errors.IsClientClosed
+)
+
 func BadRequest(message string) *errors.Error {
 	return errors.BadRequest(http.StatusText(http.StatusBadRequest), message)
 }
