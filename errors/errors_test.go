@@ -1,6 +1,7 @@
 package errors
 
 import (
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -17,4 +18,9 @@ func TestErrors(t *testing.T) {
 	assert.True(t, IsGatewayTimeout(GatewayTimeout("GatewayTimeout")))
 	assert.True(t, IsClientClosed(ClientClosed("ClientClosed")))
 	assert.True(t, IsClientClosed(ClientClosed("ClientClosed")))
+}
+
+func TestErrors_New(t *testing.T) {
+	assert.True(t, IsForbidden(New(http.StatusForbidden, "Forbidden")))
+	assert.Equal(t, New(http.StatusForbidden, "Forbidden"), Forbidden("Forbidden"))
 }

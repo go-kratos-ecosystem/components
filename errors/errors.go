@@ -19,6 +19,10 @@ var (
 	IsClientClosed       = errors.IsClientClosed
 )
 
+func New(code int, message string) *errors.Error {
+	return errors.New(code, http.StatusText(code), message)
+}
+
 func BadRequest(message string) *errors.Error {
 	return errors.BadRequest(http.StatusText(http.StatusBadRequest), message)
 }
