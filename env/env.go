@@ -9,6 +9,10 @@ var (
 	Stage Env = "stage"
 )
 
+func (e Env) String() string {
+	return string(e)
+}
+
 var currentEnv = Prod
 
 func SetEnv(env Env) {

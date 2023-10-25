@@ -13,6 +13,13 @@ func TestEnv(t *testing.T) {
 	assert.Equal(t, Env("stage"), Stage)
 }
 
+func TestString(t *testing.T) {
+	assert.Equal(t, "dev", Dev.String())
+	assert.Equal(t, "prod", Prod.String())
+	assert.Equal(t, "debug", Debug.String())
+	assert.Equal(t, "stage", Stage.String())
+}
+
 func TestIs(t *testing.T) {
 	SetEnv(Dev)
 	assert.True(t, Is(Dev))
