@@ -7,16 +7,14 @@ import (
 )
 
 func TestRecovery_Wrap(t *testing.T) {
-	fn := func() error {
+	fn := func() {
 		panic("test")
-
-		return nil
 	}
 
 	// default
 	r := New()
 	assert.Panics(t, func() {
-		_ = r.Wrap(fn)
+		r.Wrap(fn)
 	})
 
 	// with handler
@@ -24,5 +22,7 @@ func TestRecovery_Wrap(t *testing.T) {
 		assert.Equal(t, "test", err)
 	}))
 
-	assert.NoError(t, r.Wrap(fn))
+	assert.NotPanics(t, func() {
+		r.Wrap(fn)
+	})
 }
