@@ -34,7 +34,7 @@ func New(opts ...Option) *Recovery {
 	}
 }
 
-func (r *Recovery) Wrap(f func() error) error {
+func (r *Recovery) Wrap(f func()) {
 	defer func() {
 		if err := recover(); err != nil {
 			if r.opt.handler != nil {
@@ -43,5 +43,5 @@ func (r *Recovery) Wrap(f func() error) error {
 		}
 	}()
 
-	return f()
+	f()
 }
