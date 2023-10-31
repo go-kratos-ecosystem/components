@@ -88,11 +88,13 @@ func (s *Store) Get(ctx context.Context, key string, dest interface{}) error {
 	return s.opt.serializer.Unserialize([]byte(result.Val()), dest)
 }
 
-func (s *Store) Put(ctx context.Context, key string, value interface{}, ttl time.Duration) error {
+func (s *Store) Put(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
 	if data, err := s.opt.serializer.Serialize(value); err != nil {
-		return err
+		return false, err
+	} else if ok, err := s.opt.redis.SetEx(ctx, s.opt.prefix+key, data, ttl).Result(); err != nil {
+		return false, err
 	} else {
-		return s.opt.redis.SetEx(ctx, s.opt.prefix+key, data, ttl).Err()
+		return ok == "OK", nil
 	}
 }
 
@@ -112,20 +114,30 @@ func (s *Store) Decrement(ctx context.Context, key string, value int) (int, erro
 	}
 }
 
-func (s *Store) Forever(ctx context.Context, key string, value interface{}) error {
+func (s *Store) Forever(ctx context.Context, key string, value interface{}) (bool, error) {
 	if data, err := s.opt.serializer.Serialize(value); err != nil {
-		return err
+		return false, err
+	} else if ok, err := s.opt.redis.Set(ctx, s.opt.prefix+key, data, redis.KeepTTL).Result(); err != nil {
+		return false, err
 	} else {
-		return s.opt.redis.Set(ctx, s.opt.prefix+key, data, redis.KeepTTL).Err()
+		return ok == "OK", nil
 	}
 }
 
-func (s *Store) Forget(ctx context.Context, key string) error {
-	return s.opt.redis.Del(ctx, s.opt.prefix+key).Err()
+func (s *Store) Forget(ctx context.Context, key string) (bool, error) {
+	if deleted, err := s.opt.redis.Del(ctx, s.opt.prefix+key).Result(); err != nil {
+		return false, err
+	} else {
+		return deleted == 1, nil
+	}
 }
 
-func (s *Store) Flush(ctx context.Context) error {
-	return s.opt.redis.FlushAll(ctx).Err()
+func (s *Store) Flush(ctx context.Context) (bool, error) {
+	if ok, err := s.opt.redis.FlushAll(ctx).Result(); err != nil {
+		return false, err
+	} else {
+		return ok == "OK", nil
+	}
 }
 
 func (s *Store) GetPrefix() string {
