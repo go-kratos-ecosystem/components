@@ -59,19 +59,19 @@ func (l *loggerAdapter) LogMode(level logger.LogLevel) logger.Interface {
 
 func (l *loggerAdapter) Info(ctx context.Context, s string, i ...interface{}) {
 	if l.LogLevel >= logger.Info {
-		_ = l.Log(log.LevelInfo, fmt.Sprintf(l.infoStr+s, i...))
+		_ = l.Log(log.LevelInfo, fmt.Sprintf(l.infoStr+s, append([]interface{}{utils.FileWithLineNum()}, i...)...))
 	}
 }
 
 func (l *loggerAdapter) Warn(ctx context.Context, s string, i ...interface{}) {
 	if l.LogLevel >= logger.Warn {
-		_ = l.Log(log.LevelWarn, fmt.Sprintf(l.warnStr+s, i...))
+		_ = l.Log(log.LevelWarn, fmt.Sprintf(l.warnStr+s, append([]interface{}{utils.FileWithLineNum()}, i...)...))
 	}
 }
 
 func (l *loggerAdapter) Error(ctx context.Context, s string, i ...interface{}) {
 	if l.LogLevel >= logger.Error {
-		_ = l.Log(log.LevelError, fmt.Sprintf(l.errStr+s, i...))
+		_ = l.Log(log.LevelError, fmt.Sprintf(l.errStr+s, append([]interface{}{utils.FileWithLineNum()}, i...)...))
 	}
 }
 
