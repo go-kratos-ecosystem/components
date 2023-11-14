@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"fmt"
 
-	hashingContract "github.com/go-packagist/go-kratos-components/contract/hashing"
 	"github.com/go-packagist/go-kratos-components/hashing"
 )
 
@@ -12,7 +11,7 @@ type hasher struct{}
 
 var global *hasher
 
-func New() hashingContract.Hasher {
+func New() hashing.Hasher {
 	if global == nil {
 		global = &hasher{}
 	}
