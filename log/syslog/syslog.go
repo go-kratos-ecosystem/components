@@ -74,5 +74,9 @@ func (l *Logger) connect() error {
 }
 
 func (l *Logger) Close() error {
+	if l.conn == nil {
+		return nil
+	}
+
 	return l.conn.Close()
 }
