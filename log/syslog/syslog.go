@@ -23,19 +23,19 @@ type Logger struct {
 
 var _ log.Logger = (*Logger)(nil)
 
-func New(config *Config) (*Logger, error) {
-	s := &Logger{
+func New(config *Config) *Logger {
+	return &Logger{
 		config: config,
 	}
-
-	if err := s.connect(); err != nil {
-		return nil, err
-	}
-
-	return s, nil
 }
 
 func (l *Logger) Log(level log.Level, keyvals ...interface{}) error {
+	if l.conn == nil {
+		if err := l.connect(); err != nil {
+			return err
+		}
+	}
+
 	if len(keyvals) == 0 {
 		return nil
 	}
