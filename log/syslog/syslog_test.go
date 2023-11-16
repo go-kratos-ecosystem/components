@@ -3,26 +3,25 @@
 package syslog
 
 import (
+	"runtime"
 	"testing"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 func TestSyslogLogger(t *testing.T) {
-	t.Skip("skip syslog test")
+	if runtime.GOOS == "windows" {
+		t.Skip("skip syslog test")
+	}
 
-	logger, err := New(&Config{
+	logger := New(&Config{
 		Network: "udp",
 		Addr:    "192.168.8.92:30732",
 		Tag:     "test",
 	})
 	defer logger.Close()
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	err = logger.Log(log.LevelDebug, "test", "test")
+	err := logger.Log(log.LevelDebug, "test", "test")
 	if err != nil {
 		t.Fatal(err)
 	}
