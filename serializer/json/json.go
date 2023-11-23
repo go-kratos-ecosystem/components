@@ -1,18 +1,14 @@
-package serializer
+package json
 
 import (
 	"encoding/json"
 
-	"github.com/go-packagist/go-kratos-components/contract"
+	"github.com/go-packagist/go-kratos-components/serializer"
 )
 
-var JsonSerializer = newJsonSerializer()
+var Serializer serializer.Serializable = &jsonSerializer{}
 
 type jsonSerializer struct{}
-
-func newJsonSerializer() contract.Serializable {
-	return &jsonSerializer{}
-}
 
 func (j *jsonSerializer) Serialize(data interface{}) ([]byte, error) {
 	return json.Marshal(data)

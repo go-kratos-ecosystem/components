@@ -4,16 +4,16 @@ import (
 	"context"
 	"time"
 
-	serializerContract "github.com/go-packagist/go-kratos-components/contract"
 	"github.com/go-packagist/go-kratos-components/contract/cache"
 	"github.com/go-packagist/go-kratos-components/serializer"
+	"github.com/go-packagist/go-kratos-components/serializer/json"
 	"github.com/redis/go-redis/v9"
 )
 
 type options struct {
 	prefix     string
 	redis      redis.Cmdable
-	serializer serializerContract.Serializable
+	serializer serializer.Serializable
 }
 
 func (o *options) setup() {
@@ -22,7 +22,7 @@ func (o *options) setup() {
 	}
 
 	if o.serializer == nil {
-		o.serializer = serializer.JsonSerializer
+		o.serializer = json.Serializer
 	}
 }
 
@@ -42,7 +42,7 @@ func Redis(redis redis.Cmdable) Option {
 	}
 }
 
-func Serializer(serializer serializerContract.Serializable) Option {
+func Serializer(serializer serializer.Serializable) Option {
 	return func(o *options) {
 		o.serializer = serializer
 	}
