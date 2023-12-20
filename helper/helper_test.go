@@ -81,6 +81,28 @@ func TestValueOf(t *testing.T) {
 	assert.Error(t, ValueOf("foo", nil))
 	var baz2 *Baz
 	assert.Error(t, ValueOf("foo", baz2))
+
+	var baz3 Baz
+	err = ValueOf(func() interface{} {
+		return Baz{
+			Name: "baz",
+		}
+	}(), &baz3)
+	assert.Nil(t, err)
+	assert.Equal(t, "baz", baz3.Name)
+
+	// test lower
+	type test struct {
+		Name string
+	}
+	var tt test
+	err = ValueOf(func() interface{} {
+		return test{
+			Name: "test",
+		}
+	}(), &tt)
+	assert.Nil(t, err)
+	assert.Equal(t, "test", tt.Name)
 }
 
 func TestCall(t *testing.T) {
