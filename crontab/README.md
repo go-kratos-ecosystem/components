@@ -12,8 +12,8 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/robfig/cron/v3"
 
-	"pusher/internal/pkg/server/crontab"
-	redisMutex "pusher/internal/pkg/server/crontab/mutex/redis"
+	"github.com/go-packagist/go-kratos-components/crontab"
+	redisMutex "github.com/go-packagist/go-kratos-components/crontab/mutex/redis"
 )
 
 func main() {
