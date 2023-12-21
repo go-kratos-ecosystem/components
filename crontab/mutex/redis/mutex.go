@@ -20,7 +20,7 @@ var _ crontab.Mutex = (*Mutex)(nil)
 
 type Option func(*Mutex)
 
-func (m *Mutex) WithExpired(expired time.Duration) Option {
+func WithExpired(expired time.Duration) Option {
 	return func(m *Mutex) {
 		m.expired = expired
 	}
