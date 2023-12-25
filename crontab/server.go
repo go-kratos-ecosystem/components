@@ -65,15 +65,14 @@ func NewServer(c *cron.Cron, opts ...Option) *Server {
 }
 
 func (s *Server) Start(ctx context.Context) error {
-	go s.run(ctx)
-
-	return nil
-}
-
-func (s *Server) run(ctx context.Context) {
 	timer := time.NewTicker(time.Second)
+
 	defer func() {
-		_ = s.mutex.Unlock(ctx, s.name)
+		if s.running {
+			s.cron.Stop()
+		}
+
+		s.mutex.Unlock(ctx, s.name)
 		timer.Stop()
 	}()
 
@@ -81,22 +80,22 @@ func (s *Server) run(ctx context.Context) {
 		select {
 		case <-ctx.Done():
 			s.log("crontab: server done")
-			return
+			return ctx.Err()
 		case <-s.stoped:
 			s.log("crontab: server stoped")
-			return
+			return nil
 		case <-timer.C:
 			if err := s.mutex.Lock(ctx, s.name); err != nil {
 				s.log(err)
 				continue
 			}
 
-			s.start(ctx)
+			s.start()
 		}
 	}
 }
 
-func (s *Server) start(ctx context.Context) {
+func (s *Server) start() {
 	s.runningMu.Lock()
 	defer s.runningMu.Unlock()
 
@@ -111,19 +110,11 @@ func (s *Server) start(ctx context.Context) {
 }
 
 func (s *Server) Stop(ctx context.Context) error {
-	s.runningMu.Lock()
-	defer s.runningMu.Unlock()
-
-	if !s.running {
-		return nil
-	}
-
-	s.running = false
-	s.cron.Stop()
+	s.log("crontab: server stopping")
 
 	close(s.stoped)
 
-	return s.mutex.Unlock(ctx, s.name)
+	return nil
 }
 
 func (s *Server) log(v ...interface{}) {
