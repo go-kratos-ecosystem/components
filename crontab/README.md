@@ -6,7 +6,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/go-kratos/kratos/v2"
 	"github.com/redis/go-redis/v9"
@@ -17,35 +17,35 @@ import (
 )
 
 func main() {
-	rdb := redis.NewClient(&redis.Options{
-		Addr: "127.0.0.1:6379",
-	})
-
-	if err := kratos.New(
-		kratos.Server(
-			NewCrontabServer(rdb),
-		),
-	).Run(); err != nil {
-		panic(err)
-	}
-}
-
-func NewCrontabServer(rdb redis.Cmdable) *crontab.Server {
 	c := cron.New(
 		cron.WithSeconds(),
 	)
 
-	c.AddFunc("*/1 * * * * *", func() {
-		fmt.Println("Every hour on the half hour")
+	c.AddFunc("* * * * * *", func() {
+		log.Println("Hello world")
 	})
 
-	return crontab.NewServer(
-		c,
-		crontab.WithName("crontab:server"),
-		crontab.WithDebug(),
-		crontab.WithMutex(
-			redisMutex.New(rdb),
+	app := kratos.New(
+		kratos.Server(
+			crontab.NewServer(c,
+				crontab.WithMutex(redisMutex.New(redis.NewClient(&redis.Options{
+					Addr: "localhost:6379",
+				}))),
+				crontab.WithDebug(),
+			),
 		),
 	)
+
+	app.Run()
 }
+```
+
+output:
+
+```bash
+2023/12/25 14:25:56 crontab: server started
+2023/12/25 14:25:57 Hello world
+2023/12/25 14:25:58 Hello world
+2023/12/25 14:25:59 Hello world
+2023/12/25 14:26:00 Hello world
 ```
