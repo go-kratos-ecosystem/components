@@ -28,7 +28,7 @@ func TestServer(t *testing.T) {
 
 		go server.Start(context.Background())
 
-		time.Sleep(time.Second * 1)
+		time.Sleep(time.Second * 5)
 		server.Stop(context.Background())
 	}()
 
