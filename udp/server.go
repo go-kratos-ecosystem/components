@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"net"
-	"sync"
 )
 
 type Server struct {
@@ -13,7 +12,6 @@ type Server struct {
 	bufSize int
 
 	conn net.PacketConn
-	mu   sync.Mutex // guards conn
 
 	handler func(conn net.PacketConn, buf []byte, addr net.Addr)
 
@@ -86,9 +84,6 @@ func (s *Server) Start(ctx context.Context) (err error) {
 }
 
 func (s *Server) handle(buf []byte, addr net.Addr) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
 	if s.recoveryHandler != nil {
 		defer func() {
 			if err := recover(); err != nil {
@@ -101,9 +96,6 @@ func (s *Server) handle(buf []byte, addr net.Addr) {
 }
 
 func (s *Server) Stop(ctx context.Context) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
 	log.Println("udp server: stopping")
 
 	return s.conn.Close()

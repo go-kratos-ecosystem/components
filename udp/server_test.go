@@ -15,7 +15,7 @@ func TestServer(t *testing.T) {
 		done   = make(chan []byte, 1)
 	)
 
-	wg.Add(3)
+	wg.Add(2)
 
 	go func() {
 		defer wg.Done()
@@ -26,7 +26,10 @@ func TestServer(t *testing.T) {
 			t.Log(err)
 		}), WithBufSize(1024))
 
-		server.Start(context.Background())
+		go server.Start(context.Background())
+
+		time.Sleep(time.Second * 1)
+		server.Stop(context.Background())
 	}()
 
 	go func() {
@@ -44,13 +47,6 @@ func TestServer(t *testing.T) {
 			t.Error(err)
 			return
 		}
-	}()
-
-	go func() {
-		defer wg.Done()
-
-		time.Sleep(time.Second * 1)
-		server.Stop(context.Background())
 	}()
 
 	wg.Wait()
