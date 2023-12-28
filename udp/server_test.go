@@ -35,6 +35,8 @@ func TestServer(t *testing.T) {
 	go func() {
 		defer wg.Done()
 
+		time.Sleep(time.Second * 3)
+
 		c, err := net.Dial("udp", ":12190")
 		if err != nil {
 			t.Error(err)
