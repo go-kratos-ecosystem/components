@@ -4,7 +4,14 @@ import (
 	"context"
 	"log"
 	"net"
+	"sync"
 )
+
+type Message struct {
+	Conn net.PacketConn
+	Addr net.Addr
+	Body []byte
+}
 
 type Server struct {
 	address string
@@ -13,9 +20,15 @@ type Server struct {
 
 	conn net.PacketConn
 
-	handler func(conn net.PacketConn, buf []byte, addr net.Addr)
+	handler func(message *Message)
 
-	recoveryHandler func(conn net.PacketConn, buf []byte, addr net.Addr, err interface{})
+	recoveryHandler func(message *Message, err interface{})
+
+	readChan     chan *Message
+	readChanSize int // readChan size
+
+	stoped     chan struct{}
+	stopedOnce sync.Once
 }
 
 type Option func(*Server)
@@ -28,7 +41,7 @@ func WithBufSize(bufSize int) Option {
 	}
 }
 
-func WithHandler(handler func(conn net.PacketConn, buf []byte, addr net.Addr)) Option {
+func WithHandler(handler func(message *Message)) Option {
 	return func(s *Server) {
 		if handler != nil {
 			s.handler = handler
@@ -36,7 +49,7 @@ func WithHandler(handler func(conn net.PacketConn, buf []byte, addr net.Addr)) O
 	}
 }
 
-func WithRecoveryHandler(handler func(conn net.PacketConn, buf []byte, addr net.Addr, err interface{})) Option {
+func WithRecoveryHandler(handler func(message *Message, err interface{})) Option {
 	return func(s *Server) {
 		if handler != nil {
 			s.recoveryHandler = handler
@@ -44,15 +57,27 @@ func WithRecoveryHandler(handler func(conn net.PacketConn, buf []byte, addr net.
 	}
 }
 
+func WithReadChanSize(readChanSize int) Option {
+	return func(s *Server) {
+		if readChanSize > 0 {
+			s.readChanSize = readChanSize
+		}
+	}
+}
+
 func NewServer(address string, opts ...Option) *Server {
 	s := &Server{
-		address: address,
-		bufSize: 1024,
+		address:      address,
+		bufSize:      1024,
+		readChanSize: 1024,
+		stoped:       make(chan struct{}),
 	}
 
 	for _, opt := range opts {
 		opt(s)
 	}
+
+	s.readChan = make(chan *Message, s.readChanSize)
 
 	return s
 }
@@ -65,38 +90,65 @@ func (s *Server) Start(ctx context.Context) (err error) {
 
 	log.Printf("udp server: listening on %s\n", s.address)
 
+	go s.start()
+
 	buf := make([]byte, s.bufSize)
 
 	for {
 		n, addr, err := s.conn.ReadFrom(buf)
 		if err != nil {
+			s.stop()
 			return err
 		}
 
-		if s.handler == nil {
-			log.Printf("udp server: receive from %s: %s\n", addr.String(), string(buf))
-			continue
+		s.readChan <- &Message{
+			Conn: s.conn,
+			Addr: addr,
+			Body: buf[:n],
 		}
-
-		go s.handle(buf[:n], addr)
 	}
 
 }
 
-func (s *Server) handle(buf []byte, addr net.Addr) {
+func (s *Server) start() {
+	for {
+		select {
+		case <-s.stoped:
+			return
+		case message := <-s.readChan:
+			if s.handler != nil {
+				s.handle(message)
+			}
+		}
+	}
+}
+
+func (s *Server) handle(message *Message) {
 	if s.recoveryHandler != nil {
 		defer func() {
 			if err := recover(); err != nil {
-				s.recoveryHandler(s.conn, buf, addr, err)
+				s.recoveryHandler(message, err)
 			}
 		}()
 	}
 
-	s.handler(s.conn, buf, addr)
+	s.handler(message)
 }
 
 func (s *Server) Stop(ctx context.Context) error {
 	log.Println("udp server: stopping")
 
+	s.stop()
+
+	if s.conn == nil {
+		return nil
+	}
+
 	return s.conn.Close()
+}
+
+func (s *Server) stop() {
+	s.stopedOnce.Do(func() {
+		close(s.stoped)
+	})
 }

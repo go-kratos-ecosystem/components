@@ -20,9 +20,9 @@ func TestServer(t *testing.T) {
 	go func() {
 		defer wg.Done()
 
-		server = NewServer(":12190", WithHandler(func(conn net.PacketConn, buf []byte, addr net.Addr) {
-			done <- buf
-		}), WithRecoveryHandler(func(conn net.PacketConn, buf []byte, addr net.Addr, err interface{}) {
+		server = NewServer(":12190", WithHandler(func(msg *Message) {
+			done <- msg.Body
+		}), WithRecoveryHandler(func(msg *Message, err interface{}) {
 			t.Log(err)
 		}), WithBufSize(1024))
 
