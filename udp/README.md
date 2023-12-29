@@ -7,7 +7,6 @@ package main
 
 import (
 	"log"
-	"net"
 
 	"github.com/go-kratos/kratos/v2"
 
@@ -17,11 +16,11 @@ import (
 func main() {
 	err := kratos.New(
 		kratos.Server(
-			udp.NewServer(":12190", udp.WithHandler(func(conn net.PacketConn, buf []byte, addr net.Addr) {
-				log.Println(string(buf))
-			}), udp.WithRecoveryHandler(func(conn net.PacketConn, buf []byte, addr net.Addr, err interface{}) {
+			udp.NewServer(":12190", udp.WithHandler(func(msg *udp.Message) {
+				log.Printf("receive message: %s", msg.Body)
+			}), udp.WithRecoveryHandler(func(msg *udp.Message, err interface{}) {
 				log.Println(err)
-			})),
+			}), udp.WithReadChanSize(10240)),
 		),
 	).Run()
 
