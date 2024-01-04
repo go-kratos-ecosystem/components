@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/redis/go-redis/v9"
 
-	"github.com/go-packagist/go-kratos-components/crontab"
+	"github.com/go-kratos-ecosystem/components/v2/crontab"
 )
 
 type Mutex struct {
