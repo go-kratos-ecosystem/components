@@ -1,4 +1,4 @@
-package strable
+package strings
 
 import (
 	"crypto/md5"
@@ -7,6 +7,8 @@ import (
 	"math/rand"
 	"regexp"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -144,9 +146,14 @@ func Len(s string) int {
 	return len([]rune(s))
 }
 
-// IsUuid returns true if the string is a valid UUID.
-func IsUuid(str string) bool {
+// IsUUID returns true if the string is a valid UUID.
+func IsUUID(str string) bool {
 	match, err := regexp.MatchString(uuidPattern, str)
 
 	return err == nil && match
+}
+
+// UUID generate uuid string
+func UUID() string {
+	return uuid.New().String()
 }
