@@ -10,7 +10,7 @@
 ## Installation
 
 ```bash
-go get github.com/go-packagist/go-kratos-components
+go get github.com/go-kratos-ecosystem/components/v2
 ```
 
 ## Components

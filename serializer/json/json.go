@@ -3,7 +3,7 @@ package json
 import (
 	"encoding/json"
 
-	"github.com/go-packagist/go-kratos-components/serializer"
+	"github.com/go-kratos-ecosystem/components/v2/serializer"
 )
 
 var Serializer serializer.Serializable = &jsonSerializer{}

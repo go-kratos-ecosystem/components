@@ -6,11 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/robfig/cron/v3"
 )
-
-var _ transport.Server = (*Server)(nil)
 
 type Server struct {
 	cron *cron.Cron

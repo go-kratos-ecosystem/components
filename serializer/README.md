@@ -8,7 +8,7 @@ package serializer_test
 import (
 	"log"
 
-	"github.com/go-packagist/go-kratos-components/serializer/json"
+	"github.com/go-kratos-ecosystem/components/v2/serializer/json"
 )
 
 var j = json.Serializer

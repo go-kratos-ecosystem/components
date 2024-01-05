@@ -6,9 +6,9 @@ import (
 
 	"github.com/redis/go-redis/v9"
 
-	"github.com/go-packagist/go-kratos-components/serializer"
-	"github.com/go-packagist/go-kratos-components/serializer/json"
-	"github.com/go-packagist/go-kratos-components/x/cache"
+	"github.com/go-kratos-ecosystem/components/v2/serializer"
+	"github.com/go-kratos-ecosystem/components/v2/serializer/json"
+	"github.com/go-kratos-ecosystem/components/v2/x/cache"
 )
 
 type Store struct {
