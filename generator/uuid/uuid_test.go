@@ -3,8 +3,9 @@ package uuid
 import (
 	"testing"
 
-	"github.com/go-packagist/go-kratos-components/strable"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/go-kratos-ecosystem/components/v2/strable"
 )
 
 func TestGenerate(t *testing.T) {

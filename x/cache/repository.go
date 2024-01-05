@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-packagist/go-kratos-components/helper"
+	"github.com/go-kratos-ecosystem/components/v2/helper"
 )
 
 type Repository interface {
