@@ -68,8 +68,8 @@ func WithReadChanSize(readChanSize int) Option {
 func NewServer(address string, opts ...Option) *Server {
 	s := &Server{
 		address:      address,
-		bufSize:      1024,
-		readChanSize: 1024,
+		bufSize:      1024, //nolint:gomnd
+		readChanSize: 1024, //nolint:gomnd
 		stoped:       make(chan struct{}),
 	}
 
@@ -107,7 +107,6 @@ func (s *Server) Start(ctx context.Context) (err error) {
 			Body: buf[:n],
 		}
 	}
-
 }
 
 func (s *Server) start() {

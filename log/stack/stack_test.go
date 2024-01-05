@@ -55,11 +55,13 @@ func TestStackLogger(t *testing.T) {
 			name:  "debug",
 			level: log.LevelDebug,
 			want:  "name: log1, level: DEBUG, keyvals: [test test]\nname: log2, level: DEBUG, keyvals: [test test]\n",
-		}, {
+		},
+		{
 			name:  "info",
 			level: log.LevelInfo,
 			want:  "name: log1, level: INFO, keyvals: [test test]\nname: log2, level: INFO, keyvals: [test test]\n",
-		}, {
+		},
+		{
 			name:  "warn",
 			level: log.LevelWarn,
 			want:  "name: log1, level: WARN, keyvals: [test test]\nname: log2, level: WARN, keyvals: [test test]\n",

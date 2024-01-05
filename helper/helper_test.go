@@ -145,7 +145,7 @@ func TestCallWithCtx(t *testing.T) {
 
 func TestRetry(t *testing.T) {
 	t.Run("retry 3 times, and the result is an error", func(t *testing.T) {
-		var i = 1
+		i := 1
 
 		err := Retry(func() error {
 			i++
@@ -157,7 +157,7 @@ func TestRetry(t *testing.T) {
 	})
 
 	t.Run("retry 3 times, and the result is nil", func(t *testing.T) {
-		var i = 1
+		i := 1
 
 		err := Retry(func() error {
 			i++

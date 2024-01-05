@@ -7,9 +7,7 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-var (
-	ErrNoDefaultLogger = errors.New("log manager: no default logger")
-)
+var ErrNoDefaultLogger = errors.New("log manager: no default logger")
 
 type Config struct {
 	Default string

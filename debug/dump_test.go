@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestDump(t *testing.T) {
+func TestDump(_ *testing.T) {
 	Dump("foo", []byte("1234567890"), &struct {
 		Name string
 	}{

@@ -123,8 +123,8 @@ func Shuffle(s string) string {
 //
 //	Random(10) // "qujrlkhyqr"
 func Random(length int) string {
-	var letters = []rune(randomLetters)
-	var lettersLength = len(letters)
+	letters := []rune(randomLetters)
+	lettersLength := len(letters)
 
 	b := make([]rune, length)
 

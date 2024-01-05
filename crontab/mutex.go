@@ -5,9 +5,7 @@ import (
 	"errors"
 )
 
-var (
-	ErrAnotherServerRunning = errors.New("crontab: another server running")
-)
+var ErrAnotherServerRunning = errors.New("crontab: another server running")
 
 type Mutex interface {
 	Lock(ctx context.Context, name string) error

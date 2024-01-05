@@ -38,9 +38,7 @@ func Codec(codec codec.Codec) Option {
 	}
 }
 
-var (
-	_ cache.Store = (*Store)(nil)
-)
+var _ cache.Store = (*Store)(nil)
 
 func New(redis redis.Cmdable, opts ...Option) *Store {
 	opt := &options{
@@ -58,11 +56,12 @@ func New(redis redis.Cmdable, opts ...Option) *Store {
 }
 
 func (s *Store) Has(ctx context.Context, key string) (bool, error) {
-	if r := s.redis.Exists(ctx, s.opts.prefix+key); r.Err() != nil {
+	r := s.redis.Exists(ctx, s.opts.prefix+key)
+	if r.Err() != nil {
 		return false, r.Err()
-	} else {
-		return r.Val() > 0, nil
 	}
+
+	return r.Val() > 0, nil
 }
 
 func (s *Store) Get(ctx context.Context, key string, dest interface{}) error {

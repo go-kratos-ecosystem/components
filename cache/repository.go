@@ -28,12 +28,14 @@ func NewRepository(store Store) Repository {
 }
 
 func (r *repository) Missing(ctx context.Context, key string) (bool, error) {
-	if had, err := r.Store.Has(ctx, key); err != nil {
+	had, err := r.Store.Has(ctx, key)
+	if err != nil {
 		return false, err
-	} else {
-		return !had, nil
 	}
+
+	return !had, nil
 }
+
 func (r *repository) Add(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
 	// if the store is addable, use it
 	if store, ok := r.Store.(Addable); ok {
