@@ -8,7 +8,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/go-kratos-ecosystem/components/v2/crontab"
+	"github.com/go-packagist/go-kratos-components/crontab"
 )
 
 var (
