@@ -21,7 +21,7 @@ func TestTap(t *testing.T) {
 	assert.Equal(t, "foo", f.Name)
 
 	f = Tap(&Foo{Name: "foo"}, func(foo interface{}) {
-		foo.(*Foo).Name = "bar"
+		foo.(*Foo).Name = "bar" //nolint:goconst
 	}).(*Foo)
 	assert.Equal(t, "bar", f.Name)
 

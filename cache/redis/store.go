@@ -74,13 +74,17 @@ func (s *Store) Get(ctx context.Context, key string, dest interface{}) error {
 }
 
 func (s *Store) Put(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
-	if valued, err := s.opts.codec.Marshal(value); err != nil {
+	valued, err := s.opts.codec.Marshal(value)
+	if err != nil {
 		return false, err
-	} else if r := s.redis.Set(ctx, s.opts.prefix+key, valued, ttl); r.Err() != nil {
-		return false, r.Err()
-	} else {
-		return r.Val() == "OK", nil
 	}
+
+	r := s.redis.Set(ctx, s.opts.prefix+key, valued, ttl)
+	if r.Err() != nil {
+		return false, r.Err()
+	}
+
+	return r.Val() == "OK", nil
 }
 
 func (s *Store) Increment(ctx context.Context, key string, value int) (int, error) {
@@ -102,29 +106,35 @@ func (s *Store) Decrement(ctx context.Context, key string, value int) (int, erro
 }
 
 func (s *Store) Forever(ctx context.Context, key string, value interface{}) (bool, error) {
-	if valued, err := s.opts.codec.Marshal(value); err != nil {
+	valued, err := s.opts.codec.Marshal(value)
+	if err != nil {
 		return false, err
-	} else if r := s.redis.Set(ctx, s.opts.prefix+key, valued, redis.KeepTTL); r.Err() != nil {
-		return false, r.Err()
-	} else {
-		return r.Val() == "OK", nil
 	}
+
+	r := s.redis.Set(ctx, s.opts.prefix+key, valued, redis.KeepTTL)
+	if r.Err() != nil {
+		return false, r.Err()
+	}
+
+	return r.Val() == "OK", nil
 }
 
 func (s *Store) Forget(ctx context.Context, key string) (bool, error) {
-	if r := s.redis.Del(ctx, s.opts.prefix+key); r.Err() != nil {
+	r := s.redis.Del(ctx, s.opts.prefix+key)
+	if r.Err() != nil {
 		return false, r.Err()
-	} else {
-		return r.Val() > 0, nil
 	}
+
+	return r.Val() > 0, nil
 }
 
 func (s *Store) Flush(ctx context.Context) (bool, error) {
-	if r := s.redis.FlushAll(ctx); r.Err() != nil {
+	r := s.redis.FlushAll(ctx)
+	if r.Err() != nil {
 		return false, r.Err()
-	} else {
-		return r.Val() == "OK", nil
 	}
+
+	return r.Val() == "OK", nil
 }
 
 func (s *Store) GetPrefix() string {

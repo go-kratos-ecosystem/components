@@ -106,7 +106,7 @@ func (s *Server) start() {
 	s.log("crontab: server started")
 }
 
-func (s *Server) Stop(ctx context.Context) error {
+func (s *Server) Stop(_ context.Context) error {
 	s.log("crontab: server stopping")
 
 	close(s.stoped)

@@ -82,7 +82,7 @@ func NewServer(address string, opts ...Option) *Server {
 	return s
 }
 
-func (s *Server) Start(ctx context.Context) (err error) {
+func (s *Server) Start(_ context.Context) (err error) {
 	s.conn, err = net.ListenPacket("udp", s.address)
 	if err != nil {
 		return
@@ -134,7 +134,7 @@ func (s *Server) handle(message *Message) {
 	s.handler(message)
 }
 
-func (s *Server) Stop(ctx context.Context) error {
+func (s *Server) Stop(_ context.Context) error {
 	log.Println("udp server: stopping")
 
 	s.stop()

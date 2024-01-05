@@ -2,27 +2,6 @@ linters:
   disable-all: true
 
   enable:
-#    - gosimple
-#    - govet
-#    - ineffassign
-#    - staticcheck
-#    - bodyclose
-#    - dupl
-#    - exportloopref
-#    - funlen
-#    - gocognit
-#    - goconst
-#    - gocritic
-#    - gocyclo
-#    - stylecheck
-#    - whitespace
-#    - goprintffuncname
-#    - gosec
-#    - interfacer
-#    - maligned
-#    - prealloc
-#    - revive
-#    - errorlint
     - bodyclose
     - dogsled
     - durationcheck
