@@ -36,7 +36,7 @@ func (t *testLogger) Log(level log.Level, keyvals ...interface{}) error {
 
 type errorLogger struct{}
 
-func (t *errorLogger) Log(level log.Level, keyvals ...interface{}) error {
+func (t *errorLogger) Log(_ log.Level, _ ...interface{}) error {
 	return fmt.Errorf("error")
 }
 
@@ -79,7 +79,7 @@ func TestStackLogger(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			buf, err := redirectStdout(func() {
-				logger.Log(tt.level, "test", "test")
+				_ = logger.Log(tt.level, "test", "test")
 			})
 			if err != nil {
 				t.Fatal(err)
@@ -124,7 +124,7 @@ func TestIgnoreExceptions(t *testing.T) {
 			}, opts...)
 
 			buf, err := redirectStdout(func() {
-				logger.Log(log.LevelDebug, "test", "test")
+				_ = logger.Log(log.LevelDebug, "test", "test")
 			})
 			if err != nil {
 				t.Fatal(err)

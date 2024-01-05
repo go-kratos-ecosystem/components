@@ -66,11 +66,12 @@ func (s *Store) Has(ctx context.Context, key string) (bool, error) {
 }
 
 func (s *Store) Get(ctx context.Context, key string, dest interface{}) error {
-	if r := s.redis.Get(ctx, s.opts.prefix+key); r.Err() != nil {
+	r := s.redis.Get(ctx, s.opts.prefix+key)
+	if r.Err() != nil {
 		return r.Err()
-	} else {
-		return s.opts.codec.Unmarshal([]byte(r.Val()), dest)
 	}
+
+	return s.opts.codec.Unmarshal([]byte(r.Val()), dest)
 }
 
 func (s *Store) Put(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
@@ -84,19 +85,21 @@ func (s *Store) Put(ctx context.Context, key string, value interface{}, ttl time
 }
 
 func (s *Store) Increment(ctx context.Context, key string, value int) (int, error) {
-	if r := s.redis.IncrBy(ctx, s.opts.prefix+key, int64(value)); r.Err() != nil {
+	r := s.redis.IncrBy(ctx, s.opts.prefix+key, int64(value))
+	if r.Err() != nil {
 		return 0, r.Err()
-	} else {
-		return int(r.Val()), nil
 	}
+
+	return int(r.Val()), nil
 }
 
 func (s *Store) Decrement(ctx context.Context, key string, value int) (int, error) {
-	if r := s.redis.DecrBy(ctx, s.opts.prefix+key, int64(value)); r.Err() != nil {
+	r := s.redis.DecrBy(ctx, s.opts.prefix+key, int64(value))
+	if r.Err() != nil {
 		return 0, r.Err()
-	} else {
-		return int(r.Val()), nil
 	}
+
+	return int(r.Val()), nil
 }
 
 func (s *Store) Forever(ctx context.Context, key string, value interface{}) (bool, error) {

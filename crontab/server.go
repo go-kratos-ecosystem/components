@@ -69,7 +69,7 @@ func (s *Server) Start(ctx context.Context) error {
 			s.cron.Stop()
 		}
 
-		s.mutex.Unlock(ctx, s.name)
+		s.mutex.Unlock(ctx, s.name) //nolint:errcheck
 		timer.Stop()
 	}()
 

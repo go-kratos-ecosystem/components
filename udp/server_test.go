@@ -26,10 +26,10 @@ func TestServer(t *testing.T) {
 			t.Log(err)
 		}), WithBufSize(1024))
 
-		go server.Start(context.Background())
+		go server.Start(context.Background()) //nolint:errcheck
 
 		time.Sleep(time.Second * 5)
-		server.Stop(context.Background())
+		_ = server.Stop(context.Background())
 	}()
 
 	go func() {
