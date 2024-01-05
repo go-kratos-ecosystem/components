@@ -7,8 +7,8 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"github.com/go-kratos-ecosystem/components/v2/cache"
-	"github.com/go-kratos-ecosystem/components/v2/serializer"
-	"github.com/go-kratos-ecosystem/components/v2/serializer/json"
+	"github.com/go-kratos-ecosystem/components/v2/codec"
+	"github.com/go-kratos-ecosystem/components/v2/codec/json"
 )
 
 type Store struct {
@@ -18,8 +18,8 @@ type Store struct {
 }
 
 type options struct {
-	prefix     string
-	serializer serializer.Serializable
+	prefix string
+	codec  codec.Codec
 }
 
 type Option func(*options)
@@ -32,9 +32,9 @@ func Prefix(prefix string) Option {
 	}
 }
 
-func Serializer(serializer serializer.Serializable) Option {
+func Codec(codec codec.Codec) Option {
 	return func(o *options) {
-		o.serializer = serializer
+		o.codec = codec
 	}
 }
 
@@ -44,7 +44,7 @@ var (
 
 func New(redis redis.Cmdable, opts ...Option) *Store {
 	opt := &options{
-		serializer: json.Serializer,
+		codec: json.Codec,
 	}
 
 	for _, o := range opts {
@@ -69,12 +69,12 @@ func (s *Store) Get(ctx context.Context, key string, dest interface{}) error {
 	if r := s.redis.Get(ctx, s.opts.prefix+key); r.Err() != nil {
 		return r.Err()
 	} else {
-		return s.opts.serializer.Unserialize([]byte(r.Val()), dest)
+		return s.opts.codec.Unmarshal([]byte(r.Val()), dest)
 	}
 }
 
 func (s *Store) Put(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
-	if valued, err := s.opts.serializer.Serialize(value); err != nil {
+	if valued, err := s.opts.codec.Marshal(value); err != nil {
 		return false, err
 	} else if r := s.redis.Set(ctx, s.opts.prefix+key, valued, ttl); r.Err() != nil {
 		return false, r.Err()
@@ -100,7 +100,7 @@ func (s *Store) Decrement(ctx context.Context, key string, value int) (int, erro
 }
 
 func (s *Store) Forever(ctx context.Context, key string, value interface{}) (bool, error) {
-	if valued, err := s.opts.serializer.Serialize(value); err != nil {
+	if valued, err := s.opts.codec.Marshal(value); err != nil {
 		return false, err
 	} else if r := s.redis.Set(ctx, s.opts.prefix+key, valued, redis.KeepTTL); r.Err() != nil {
 		return false, r.Err()
