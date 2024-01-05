@@ -5,15 +5,15 @@ import "github.com/go-kratos/kratos/v2/log"
 var _ log.Logger = (*stackLogger)(nil)
 
 type stackLogger struct {
-	loggers    []log.Logger
-	ignoreErrs bool
+	loggers   []log.Logger
+	ignoreErr bool
 }
 
 type Option func(*stackLogger)
 
-func IgnoreErrs() Option {
+func IgnoreErr() Option {
 	return func(logger *stackLogger) {
-		logger.ignoreErrs = true
+		logger.ignoreErr = true
 	}
 }
 
@@ -32,7 +32,7 @@ func New(loggers []log.Logger, opts ...Option) log.Logger {
 func (s *stackLogger) Log(level log.Level, keyvals ...interface{}) error {
 	for _, logger := range s.loggers {
 		if err := logger.Log(level, keyvals...); err != nil {
-			if !s.ignoreErrs {
+			if !s.ignoreErr {
 				return err
 			}
 		}

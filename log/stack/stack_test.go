@@ -115,7 +115,7 @@ func TestIgnoreExceptions(t *testing.T) {
 			var opts []Option
 
 			if tt.ignoreExceptions {
-				opts = append(opts, IgnoreErrs())
+				opts = append(opts, IgnoreErr())
 			}
 
 			logger := New([]log.Logger{
