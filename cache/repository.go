@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos-ecosystem/components/v2/helper"
+	"github.com/go-kratos-ecosystem/components/v2/utils"
 )
 
 type Repository interface {
@@ -79,7 +79,7 @@ func (r *repository) Remember(
 			return err
 		}
 
-		return helper.ValueOf(v, dest)
+		return utils.ValueOf(v, dest)
 	}
 
 	return r.Get(ctx, key, dest)
