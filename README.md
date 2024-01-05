@@ -34,7 +34,7 @@ go get github.com/go-kratos-ecosystem/components/v2
 - [timezone](timezone)
 - [udp](udp)
 - [utils](utils)
-  - [x](x) `Unstable`
+- [x](x) `Unstable`
   - [log](x/log)
   - [log-adapter](x/log-adapter)
 
