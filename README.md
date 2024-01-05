@@ -27,7 +27,7 @@ go get github.com/go-kratos-ecosystem/components/v2
 - [hashing](hashing)
 - [log](log)
 - [middleware](middleware)
-  - [cors](cors)
+  - [cors](middleware/cors)
 - [ptr](ptr)
 - [recovery](recovery)
 - [strings](strings)
@@ -35,8 +35,8 @@ go get github.com/go-kratos-ecosystem/components/v2
 - [udp](udp)
 - [utils](utils)
   - [x](x) `Unstable`
-  - [log](log)
-  - [log-adapter](log-adapter)
+  - [log](x/log)
+  - [log-adapter](x/log-adapter)
 
 
 
