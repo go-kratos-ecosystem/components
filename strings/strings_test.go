@@ -1,4 +1,4 @@
-package strable
+package strings
 
 import (
 	"testing"
@@ -63,8 +63,16 @@ func TestLength(t *testing.T) {
 	assert.Equal(t, 12, len("张三李四"))
 }
 
-func TestIsUuid(t *testing.T) {
-	assert.True(t, IsUuid("f81d4fae-7dec-11d0-a765-00a0c91e6bf6"))
-	assert.False(t, IsUuid("f81d4fae-7dec-11d0-a765-00a0c91e6bf"))
-	assert.False(t, IsUuid("f81d4fae-7dec-11d0-a765-00a0c91e6bf6a"))
+func TestIsUUID(t *testing.T) {
+	assert.True(t, IsUUID("f81d4fae-7dec-11d0-a765-00a0c91e6bf6"))
+	assert.False(t, IsUUID("f81d4fae-7dec-11d0-a765-00a0c91e6bf"))
+	assert.False(t, IsUUID("f81d4fae-7dec-11d0-a765-00a0c91e6bf6a"))
+}
+
+func TestUUID(t *testing.T) {
+	uuid := UUID()
+
+	assert.NotEmpty(t, uuid)
+	assert.Equal(t, 36, len(uuid))
+	assert.True(t, IsUUID(uuid))
 }
