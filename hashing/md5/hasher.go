@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 
-	"github.com/go-kratos-ecosystem/components/v2/hashing"
+	"github.com/go-packagist/go-kratos-components/hashing"
 )
 
 type hasher struct{}
