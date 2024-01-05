@@ -7,19 +7,19 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"gorm.io/gorm/logger"
+	gl "gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
 )
 
-type loggerAdapter struct {
+type logger struct {
 	log.Logger
-	logger.Config
+	gl.Config
 
 	infoStr, warnStr, errStr            string
 	traceStr, traceErrStr, traceWarnStr string
 }
 
-func NewLogger(l log.Logger, config logger.Config) logger.Interface {
+func New(l log.Logger, config gl.Config) gl.Interface {
 	var (
 		infoStr      = "%s\n[info] "
 		warnStr      = "%s\n[warn] "
@@ -30,15 +30,15 @@ func NewLogger(l log.Logger, config logger.Config) logger.Interface {
 	)
 
 	if config.Colorful {
-		infoStr = logger.Green + "%s\n" + logger.Reset + logger.Green + "[info] " + logger.Reset //nolint:goconst
-		warnStr = logger.BlueBold + "%s\n" + logger.Reset + logger.Magenta + "[warn] " + logger.Reset
-		errStr = logger.Magenta + "%s\n" + logger.Reset + logger.Red + "[error] " + logger.Reset
-		traceStr = logger.Green + "%s\n" + logger.Reset + logger.Yellow + "[%.3fms] " + logger.BlueBold + "[rows:%v]" + logger.Reset + " %s"                                             //nolint:goconst,lll
-		traceWarnStr = logger.Green + "%s " + logger.Yellow + "%s\n" + logger.Reset + logger.RedBold + "[%.3fms] " + logger.Yellow + "[rows:%v]" + logger.Magenta + " %s" + logger.Reset //nolint:lll
-		traceErrStr = logger.RedBold + "%s " + logger.MagentaBold + "%s\n" + logger.Reset + logger.Yellow + "[%.3fms] " + logger.BlueBold + "[rows:%v]" + logger.Reset + " %s"           //nolint:lll
+		infoStr = gl.Green + "%s\n" + gl.Reset + gl.Green + "[info] " + gl.Reset //nolint:goconst
+		warnStr = gl.BlueBold + "%s\n" + gl.Reset + gl.Magenta + "[warn] " + gl.Reset
+		errStr = gl.Magenta + "%s\n" + gl.Reset + gl.Red + "[error] " + gl.Reset
+		traceStr = gl.Green + "%s\n" + gl.Reset + gl.Yellow + "[%.3fms] " + gl.BlueBold + "[rows:%v]" + gl.Reset + " %s"                                     //nolint:goconst,lll
+		traceWarnStr = gl.Green + "%s " + gl.Yellow + "%s\n" + gl.Reset + gl.RedBold + "[%.3fms] " + gl.Yellow + "[rows:%v]" + gl.Magenta + " %s" + gl.Reset //nolint:lll
+		traceErrStr = gl.RedBold + "%s " + gl.MagentaBold + "%s\n" + gl.Reset + gl.Yellow + "[%.3fms] " + gl.BlueBold + "[rows:%v]" + gl.Reset + " %s"       //nolint:lll
 	}
 
-	return &loggerAdapter{
+	return &logger{
 		Logger:       l,
 		Config:       config,
 		infoStr:      infoStr,
@@ -50,46 +50,46 @@ func NewLogger(l log.Logger, config logger.Config) logger.Interface {
 	}
 }
 
-func (l *loggerAdapter) LogMode(level logger.LogLevel) logger.Interface {
+func (l *logger) LogMode(level gl.LogLevel) gl.Interface {
 	newLogger := *l
 	newLogger.LogLevel = level
 
 	return &newLogger
 }
 
-func (l *loggerAdapter) Info(_ context.Context, s string, i ...interface{}) {
-	if l.LogLevel >= logger.Info {
+func (l *logger) Info(_ context.Context, s string, i ...interface{}) {
+	if l.LogLevel >= gl.Info {
 		_ = l.Log(log.LevelInfo, fmt.Sprintf(l.infoStr+s, append([]interface{}{utils.FileWithLineNum()}, i...)...))
 	}
 }
 
-func (l *loggerAdapter) Warn(_ context.Context, s string, i ...interface{}) {
-	if l.LogLevel >= logger.Warn {
+func (l *logger) Warn(_ context.Context, s string, i ...interface{}) {
+	if l.LogLevel >= gl.Warn {
 		_ = l.Log(log.LevelWarn, fmt.Sprintf(l.warnStr+s, append([]interface{}{utils.FileWithLineNum()}, i...)...))
 	}
 }
 
-func (l *loggerAdapter) Error(_ context.Context, s string, i ...interface{}) {
-	if l.LogLevel >= logger.Error {
+func (l *logger) Error(_ context.Context, s string, i ...interface{}) {
+	if l.LogLevel >= gl.Error {
 		_ = l.Log(log.LevelError, fmt.Sprintf(l.errStr+s, append([]interface{}{utils.FileWithLineNum()}, i...)...))
 	}
 }
 
-func (l *loggerAdapter) Trace(_ context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) { //nolint:lll
-	if l.LogLevel <= logger.Silent {
+func (l *logger) Trace(_ context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) { //nolint:lll
+	if l.LogLevel <= gl.Silent {
 		return
 	}
 
 	elapsed := time.Since(begin)
 	switch {
-	case err != nil && l.LogLevel >= logger.Error && (!errors.Is(err, logger.ErrRecordNotFound) || !l.IgnoreRecordNotFoundError): //nolint:lll
+	case err != nil && l.LogLevel >= gl.Error && (!errors.Is(err, gl.ErrRecordNotFound) || !l.IgnoreRecordNotFoundError): //nolint:lll
 		sql, rows := fc()
 		if rows == -1 {
 			_ = l.Log(log.LevelFatal, fmt.Sprintf(l.traceErrStr, utils.FileWithLineNum(), err, float64(elapsed.Nanoseconds())/1e6, "-", sql)) //nolint:gomnd,lll
 		} else {
 			_ = l.Log(log.LevelFatal, fmt.Sprintf(l.traceErrStr, utils.FileWithLineNum(), err, float64(elapsed.Nanoseconds())/1e6, rows, sql)) //nolint:gomnd,lll
 		}
-	case elapsed > l.SlowThreshold && l.SlowThreshold != 0 && l.LogLevel >= logger.Warn:
+	case elapsed > l.SlowThreshold && l.SlowThreshold != 0 && l.LogLevel >= gl.Warn:
 		sql, rows := fc()
 		slowLog := fmt.Sprintf("SLOW SQL >= %v", l.SlowThreshold)
 		if rows == -1 {
@@ -97,7 +97,7 @@ func (l *loggerAdapter) Trace(_ context.Context, begin time.Time, fc func() (sql
 		} else {
 			_ = l.Log(log.LevelWarn, fmt.Sprintf(l.traceWarnStr, utils.FileWithLineNum(), slowLog, float64(elapsed.Nanoseconds())/1e6, rows, sql)) //nolint:gomnd,lll
 		}
-	case l.LogLevel == logger.Info:
+	case l.LogLevel == gl.Info:
 		sql, rows := fc()
 		if rows == -1 {
 			_ = l.Log(log.LevelInfo, fmt.Sprintf(l.traceStr, utils.FileWithLineNum(), float64(elapsed.Nanoseconds())/1e6, "-", sql)) //nolint:gomnd,lll
