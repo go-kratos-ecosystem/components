@@ -3,9 +3,10 @@ package hashing_test
 import (
 	"testing"
 
-	"github.com/go-packagist/go-kratos-components/hashing"
-	_ "github.com/go-packagist/go-kratos-components/hashing/md5"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/go-kratos-ecosystem/components/v2/hashing"
+	_ "github.com/go-kratos-ecosystem/components/v2/hashing/md5"
 )
 
 func TestHasher_New(t *testing.T) {
