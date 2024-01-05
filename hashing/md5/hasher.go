@@ -33,7 +33,6 @@ func (h *hasher) Make(value string) (string, error) {
 // MustMake generates a new hashed value.
 func (h *hasher) MustMake(value string) string {
 	hashedValue, err := h.Make(value)
-
 	if err != nil {
 		panic(err)
 	}
@@ -44,7 +43,6 @@ func (h *hasher) MustMake(value string) string {
 // Check checks the given value and hashed value.
 func (h *hasher) Check(value, hashedValue string) bool {
 	hv, err := h.Make(value)
-
 	if err != nil {
 		return false
 	}

@@ -8,7 +8,7 @@ import (
 type Bytes int64
 
 const (
-	KB Bytes = 1 << (10 * (iota + 1))
+	KB Bytes = 1 << (10 * (iota + 1)) //nolint:gomnd
 	MB
 	GB
 	TB
@@ -83,7 +83,7 @@ func (b Bytes) EB() float64 {
 }
 
 func (b Bytes) HumanizeValue(lens ...int) string {
-	var l = 2
+	l := 2
 	if len(lens) > 0 {
 		l = lens[0]
 	}
@@ -92,5 +92,5 @@ func (b Bytes) HumanizeValue(lens ...int) string {
 }
 
 func (b Bytes) Humanize(lens ...int) string {
-	return fmt.Sprintf("%s", b.HumanizeValue(lens...)) + b.Unit()
+	return b.HumanizeValue(lens...) + b.Unit()
 }

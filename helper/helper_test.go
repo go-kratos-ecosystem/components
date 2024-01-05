@@ -21,7 +21,7 @@ func TestTap(t *testing.T) {
 	assert.Equal(t, "foo", f.Name)
 
 	f = Tap(&Foo{Name: "foo"}, func(foo interface{}) {
-		foo.(*Foo).Name = "bar"
+		foo.(*Foo).Name = "bar" //nolint:goconst
 	}).(*Foo)
 	assert.Equal(t, "bar", f.Name)
 
@@ -145,7 +145,7 @@ func TestCallWithCtx(t *testing.T) {
 
 func TestRetry(t *testing.T) {
 	t.Run("retry 3 times, and the result is an error", func(t *testing.T) {
-		var i = 1
+		i := 1
 
 		err := Retry(func() error {
 			i++
@@ -157,7 +157,7 @@ func TestRetry(t *testing.T) {
 	})
 
 	t.Run("retry 3 times, and the result is nil", func(t *testing.T) {
-		var i = 1
+		i := 1
 
 		err := Retry(func() error {
 			i++

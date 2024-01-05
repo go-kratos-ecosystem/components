@@ -46,6 +46,7 @@ func Conflict(message string) *errors.Error {
 func InternalServer(message string) *errors.Error {
 	return errors.InternalServer(http.StatusText(http.StatusInternalServerError), message)
 }
+
 func ServiceUnavailable(message string) *errors.Error {
 	return errors.ServiceUnavailable(http.StatusText(http.StatusServiceUnavailable), message)
 }

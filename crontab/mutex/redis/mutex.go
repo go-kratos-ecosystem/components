@@ -29,7 +29,7 @@ func WithExpired(expired time.Duration) Option {
 func New(redis redis.Cmdable, opts ...Option) *Mutex {
 	m := &Mutex{
 		Cmdable:  redis,
-		expired:  time.Second * 60,
+		expired:  time.Second * 60, //nolint:gomnd
 		serverid: uuid.New().String(),
 	}
 

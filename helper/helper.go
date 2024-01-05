@@ -74,7 +74,7 @@ func CallWithCtx(ctx interface{}, fn interface{}, params ...interface{}) interfa
 		panic("fn must be a function")
 	}
 
-	var args []reflect.Value
+	var args []reflect.Value //nolint:prealloc
 
 	if ctx != nil {
 		args = append(args, reflect.ValueOf(ctx))

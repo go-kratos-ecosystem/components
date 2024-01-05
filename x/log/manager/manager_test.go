@@ -24,12 +24,12 @@ func TestManager_Channel(t *testing.T) {
 		},
 	})
 
-	m.Log(log.LevelDebug, "test", "test")
-	m.Channel("test").Log(log.LevelDebug, "test", "test")
-	m.Channel("ts").Log(log.LevelDebug, "test", "test")
+	m.Log(log.LevelDebug, "test", "test")                 //nolint:errcheck
+	m.Channel("test").Log(log.LevelDebug, "test", "test") //nolint:errcheck
+	m.Channel("ts").Log(log.LevelDebug, "test", "test")   //nolint:errcheck
 
 	assert.Panics(t, func() {
-		m.Channel("unknown").Log(log.LevelDebug, "test", "test")
+		m.Channel("unknown").Log(log.LevelDebug, "test", "test") //nolint:errcheck
 	})
 }
 

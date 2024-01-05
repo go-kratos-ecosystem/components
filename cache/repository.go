@@ -28,12 +28,14 @@ func NewRepository(store Store) Repository {
 }
 
 func (r *repository) Missing(ctx context.Context, key string) (bool, error) {
-	if had, err := r.Store.Has(ctx, key); err != nil {
+	had, err := r.Store.Has(ctx, key)
+	if err != nil {
 		return false, err
-	} else {
-		return !had, nil
 	}
+
+	return !had, nil
 }
+
 func (r *repository) Add(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
 	// if the store is addable, use it
 	if store, ok := r.Store.(Addable); ok {
@@ -44,14 +46,14 @@ func (r *repository) Add(ctx context.Context, key string, value interface{}, ttl
 	if missing, err := r.Missing(ctx, key); err != nil {
 		return false, err
 	} else if missing {
-		if status, err := r.Set(ctx, key, value, ttl); err != nil {
+		status, err := r.Set(ctx, key, value, ttl)
+		if err != nil {
 			return false, err
-		} else {
-			return status, nil
 		}
-	} else {
-		return false, nil
+		return status, nil
 	}
+
+	return false, nil
 }
 
 func (r *repository) Delete(ctx context.Context, key string) (bool, error) {
@@ -62,7 +64,12 @@ func (r *repository) Set(ctx context.Context, key string, value interface{}, ttl
 	return r.Put(ctx, key, value, ttl)
 }
 
-func (r *repository) Remember(ctx context.Context, key string, dest interface{}, value func() interface{}, ttl time.Duration) error {
+func (r *repository) Remember(
+	ctx context.Context,
+	key string, dest interface{},
+	value func() interface{},
+	ttl time.Duration,
+) error {
 	if missing, err := r.Missing(ctx, key); err != nil {
 		return err
 	} else if missing {
@@ -73,7 +80,7 @@ func (r *repository) Remember(ctx context.Context, key string, dest interface{},
 		}
 
 		return helper.ValueOf(v, dest)
-	} else {
-		return r.Get(ctx, key, dest)
 	}
+
+	return r.Get(ctx, key, dest)
 }
