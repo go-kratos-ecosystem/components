@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-kratos/kratos/v2/log"
 )
 
 type Server struct {
@@ -42,9 +43,11 @@ func NewServer(e *gin.Engine, opts ...Option) *Server {
 }
 
 func (s *Server) Start(_ context.Context) error {
+	log.Infof("[GIN] server listening on: %s", s.addr)
 	return s.server.ListenAndServe()
 }
 
 func (s *Server) Stop(ctx context.Context) error {
+	log.Info("[GIN] server stopping")
 	return s.server.Shutdown(ctx)
 }
