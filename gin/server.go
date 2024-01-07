@@ -30,13 +30,13 @@ func NewServer(e *gin.Engine, opts ...Option) *Server {
 		addr:   ":8080",
 	}
 
+	for _, opt := range opts {
+		opt(srv)
+	}
+
 	srv.server = &http.Server{
 		Addr:    srv.addr,
 		Handler: e,
-	}
-
-	for _, opt := range opts {
-		opt(srv)
 	}
 
 	return srv
