@@ -24,6 +24,7 @@ go get github.com/go-kratos-ecosystem/components/v2
 - [debug](debug)
 - [env](env)
 - [errors](errors)
+- [gin](gin)
 - [hashing](hashing)
 - [log](log)
 - [middleware](middleware)
