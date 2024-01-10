@@ -10,7 +10,6 @@ import (
 
 	"golang.org/x/text/encoding/traditionalchinese"
 
-	"github.com/go-kratos-ecosystem/components/v2/debug"
 	"github.com/go-kratos-ecosystem/components/v2/sms"
 )
 
@@ -83,8 +82,6 @@ func (p *provider) Send(ctx context.Context, phone *sms.Phone, message *sms.Mess
 		return err
 	}
 	defer resp.Body.Close()
-
-	debug.Dump(resp.Body)
 
 	// check response
 	if resp.StatusCode != http.StatusOK {
