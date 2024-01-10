@@ -38,12 +38,13 @@ func TestProvider(t *testing.T) {
 			t.Fatal("smbody error")
 		}
 
-		w.Write([]byte("")) //nolint:errcheck
+		w.Write([]byte("hello")) //nolint:errcheck
 	}))
 	defer srv.Close()
 
 	p := New(username, password,
 		WithAPI(srv.URL),
+		WithHTTPClient(http.DefaultClient),
 	)
 
 	err := p.Send(context.Background(), &sms.Phone{
