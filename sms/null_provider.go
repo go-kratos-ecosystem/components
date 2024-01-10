@@ -2,8 +2,7 @@ package sms
 
 import "context"
 
-type NullProvider struct {
-}
+type NullProvider struct{}
 
 func NewNullProvider() Provider {
 	return &NullProvider{}

@@ -51,7 +51,6 @@ func TestProvider(t *testing.T) {
 	}, &sms.Message{
 		Text: text,
 	})
-
 	if err != nil {
 		t.Fatal(err)
 	}

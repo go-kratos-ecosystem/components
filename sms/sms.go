@@ -56,7 +56,7 @@ func (s *Sms) SendTextWithNumber(ctx context.Context, phoneNumber, text string) 
 	}, text)
 }
 
-func (s *Sms) SendTemplateWithNumber(ctx context.Context, phoneNumber, template string, variables map[string]string) error {
+func (s *Sms) SendTemplateWithNumber(ctx context.Context, phoneNumber, template string, variables map[string]string) error { //nolint:lll
 	return s.SendTemplate(ctx, &Phone{
 		Number: phoneNumber,
 	}, template, variables)
