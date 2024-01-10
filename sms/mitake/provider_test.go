@@ -13,7 +13,7 @@ func TestProvider(t *testing.T) {
 	var (
 		username = "test"
 		password = "test"
-		number   = "0939474570"
+		number   = "123456789"
 		text     = "Hello, world"
 	)
 
