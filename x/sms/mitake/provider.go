@@ -10,7 +10,7 @@ import (
 
 	"golang.org/x/text/encoding/traditionalchinese"
 
-	"github.com/go-kratos-ecosystem/components/v2/sms"
+	"github.com/go-kratos-ecosystem/components/v2/x/sms"
 )
 
 type provider struct {
@@ -50,15 +50,15 @@ func New(username, password string, opts ...Option) sms.Provider {
 	return p
 }
 
-func (p *provider) Send(ctx context.Context, phone *sms.Phone, message *sms.Message) error {
-	if err := p.verify(phone, message); err != nil {
-		return err
+func (p *provider) Send(ctx context.Context, message *sms.Message) (err error) {
+	if err = p.verify(message); err != nil {
+		return
 	}
 
 	// Convert to Big5
-	text, err := traditionalchinese.Big5.NewEncoder().String(message.Text)
+	text, err := traditionalchinese.Big5.NewEncoder().String(message.Content.Text)
 	if err != nil {
-		return err
+		return
 	}
 
 	// Combine params
@@ -67,36 +67,37 @@ func (p *provider) Send(ctx context.Context, phone *sms.Phone, message *sms.Mess
 	params.Set("password", p.password)
 	params.Set("type", "now")
 	params.Set("encoding", "big5")
-	params.Set("dstaddr", phone.Number)
+	params.Set("dstaddr", message.Phone.Number)
 	params.Set("smbody", text)
 
-	// new request
+	// new message
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, p.api+"?"+params.Encode(), nil)
 	if err != nil {
-		return err
+		return
 	}
 
-	// send request
-	resp, err := p.httpClient.Do(req)
+	// send message
+	rep, err := p.httpClient.Do(req)
 	if err != nil {
-		return err
+		return
 	}
-	defer resp.Body.Close()
+	defer rep.Body.Close()
 
-	// check response
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("sms mitake: http status code: %d", resp.StatusCode)
+	// check rep
+	if rep.StatusCode != http.StatusOK {
+		err = fmt.Errorf("sms mitake: http status code: %d", rep.StatusCode)
+		return
 	}
 
 	return nil
 }
 
-func (p *provider) verify(phone *sms.Phone, message *sms.Message) error {
-	if phone.Number == "" {
+func (p *provider) verify(message *sms.Message) error {
+	if message.Phone == nil || message.Phone.Number == "" {
 		return sms.ErrInvalidPhone
 	}
 
-	if message.Text == "" {
+	if message.Content == nil || message.Content.Text == "" {
 		return sms.ErrInvalidMessage
 	}
 

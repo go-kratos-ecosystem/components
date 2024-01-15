@@ -8,6 +8,6 @@ func NewNullProvider() Provider {
 	return &NullProvider{}
 }
 
-func (p *NullProvider) Send(_ context.Context, _ *Phone, _ *Message) error {
+func (p *NullProvider) Send(_ context.Context, _ *Message) error {
 	return nil
 }
