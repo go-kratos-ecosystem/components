@@ -27,15 +27,15 @@ type Message struct {
 }
 
 type Sms struct {
-	gw Provider
+	provider Provider
 }
 
-func New(gw Provider) *Sms {
+func New(provider Provider) *Sms {
 	return &Sms{
-		gw: gw,
+		provider: provider,
 	}
 }
 
 func (s *Sms) Send(ctx context.Context, message *Message) error {
-	return s.gw.Send(ctx, message)
+	return s.provider.Send(ctx, message)
 }
