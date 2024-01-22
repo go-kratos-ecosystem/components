@@ -27,5 +27,5 @@ func TestManager_Channel(t *testing.T) {
 func TestManager_Log(t *testing.T) {
 	m := New(nil)
 
-	assert.EqualError(t, m.Log(log.LevelDebug, "test", "test"), ErrInvalidLogger.Error())
+	assert.EqualError(t, m.Log(log.LevelDebug, "test", "test"), ErrNoLogger.Error())
 }

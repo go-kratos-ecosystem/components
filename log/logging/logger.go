@@ -1,12 +1,13 @@
 package logging
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-var ErrInvalidLogger = fmt.Errorf("logging: invalid logger")
+var ErrNoLogger = errors.New("logging: the logger is not defined")
 
 type Logger struct {
 	log.Logger
@@ -25,7 +26,8 @@ func (l *Logger) Log(level log.Level, keyvals ...interface{}) error {
 		return l.Logger.Log(level, keyvals...)
 	}
 
-	return ErrInvalidLogger
+	// return errors.New("logging: the logger is not defined")
+	return ErrNoLogger
 }
 
 func (l *Logger) Register(name string, logger log.Logger) {
