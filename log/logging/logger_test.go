@@ -15,9 +15,9 @@ func TestManager_Channel(t *testing.T) {
 		"ts", log.Timestamp(time.RFC3339),
 	))
 
-	logger.Log(log.LevelDebug, "test", "test") //nolint:errcheck
-	logger.Channel().Log(log.LevelDebug, "test", "test")
-	logger.Channel("ts").Log(log.LevelDebug, "test", "test")
+	logger.Log(log.LevelDebug, "test", "test")               //nolint:errcheck
+	logger.Channel().Log(log.LevelDebug, "test", "test")     //nolint:errcheck
+	logger.Channel("ts").Log(log.LevelDebug, "test", "test") //nolint:errcheck
 
 	assert.Panics(t, func() {
 		logger.Channel("unknown").Log(log.LevelDebug, "test", "test") //nolint:errcheck
