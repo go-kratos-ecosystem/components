@@ -26,7 +26,6 @@ func (l *Logger) Log(level log.Level, keyvals ...interface{}) error {
 		return l.Logger.Log(level, keyvals...)
 	}
 
-	// return errors.New("logging: the logger is not defined")
 	return ErrNoLogger
 }
 
