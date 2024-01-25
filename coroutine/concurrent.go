@@ -3,16 +3,18 @@ package coroutine
 import "sync"
 
 func Concurrent(limit int, tasks ...func()) {
-	var wg sync.WaitGroup
+	var (
+		wg sync.WaitGroup
+		ch = make(chan struct{}, limit)
+	)
+	defer close(ch)
 	wg.Add(len(tasks))
 
-	limitCh := make(chan struct{}, limit)
-
 	for _, task := range tasks {
-		limitCh <- struct{}{}
+		ch <- struct{}{}
 		go func(task func()) {
 			defer func() {
-				<-limitCh
+				<-ch
 				wg.Done()
 			}()
 			task()
