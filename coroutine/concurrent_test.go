@@ -16,7 +16,7 @@ func TestConcurrent(t *testing.T) {
 		mu     sync.Mutex
 	)
 
-	Concurrent(2, func() {
+	RunConcurrent(2, func() {
 		time.Sleep(1 * time.Second)
 		mu.Lock()
 		defer mu.Unlock()
