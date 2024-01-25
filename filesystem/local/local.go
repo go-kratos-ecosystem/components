@@ -21,12 +21,15 @@ func WithPrefixer(prefixer *filesystem.PathPrefixer) Option {
 
 func New(root string, opts ...Option) filesystem.Filesystem {
 	l := &local{
-		root:     root,
-		prefixer: filesystem.NewPathPrefixer(root),
+		root: root,
 	}
 
 	for _, opt := range opts {
 		opt(l)
+	}
+
+	if l.prefixer == nil {
+		l.prefixer = filesystem.NewPathPrefixer(root)
 	}
 
 	return l
@@ -36,52 +39,25 @@ func (l *local) Exists(path string) (bool, error) {
 	path = l.prefixer.PrefixPath(path)
 
 	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			return false, nil
+		}
+
 		return false, err
-	} else if os.IsNotExist(err) {
-		return false, nil
 	}
 
 	return true, nil
 }
 
 func (l *local) Get(path string) ([]byte, error) {
-	path = l.prefixer.PrefixPath(path)
-
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	stat, err := file.Stat()
-	if err != nil {
-		return nil, err
-	}
-
-	data := make([]byte, stat.Size())
-	_, err = file.Read(data)
-	if err != nil {
-		return nil, err
-	}
-
-	return data, nil
+	return os.ReadFile(
+		l.prefixer.PrefixPath(path),
+	)
 }
 
 func (l *local) Put(path string, value []byte) error {
 	path = l.prefixer.PrefixPath(path)
-
-	file, err := os.Create(path)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.Write(value)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return os.WriteFile(path, value, 0644) //nolint:gofumpt
 }
 
 func (l *local) Prepend(path string, value []byte) error {
@@ -105,8 +81,10 @@ func (l *local) Copy(src, dst string) error {
 }
 
 func (l *local) Move(src, dst string) error {
-	// TODO implement me
-	panic("implement me")
+	return os.Rename(
+		l.prefixer.PrefixPath(src),
+		l.prefixer.PrefixPath(dst),
+	)
 }
 
 func (l *local) Size(path string) (int64, error) {
