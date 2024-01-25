@@ -2,6 +2,7 @@ package coroutine
 
 import (
 	"bytes"
+	"sync"
 	"testing"
 	"time"
 
@@ -12,16 +13,23 @@ func TestConcurrent(t *testing.T) {
 	var (
 		start  = time.Now()
 		buffer bytes.Buffer
+		mu     sync.Mutex
 	)
 
 	Concurrent(2, func() {
 		time.Sleep(1 * time.Second)
+		mu.Lock()
+		defer mu.Unlock()
 		buffer.WriteString("1")
 	}, func() {
 		time.Sleep(2 * time.Second)
+		mu.Lock()
+		defer mu.Unlock()
 		buffer.WriteString("2")
 	}, func() {
 		time.Sleep(3 * time.Second)
+		mu.Lock()
+		defer mu.Unlock()
 		buffer.WriteString("3")
 	})
 
