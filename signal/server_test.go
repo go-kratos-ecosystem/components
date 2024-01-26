@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"sync"
 	"syscall"
 	"testing"
 	"time"
@@ -12,7 +13,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var buffer bytes.Buffer
+var (
+	buffer bytes.Buffer
+	mu     sync.Mutex
+)
 
 func TestServer(t *testing.T) {
 	srv := newServer()
@@ -37,6 +41,8 @@ exampleHandler signal: user defined signal 2
 func newServer() *Server {
 	srv := NewServer(
 		WithRecoveryHandler(func(err interface{}, signal os.Signal, handler Handler) {
+			mu.Lock()
+			defer mu.Unlock()
 			buffer.WriteString(fmt.Sprintf("signal: %s, handler: %T, err: %v\n", signal, handler, err))
 		}),
 	)
@@ -53,6 +59,8 @@ func (h *exampleHandler) Listen() []os.Signal {
 }
 
 func (h *exampleHandler) Handle(sig os.Signal) {
+	mu.Lock()
+	defer mu.Unlock()
 	buffer.WriteString(fmt.Sprintf("exampleHandler signal: %s\n", sig))
 }
 
