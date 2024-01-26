@@ -6,7 +6,6 @@ import (
 	"os/signal"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"github.com/go-kratos/kratos/v2/transport"
 )
 
 var DefaultRecoveryHandler = func(err interface{}, sig os.Signal, handler Handler) {
@@ -21,6 +20,12 @@ type Server struct {
 
 type Option func(*Server)
 
+func AddHandler(handler ...Handler) Option {
+	return func(s *Server) {
+		s.handlers = append(s.handlers, handler...)
+	}
+}
+
 func WithRecoveryHandler(handler func(interface{}, os.Signal, Handler)) Option {
 	return func(s *Server) {
 		if handler != nil {
@@ -28,8 +33,6 @@ func WithRecoveryHandler(handler func(interface{}, os.Signal, Handler)) Option {
 		}
 	}
 }
-
-var _ transport.Server = (*Server)(nil)
 
 func NewServer(opts ...Option) *Server {
 	server := &Server{
