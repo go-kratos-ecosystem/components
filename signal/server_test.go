@@ -30,10 +30,12 @@ func TestServer(t *testing.T) {
 
 	time.Sleep(2 * time.Second)
 
+	mu.Lock()
 	assert.Equal(t, `exampleHandler signal: user defined signal 1
 signal: user defined signal 1, handler: *signal.example2Handler, err: example2Handler panic
 exampleHandler signal: user defined signal 2
 `, buffer.String())
+	mu.Unlock()
 
 	srv.Stop(context.Background()) //nolint:errcheck
 }
