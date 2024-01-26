@@ -72,6 +72,10 @@ func (h *example2Handler) Listen() []os.Signal {
 	return []os.Signal{syscall.SIGUSR1}
 }
 
+func (h *example2Handler) Async() bool {
+	return false
+}
+
 func (h *example2Handler) Handle(os.Signal) {
 	panic("example2Handler panic")
 }
