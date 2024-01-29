@@ -26,7 +26,7 @@ func main() {
 
 func newSignalServer() *signal.Server {
 	srv := signal.NewServer(
-		signal.WithRecoveryHandler(signal.DefaultRecoveryHandler),
+		signal.WithRecovery(signal.DefaultRecovery),
 	)
 
 	srv.Register(&exampleHandler{}, &example2Handler{})

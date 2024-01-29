@@ -42,7 +42,7 @@ exampleHandler signal: user defined signal 2
 
 func newServer() *Server {
 	srv := NewServer(
-		WithRecoveryHandler(func(err interface{}, signal os.Signal, handler Handler) {
+		WithRecovery(func(err interface{}, signal os.Signal, handler Handler) {
 			mu.Lock()
 			defer mu.Unlock()
 			buffer.WriteString(fmt.Sprintf("signal: %s, handler: %T, err: %v\n", signal, handler, err))
