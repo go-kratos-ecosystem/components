@@ -9,6 +9,12 @@ type Handler interface {
 	Handle(os.Signal)
 }
 
-type AsyncFeature interface {
+type asyncFeature interface {
 	Async() bool
+}
+
+type AsyncFeature struct{}
+
+func (*AsyncFeature) Async() bool {
+	return true
 }

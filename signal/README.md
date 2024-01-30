@@ -44,7 +44,9 @@ func (h *exampleHandler) Handle(sig os.Signal) {
 	println("exampleHandler signal:", sig)
 }
 
-type example2Handler struct{}
+type example2Handler struct{
+	signal.AsyncFeature // async feature
+}
 
 func (h *example2Handler) Listen() []os.Signal {
 	return []os.Signal{syscall.SIGUSR1}
