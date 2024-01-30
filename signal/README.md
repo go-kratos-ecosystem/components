@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2"
 
+	"github.com/go-kratos-ecosystem/components/v2/feature"
 	"github.com/go-kratos-ecosystem/components/v2/signal"
 )
 
@@ -45,7 +46,7 @@ func (h *exampleHandler) Handle(sig os.Signal) {
 }
 
 type example2Handler struct{
-	signal.AsyncFeature // async feature
+	feature.AsyncFeature // async feature
 }
 
 func (h *example2Handler) Listen() []os.Signal {

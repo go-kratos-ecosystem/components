@@ -6,6 +6,8 @@ import (
 	"os/signal"
 
 	"github.com/go-kratos/kratos/v2/log"
+
+	"github.com/go-kratos-ecosystem/components/v2/feature"
 )
 
 var DefaultRecovery = func(err interface{}, sig os.Signal, handler Handler) {
@@ -80,7 +82,7 @@ func (s *Server) Start(ctx context.Context) error {
 			if hs, ok := handlers[sig]; ok {
 				for _, h := range hs {
 					// if Support asyncFeature
-					if async, ok := h.(asyncFeature); ok && async.Async() {
+					if async, ok := h.(feature.Asyncable); ok && async.Async() {
 						go s.handle(sig, h)
 					} else {
 						s.handle(sig, h)
