@@ -10,7 +10,6 @@ type Concurrent struct {
 
 func NewConcurrent(limit int) *Concurrent {
 	return &Concurrent{
-		wg: sync.WaitGroup{},
 		ch: make(chan struct{}, limit),
 		fs: make([]func(), 0),
 	}

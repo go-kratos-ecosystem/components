@@ -9,7 +9,6 @@ type Parallel struct {
 
 func NewParallel() *Parallel {
 	return &Parallel{
-		wg: sync.WaitGroup{},
 		fs: make([]func(), 0),
 	}
 }

@@ -41,5 +41,8 @@ func main() {
 
 	// Parallel Example2
 	coroutine.RunParallel(funcs...)
+	
+	// Wait Example
+	coroutine.Wait(funcs...)
 }
 ```
