@@ -66,3 +66,7 @@ event: test data: test data
 event: test2 data: test2 data
 event: test data: test data
 ```
+
+## Links
+
+- https://github.com/asaskevich/EventBus
