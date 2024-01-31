@@ -16,14 +16,14 @@ func TestWait(t *testing.T) {
 	)
 
 	Wait(func() {
+		time.Sleep(100 * time.Millisecond)
 		mu.Lock()
 		defer mu.Unlock()
-		time.Sleep(100 * time.Millisecond)
 		buffer.WriteString("hello")
 	}, func() {
+		time.Sleep(200 * time.Millisecond)
 		mu.Lock()
 		defer mu.Unlock()
-		time.Sleep(200 * time.Millisecond)
 		buffer.WriteString(" world")
 	})
 
