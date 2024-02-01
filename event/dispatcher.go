@@ -15,16 +15,18 @@ type Listener interface {
 	Handle(event Event, data interface{})
 }
 
+type RecoveryHandler func(err interface{}, listener Listener, event Event, data interface{})
+
 type Dispatcher struct {
 	listeners map[Event][]Listener
 	rw        sync.RWMutex
 
-	recovery func(err interface{}, listener Listener, event Event, data interface{})
+	recovery RecoveryHandler
 }
 
 type Option func(*Dispatcher)
 
-func WithRecovery(handler func(err interface{}, listener Listener, event Event, data interface{})) Option {
+func WithRecovery(handler RecoveryHandler) Option {
 	return func(d *Dispatcher) {
 		if handler != nil {
 			d.recovery = handler
@@ -32,8 +34,8 @@ func WithRecovery(handler func(err interface{}, listener Listener, event Event, 
 	}
 }
 
-var DefaultRecovery = func(err interface{}, event Event, data interface{}) {
-	log.Errorf("[Event] handler panic event: %s, data: %v, err: %v", event, data, err)
+var DefaultRecovery RecoveryHandler = func(err interface{}, listener Listener, event Event, data interface{}) {
+	log.Errorf("[Event] handler panic listener: %v, event: %s, data: %v, err: %v", listener, event, data, err)
 }
 
 func NewDispatcher(opts ...Option) *Dispatcher {
