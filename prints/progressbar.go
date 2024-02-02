@@ -6,6 +6,10 @@ var (
 	Full    = pb.Full
 	Default = pb.Default
 	Simple  = pb.Simple
+
+	FullTemplate    = WithTemplate(Full)
+	DefaultTemplate = WithTemplate(Default)
+	SimpleTemplate  = WithTemplate(Simple)
 )
 
 type ProgressBar struct {
