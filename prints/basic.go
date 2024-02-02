@@ -8,11 +8,12 @@ import (
 
 var (
 	line    = color.New()
-	info    = color.New(color.FgGreen)
-	comment = color.New(color.FgYellow)
+	info    = color.New(color.FgCyan)
+	comment = color.New(color.FgWhite)
 	errs    = color.New(color.FgRed)
-	warn    = color.New(color.FgHiYellow)
-	alert   = comment
+	warn    = color.New(color.FgYellow)
+	alert   = color.New(color.FgYellow, color.ReverseVideo)
+	success = color.New(color.FgGreen)
 )
 
 func Line(a ...interface{}) (int, error) {
@@ -73,4 +74,12 @@ func Alert(a ...interface{}) (int, error) {
 
 func Alertf(format string, a ...interface{}) (int, error) {
 	return alert.Printf(format, a...)
+}
+
+func Success(a ...interface{}) (int, error) {
+	return success.Println(a...)
+}
+
+func Successf(format string, a ...interface{}) (int, error) {
+	return success.Printf(format, a...)
 }
