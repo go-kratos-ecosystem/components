@@ -50,4 +50,4 @@ func main() {
 
 Output:
 
-![](output.png)
+![](output.jpg)
