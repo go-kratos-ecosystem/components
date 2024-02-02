@@ -1,6 +1,8 @@
 package prints
 
 import (
+	"strings"
+
 	"github.com/fatih/color"
 )
 
@@ -21,8 +23,16 @@ func Linef(format string, a ...interface{}) (int, error) {
 	return line.Printf(format, a...)
 }
 
-func NewLine() (int, error) {
-	return line.Println("")
+func NewLine(length ...int) (int, error) {
+	var brs []string
+
+	if len(length) > 0 {
+		for i := 0; i < length[0]-1; i++ {
+			brs = append(brs, "\n")
+		}
+	}
+
+	return line.Println(strings.Join(brs, ""), "")
 }
 
 func Info(a ...interface{}) (int, error) {
