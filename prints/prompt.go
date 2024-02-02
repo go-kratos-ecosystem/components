@@ -6,17 +6,45 @@ import (
 	"strings"
 )
 
-func Ask(question string, defaults ...string) (string, error) {
-	var defaultAnswer string
-	if len(defaults) > 0 {
-		defaultAnswer = defaults[0]
+type Prompt struct {
+	question string
+
+	defaultAnswer string
+	secret        bool // TODO: support secret
+}
+
+type PromptOption func(*Prompt)
+
+func WithDefaultAnswer(defaultAnswer string) PromptOption {
+	return func(p *Prompt) {
+		p.defaultAnswer = defaultAnswer
+	}
+}
+
+func WithSecret() PromptOption {
+	return func(p *Prompt) {
+		p.secret = true
+	}
+}
+
+func NewPrompt(question string, opts ...PromptOption) *Prompt {
+	p := &Prompt{
+		question: question,
 	}
 
-	if _, err := Infof("%s ", question); err != nil {
+	for _, opt := range opts {
+		opt(p)
+	}
+
+	return p
+}
+
+func (p *Prompt) Ask() (string, error) {
+	if _, err := Infof("%s ", p.question); err != nil {
 		return "", err
 	}
-	if defaultAnswer != "" {
-		if _, err := Alertf("[%s] ", defaultAnswer); err != nil {
+	if p.defaultAnswer != "" {
+		if _, err := Alertf("[%s] ", p.defaultAnswer); err != nil {
 			return "", err
 		}
 	}
@@ -31,7 +59,16 @@ func Ask(question string, defaults ...string) (string, error) {
 	}
 	input = strings.TrimSpace(input)
 	if input == "" {
-		return defaultAnswer, nil
+		return p.defaultAnswer, nil
 	}
 	return input, nil
+}
+
+func Ask(question string, defaults ...string) (string, error) {
+	var opts []PromptOption
+	if len(defaults) > 0 {
+		opts = append(opts, WithDefaultAnswer(defaults[0]))
+	}
+
+	return NewPrompt(question, opts...).Ask()
 }
