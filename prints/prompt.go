@@ -44,7 +44,7 @@ func (p *Prompt) Ask() (string, error) {
 		return "", err
 	}
 	if p.defaultAnswer != "" {
-		if _, err := Alertf("[%s] ", p.defaultAnswer); err != nil {
+		if _, err := Warnf("[%s] ", p.defaultAnswer); err != nil {
 			return "", err
 		}
 	}
