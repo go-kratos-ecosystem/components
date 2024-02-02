@@ -16,9 +16,12 @@ func Ask(question string, defaults ...string) (string, error) {
 		return "", err
 	}
 	if defaultAnswer != "" {
-		if _, err := Alertf(" [%s] ", defaultAnswer); err != nil {
+		if _, err := Alertf("[%s] ", defaultAnswer); err != nil {
 			return "", err
 		}
+	}
+	if _, err := Linef("\n> "); err != nil {
+		return "", err
 	}
 
 	reader := bufio.NewReader(os.Stdin)
