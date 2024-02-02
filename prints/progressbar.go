@@ -8,28 +8,32 @@ var (
 	Simple  = pb.Simple
 )
 
-type progressBarOptions struct {
+type ProgressBar struct {
+	*pb.ProgressBar
+
 	template pb.ProgressBarTemplate
 }
 
-type ProgressBarOption func(*progressBarOptions)
+type ProgressBarOption func(*ProgressBar)
 
 func WithTemplate(template pb.ProgressBarTemplate) ProgressBarOption {
-	return func(o *progressBarOptions) {
+	return func(o *ProgressBar) {
 		o.template = template
 	}
 }
 
-func NewProgressBar(total int, opts ...ProgressBarOption) *pb.ProgressBar {
-	opt := &progressBarOptions{}
+func NewProgressBar(total int, opts ...ProgressBarOption) *ProgressBar {
+	p := &ProgressBar{}
 
-	for _, o := range opts {
-		o(opt)
+	for _, opt := range opts {
+		opt(p)
 	}
 
-	if opt.template != "" {
-		return opt.template.Start(total)
+	if p.template != "" {
+		p.ProgressBar = p.template.Start(total)
+	} else {
+		p.ProgressBar = pb.StartNew(total)
 	}
 
-	return pb.StartNew(total)
+	return p
 }
