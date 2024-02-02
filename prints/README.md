@@ -7,6 +7,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/go-kratos-ecosystem/components/v2/prints"
 )
@@ -44,10 +45,24 @@ func main() {
 		prints.Infof("You are %s!\n", r1) 
 	}
 	r2, _ := prints.Ask("What is your name?") 
-	prints.Info(r2)                           
+	prints.Info(r2)
+
+	// progress bar
+	bar := prints.NewProgressBar(100, prints.WithTemplate(prints.Full))
+	for i := 1; i <= 100; i++ {
+		time.Sleep(time.Millisecond * 100)
+		bar.Increment()
+	}
+
+	bar.Finish()
 }
 ```
 
 Output:
 
 ![](output.jpg)
+
+## Thanks
+
+- https://github.com/fatih/color
+- https://github.com/cheggaaa/pb
