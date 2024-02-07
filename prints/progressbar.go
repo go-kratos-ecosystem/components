@@ -41,3 +41,9 @@ func NewProgressBar(total int, opts ...ProgressBarOption) *ProgressBar {
 
 	return p
 }
+
+func WithProgressBar(total int, fc func(bar *ProgressBar), opts ...ProgressBarOption) {
+	bar := NewProgressBar(total, opts...)
+	fc(bar)
+	bar.Finish()
+}
