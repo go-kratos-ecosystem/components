@@ -24,3 +24,11 @@ func TestNewProgressBar(t *testing.T) {
 	}
 	p2.Finish()
 }
+
+func TestWithProgressBar(*testing.T) {
+	WithProgressBar(100, func(p *ProgressBar) {
+		for i := 1; i <= 100; i++ {
+			p.Increment()
+		}
+	})
+}
