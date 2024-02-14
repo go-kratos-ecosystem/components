@@ -39,8 +39,8 @@ func TestCrontab(t *testing.T) {
 
 	RegisterMockJob(srv)
 
-	go srv.Start(ctx)
-	defer srv.Stop(ctx)
+	go srv.Start(ctx)   //nolint:errcheck
+	defer srv.Stop(ctx) //nolint:errcheck
 
 	ctx, cancel := context.WithTimeout(ctx, time.Second*2)
 	defer cancel()
