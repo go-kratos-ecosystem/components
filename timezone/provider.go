@@ -26,7 +26,7 @@ func Provider(opts ...Option) func(ctx context.Context) error {
 		opt(&op)
 	}
 
-	return func(ctx context.Context) error {
+	return func(context.Context) error {
 		location, err := time.LoadLocation(op.local)
 		if err != nil {
 			return err

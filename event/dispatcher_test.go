@@ -60,7 +60,7 @@ func (l *test2Listener) Handle(event Event, data interface{}) {
 func TestDispatcher(t *testing.T) {
 	var (
 		d = NewDispatcher(
-			WithRecovery(func(err interface{}, listener Listener, event Event, data interface{}) {
+			WithRecovery(func(err interface{}, _ Listener, event Event, data interface{}) {
 				recv <- result{
 					event: event,
 					data:  data,

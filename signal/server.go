@@ -10,7 +10,7 @@ import (
 	"github.com/go-kratos-ecosystem/components/v2/feature"
 )
 
-var DefaultRecovery = func(err interface{}, sig os.Signal, handler Handler) {
+var DefaultRecovery = func(err interface{}, sig os.Signal, _ Handler) {
 	log.Errorf("[Signal] handler panic (%s): %v", sig, err)
 }
 
