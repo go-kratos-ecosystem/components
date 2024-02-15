@@ -9,7 +9,7 @@ import (
 
 func TestManager(t *testing.T) {
 	wg := sync.WaitGroup{}
-	ch := make(chan struct{}, 2)
+	ch := make(chan struct{}, 10)
 
 	c1 := Until("foo")
 	c2 := Until("foo")
