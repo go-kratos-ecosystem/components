@@ -4,7 +4,7 @@ import "sync"
 
 type Manager struct {
 	coordinators map[string]*Coordinator
-	mu           sync.RWMutex
+	mu           sync.Mutex
 }
 
 func NewManager() *Manager {

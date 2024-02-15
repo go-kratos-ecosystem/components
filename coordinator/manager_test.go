@@ -9,7 +9,7 @@ import (
 
 func TestManager(t *testing.T) {
 	wg := sync.WaitGroup{}
-	ch := make(chan struct{}, 2)
+	ch := make(chan struct{}, 10)
 
 	c1 := Until("foo")
 	c2 := Until("foo")
@@ -39,4 +39,30 @@ func TestManager(t *testing.T) {
 
 	wg.Wait()
 	assert.Equal(t, 2, len(ch))
+
+	// Clear all coordinators
+	Clear()
+
+	c3 := Until("foo")
+	assert.NotSame(t, c1, c3)
+
+	// Close foo coordinators
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		if <-c3.Done(); true {
+			ch <- struct{}{}
+			return
+		}
+	}()
+	assert.Equal(t, 2, len(ch))
+	Close("foo")
+	wg.Wait()
+	assert.Equal(t, 3, len(ch))
+
+	// Close non-exist coordinator
+	assert.NotPanics(t, func() {
+		Close("bar")
+	})
 }
