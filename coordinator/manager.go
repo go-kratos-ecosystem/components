@@ -33,7 +33,6 @@ func (m *Manager) Close(identifier string) {
 
 	if c, ok := m.coordinators[identifier]; ok {
 		c.Close()
-		delete(m.coordinators, identifier)
 	}
 }
 
