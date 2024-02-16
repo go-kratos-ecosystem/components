@@ -47,6 +47,10 @@ func main() {
 	r2, _ := prints.Ask("What is your name?") 
 	prints.Info(r2)
 
+	// secret
+	r3, _ := prints.Secret("What is your password?", "123456")
+	prints.Info("The password is " + r3)
+
 	// progress bar
 	bar := prints.NewProgressBar(100, prints.WithTemplate(prints.Full))
 	for i := 1; i <= 100; i++ {
