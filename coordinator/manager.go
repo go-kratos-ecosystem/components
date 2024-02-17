@@ -33,7 +33,14 @@ func (m *Manager) Close(identifier string) {
 
 	if c, ok := m.coordinators[identifier]; ok {
 		c.Close()
+		return
 	}
+
+	// If the coordinator does not exist, create a new one and close it immediately.
+	// Fix when first Close and then Until, the coordinator will not be closed.
+	c := NewCoordinator()
+	m.coordinators[identifier] = c
+	c.Close()
 }
 
 func (m *Manager) Clear() {
