@@ -95,3 +95,14 @@ func TestDispatcher(t *testing.T) {
 	assert.Equal(t, Event("test3"), r4.event)
 	assert.Equal(t, "test3 data", r4.data)
 }
+
+func TestEvent_String(t *testing.T) {
+	assert.Equal(t, "test", Event("test").String())
+	assert.Equal(t, "test2", Event("test2").String())
+}
+
+func TestDefaultRecovery(t *testing.T) {
+	assert.NotPanics(t, func() {
+		DefaultRecovery("test", &testListener{}, "test", "test data")
+	})
+}
