@@ -10,6 +10,10 @@ import (
 
 type Event string
 
+func (e Event) String() string {
+	return string(e)
+}
+
 type Listener interface {
 	Listen() []Event
 	Handle(event Event, data interface{})
