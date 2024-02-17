@@ -2,10 +2,8 @@ package foundation
 
 import (
 	"context"
-	"fmt"
 	"sync"
 	"testing"
-	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -53,11 +51,11 @@ func TestBootAndShut(t *testing.T) {
 		shut = NewShutdown(WithManager(m), WithDispatcher(d))
 	)
 	wg.Add(4)
+	assert.Equal(t, 0, len(c))
 
 	go func() {
 		defer wg.Done()
 		if <-m.Until(BootstrapName).Done(); true {
-			fmt.Println("bootstrap done")
 			c <- "bootstrap done"
 		}
 	}()
@@ -74,17 +72,7 @@ func TestBootAndShut(t *testing.T) {
 	assert.NoError(t, boot(context.Background()))
 	assert.NoError(t, shut(context.Background()))
 
-	// wg.Wait()
+	wg.Wait()
 
-	// assert.Equal(t, 4, len(c))
-	time.Sleep(time.Second)
-
-	for {
-		select {
-		case v := <-c:
-			fmt.Println(v)
-		default:
-			return
-		}
-	}
+	assert.Equal(t, 4, len(c))
 }
