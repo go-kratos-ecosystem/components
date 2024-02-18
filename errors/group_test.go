@@ -49,3 +49,11 @@ func TestGroup_First(t *testing.T) {
 	assert.Equal(t, g, g.Add(err2))
 	assert.Equal(t, err1, g.First())
 }
+
+func TestGroup_IsNil(t *testing.T) {
+	g := NewGroup()
+	assert.True(t, g.IsNil())
+
+	assert.Equal(t, g, g.Add(err1))
+	assert.False(t, g.IsNil())
+}

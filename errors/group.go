@@ -62,3 +62,7 @@ func (g *Group) First() error {
 
 	return g.errors[0]
 }
+
+func (g *Group) IsNil() bool {
+	return len(g.errors) == 0
+}
