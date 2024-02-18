@@ -27,3 +27,25 @@ func TestGroup(t *testing.T) {
 	assert.False(t, g.Has(err3))
 	assert.Equal(t, err1, g.First())
 }
+
+func TestGroup_Error(t *testing.T) {
+	g := NewGroup()
+	assert.Equal(t, "", g.Error())
+
+	assert.Equal(t, g, g.Add(err1))
+	assert.Equal(t, "err1", g.Error())
+
+	assert.Equal(t, g, g.Add(err2))
+	assert.Equal(t, multipleErrors, g.Error())
+}
+
+func TestGroup_First(t *testing.T) {
+	g := NewGroup()
+	assert.Nil(t, g.First())
+
+	assert.Equal(t, g, g.Add(err1))
+	assert.Equal(t, err1, g.First())
+
+	assert.Equal(t, g, g.Add(err2))
+	assert.Equal(t, err1, g.First())
+}

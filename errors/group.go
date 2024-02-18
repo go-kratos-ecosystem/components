@@ -27,7 +27,14 @@ func (g *Group) Add(errs ...error) *Group {
 }
 
 func (g *Group) Error() string {
-	return multipleErrors
+	switch len(g.errors) {
+	case 0:
+		return ""
+	case 1:
+		return g.errors[0].Error()
+	default:
+		return multipleErrors
+	}
 }
 
 func (g *Group) Errors() []error {
