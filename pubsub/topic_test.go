@@ -17,7 +17,7 @@ func TestTopic(*testing.T) {
 		return nil
 	})
 
-	sub2 := topic.Subscribe(func(msg *loginEvent) error {
+	sub2 := topic.Subscribe(func(_ *loginEvent) error {
 		return fmt.Errorf("error")
 	})
 
