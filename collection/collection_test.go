@@ -151,12 +151,12 @@ func TestCollection_String(t *testing.T) {
 	assert.Equal(t, "", v33)
 
 	// Index
-	v4, ok4 := c.Index(func(s string, i int) bool {
+	v4, ok4 := c.Index(func(s string, _ int) bool {
 		return s == "dd"
 	})
 	assert.True(t, ok4)
 	assert.Equal(t, 1, v4)
-	v5, ok5 := c.Index(func(s string, i int) bool {
+	v5, ok5 := c.Index(func(s string, _ int) bool {
 		return s == "ee"
 	})
 	assert.False(t, ok5)
