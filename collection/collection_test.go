@@ -254,12 +254,12 @@ func TestCollection_Ptr(t *testing.T) {
 	assert.Nil(t, v33)
 
 	// Index
-	v4, ok4 := c.Index(func(u *User, i int) bool {
+	v4, ok4 := c.Index(func(u *User, _ int) bool {
 		return u.Name == "dd"
 	})
 	assert.True(t, ok4)
 	assert.Equal(t, 1, v4)
-	v5, ok5 := c.Index(func(u *User, i int) bool {
+	v5, ok5 := c.Index(func(u *User, _ int) bool {
 		return u.Name == "ee"
 	})
 	assert.False(t, ok5)
