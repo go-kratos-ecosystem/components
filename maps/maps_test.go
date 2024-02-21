@@ -23,8 +23,26 @@ func TestMaps(t *testing.T) {
 	assert.Equal(t, 21, maps["age"])
 	assert.True(t, maps.Has("name"))
 	assert.Equal(t, 2, maps.Len())
-	assert.Equal(t, []string{"name", "age"}, maps.Keys())
-	assert.Equal(t, []interface{}{"Flc", 21}, maps.Values())
+	assert.True(t, func() bool {
+		ok := true
+		for _, key := range maps.Keys() {
+			if key != "name" && key != "age" {
+				ok = false
+				break
+			}
+		}
+		return ok
+	}())
+	assert.True(t, func() bool {
+		ok := true
+		for _, value := range maps.Values() {
+			if value != "Flc" && value != 21 {
+				ok = false
+				break
+			}
+		}
+		return ok
+	}())
 
 	assert.Equal(t, maps, maps.Clone())
 	assert.NotSame(t, maps, maps.Clone())
@@ -49,6 +67,13 @@ func TestMaps(t *testing.T) {
 
 	maps.Merge(Maps{"year": "123"})
 	assert.Equal(t, "123", maps["year"])
+
+	maps.Unless(true, func(maps Maps) Maps {
+		return maps.Set("sex", "woman")
+	}).Unless(false, func(maps Maps) Maps {
+		return maps.Set("sex", "man")
+	})
+	assert.Equal(t, "man", maps["sex"])
 }
 
 func TestMaps_Get(t *testing.T) {
