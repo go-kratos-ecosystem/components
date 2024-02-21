@@ -100,6 +100,11 @@ func TestCollection_Int(t *testing.T) {
 	assert.Equal(t, []int{1, 2, 3}, c.SortBy(func(a, b int) bool {
 		return a < b
 	}).Items())
+
+	// Dump
+	assert.NotPanics(t, func() {
+		c.Dump()
+	})
 }
 
 func TestCollection_String(t *testing.T) {
@@ -196,6 +201,11 @@ func TestCollection_String(t *testing.T) {
 	assert.Equal(t, []string{"a", "b", "c"}, c.SortBy(func(a, b string) bool {
 		return a < b
 	}).Items())
+
+	// Dump
+	assert.NotPanics(t, func() {
+		c.Dump()
+	})
 }
 
 type User struct {
@@ -300,4 +310,9 @@ func TestCollection_Ptr(t *testing.T) {
 	assert.Equal(t, []User{{Name: "a"}, {Name: "b"}, {Name: "c"}}, c5.SortBy(func(a, b User) bool {
 		return a.Name < b.Name
 	}).Items())
+
+	// Dump
+	assert.NotPanics(t, func() {
+		c.Dump()
+	})
 }
