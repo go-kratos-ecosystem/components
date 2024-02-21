@@ -1,6 +1,10 @@
 package collection
 
-import "sort"
+import (
+	"sort"
+
+	"github.com/go-kratos-ecosystem/components/v2/debug"
+)
 
 type Collection[T comparable] struct { //nolint:gofumpt
 	items []T
@@ -157,4 +161,8 @@ func (c *Collection[T]) SortBy(fn func(T, T) bool) *Collection[T] {
 		return fn(items[i], items[j])
 	})
 	return New(items)
+}
+
+func (c *Collection[T]) Dump() {
+	debug.Dump(c.items)
 }
