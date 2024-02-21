@@ -12,7 +12,7 @@ func TestMaps(t *testing.T) {
 	}).When(false, func(maps Maps) Maps {
 		return maps.Set("age", 20)
 	}).Map(func(key string, value interface{}) (string, interface{}) {
-		if key == "age" { //nolint:gomnd
+		if key == "age" { //nolint:goconst
 			return key, 21
 		}
 
