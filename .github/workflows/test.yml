@@ -32,7 +32,7 @@ jobs:
           MYSQL_PASSWORD: gorm
           MYSQL_RANDOM_ROOT_PASSWORD: "yes"
         ports:
-          - 9910:3306
+          - 3306:3306
         options: >-
           --health-cmd "mysqladmin ping -ugorm -pgorm"
           --health-interval 10s
