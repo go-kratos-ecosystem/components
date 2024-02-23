@@ -6,14 +6,24 @@ import (
 	"gorm.io/gorm"
 )
 
+// Where add where condition
+//
+//	Where("name = ?", "Flc")
+//	Where("name = ? AND age = ?", "Flc", 20)
 func Where(query interface{}, args ...interface{}) *Scopes {
 	return New().Where(query, args...)
 }
 
+// WhereBetween add where between condition
+//
+//	WhereBetween("age", 18, 20)
 func WhereBetween(field string, start, end interface{}) *Scopes {
 	return New().WhereBetween(field, start, end)
 }
 
+// WhereNotBetween add where not between condition
+//
+//	WhereNotBetween("age", 18, 20)
 func WhereNotBetween(field string, start, end interface{}) *Scopes {
 	return New().WhereNotBetween(field, start, end)
 }
@@ -36,10 +46,22 @@ func WhereNotIn(field string, values ...interface{}) *Scopes {
 	return New().WhereNotIn(field, values...)
 }
 
+// WhereLike add where like condition
+//
+//	WhereLike("name", "Flc")
+//	WhereLike("name", "Flc%")
+//	WhereLike("name", "%Flc")
+//	WhereLike("name", "%Flc%")
 func WhereLike(field string, value interface{}) *Scopes {
 	return New().WhereLike(field, value)
 }
 
+// WhereNotLike add where not like condition
+//
+//	WhereNotLike("name", "Flc")
+//	WhereNotLike("name", "Flc%")
+//	WhereNotLike("name", "%Flc")
+//	WhereNotLike("name", "%Flc%")
 func WhereNotLike(field string, value interface{}) *Scopes {
 	return New().WhereNotLike(field, value)
 }
@@ -64,18 +86,28 @@ func WhereLt(field string, value interface{}) *Scopes {
 	return New().WhereLt(field, value)
 }
 
+// Where add where condition
+//
+//	Where("name = ?", "Flc")
+//	Where("name = ? AND age = ?", "Flc", 20)
 func (s *Scopes) Where(query interface{}, args ...interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
 		return db.Where(query, args...)
 	})
 }
 
+// WhereBetween add where between condition
+//
+//	WhereBetween("age", 18, 20)
 func (s *Scopes) WhereBetween(column string, start, end interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
 		return db.Where(fmt.Sprintf("%s BETWEEN ? AND ?", column), start, end)
 	})
 }
 
+// WhereNotBetween add where not between condition
+//
+//	WhereNotBetween("age", 18, 20)
 func (s *Scopes) WhereNotBetween(column string, start, end interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
 		return db.Where(fmt.Sprintf("%s NOT BETWEEN ? AND ?", column), start, end)
@@ -110,15 +142,27 @@ func (s *Scopes) WhereNotIn(column string, values ...interface{}) *Scopes {
 	})
 }
 
+// WhereLike add where like condition
+//
+//	WhereLike("name", "Flc")
+//	WhereLike("name", "Flc%")
+//	WhereLike("name", "%Flc")
+//	WhereLike("name", "%Flc%")
 func (s *Scopes) WhereLike(column string, value interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
-		return db.Where("? LIKE ?", column, value)
+		return db.Where(fmt.Sprintf("%s LIKE ?", column), value)
 	})
 }
 
+// WhereNotLike add where not like condition
+//
+//	WhereNotLike("name", "Flc")
+//	WhereNotLike("name", "Flc%")
+//	WhereNotLike("name", "%Flc")
+//	WhereNotLike("name", "%Flc%")
 func (s *Scopes) WhereNotLike(column string, value interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
-		return db.Where("? NOT LIKE ?", column, value)
+		return db.Where(fmt.Sprintf("%s NOT LIKE ?", column), value)
 	})
 }
 

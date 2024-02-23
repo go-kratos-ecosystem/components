@@ -80,3 +80,7 @@ func GetUser(name string, opts GetUserOptions) *User {
 
 	return &user
 }
+
+func CleanUsers() {
+	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&User{})
+}

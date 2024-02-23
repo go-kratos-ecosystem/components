@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"gorm.io/gorm"
 )
 
 func TestWhere_Where(t *testing.T) {
@@ -14,6 +13,7 @@ func TestWhere_Where(t *testing.T) {
 		GetUser("WhereUser3", GetUserOptions{}),
 	}
 
+	CleanUsers()
 	DB.Create(&users)
 
 	var users1, users2, users3 []User
@@ -35,7 +35,7 @@ func TestWhere_Between(t *testing.T) {
 		GetUser("WhereBetweenUser3", GetUserOptions{Age: 22}),
 	}
 
-	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&User{})
+	CleanUsers()
 	DB.Create(&users)
 
 	var users1, users2, users3 []User
@@ -68,7 +68,7 @@ func TestWhere_In(t *testing.T) {
 		GetUser("WhereInUser3", GetUserOptions{Age: 22}),
 	}
 
-	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&User{})
+	CleanUsers()
 	DB.Create(&users)
 
 	var users1, users2, users3 []User
@@ -93,4 +93,43 @@ func TestWhere_In(t *testing.T) {
 	DB.Scopes(WhereNotIn("name", []string{"WhereInUser1", "WhereInUser2"}).Scope()).Find(&users6)
 	assert.Len(t, users6, 1)
 	assert.Equal(t, "WhereInUser3", users6[0].Name)
+}
+
+func TestWhere_Like(t *testing.T) {
+	users := []*User{
+		GetUser("WhereLikeUser1", GetUserOptions{Age: 18}),
+		GetUser("WhereLikeUser2", GetUserOptions{Age: 20}),
+		GetUser("WhereLikeUser3", GetUserOptions{Age: 22}),
+	}
+
+	CleanUsers()
+	DB.Create(&users)
+
+	var users1, users2, users3, users4 []User
+	DB.Scopes(WhereLike("name", "WhereLikeUser1").Scope()).Find(&users1)
+	assert.Len(t, users1, 1)
+	assert.Equal(t, "WhereLikeUser1", users1[0].Name)
+
+	DB.Scopes(WhereLike("name", "WhereLike%").Scope()).Find(&users2)
+	assert.Len(t, users2, 3)
+
+	DB.Scopes(WhereLike("name", "%LikeUser3").Scope()).Find(&users3)
+	assert.Len(t, users3, 1)
+	assert.Equal(t, "WhereLikeUser3", users3[0].Name)
+
+	DB.Scopes(WhereLike("name", "%Like%").Scope()).Find(&users4)
+	assert.Len(t, users4, 3)
+
+	var users5, users6, users7, users8 []User
+	DB.Scopes(WhereNotLike("name", "WhereLikeUser1").Scope()).Find(&users5)
+	assert.Len(t, users5, 2)
+
+	DB.Scopes(WhereNotLike("name", "WhereLike%").Scope()).Find(&users6)
+	assert.Len(t, users6, 0)
+
+	DB.Scopes(WhereNotLike("name", "%LikeUser3").Scope()).Find(&users7)
+	assert.Len(t, users7, 2)
+
+	DB.Scopes(WhereNotLike("name", "%Like%").Scope()).Find(&users8)
+	assert.Len(t, users8, 0)
 }
