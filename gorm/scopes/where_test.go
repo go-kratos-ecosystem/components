@@ -133,3 +133,83 @@ func TestWhere_Like(t *testing.T) {
 	DB.Scopes(WhereNotLike("name", "%Like%").Scope()).Find(&users8)
 	assert.Len(t, users8, 0)
 }
+
+func TestWhere_OP(t *testing.T) {
+	users := []*User{
+		GetUser("WhereLikeUser1", GetUserOptions{Age: 18}),
+		GetUser("WhereLikeUser2", GetUserOptions{Age: 20}),
+		GetUser("WhereLikeUser3", GetUserOptions{Age: 22}),
+		GetUser("WhereLikeUser4", GetUserOptions{Age: 22}),
+	}
+
+	CleanUsers()
+	DB.Create(&users)
+
+	// Eq
+	var users1, users2, users3 []User
+	DB.Scopes(WhereEq("name", "WhereLikeUser1").Scope()).Find(&users1)
+	assert.Len(t, users1, 1)
+	assert.Equal(t, "WhereLikeUser1", users1[0].Name)
+
+	DB.Scopes(WhereEq("age", 18).Scope()).Find(&users2)
+	assert.Len(t, users2, 1)
+	assert.Equal(t, "WhereLikeUser1", users2[0].Name)
+
+	DB.Scopes(WhereEq("age", 22).Scope()).Find(&users3)
+	assert.Len(t, users3, 2)
+
+	// Egt
+	var users4, users5, users6 []User
+	DB.Scopes(WhereEgt("age", 20).Scope()).Find(&users4)
+	assert.Len(t, users4, 3)
+
+	DB.Scopes(WhereEgt("age", 22).Scope()).Find(&users5)
+	assert.Len(t, users5, 2)
+
+	DB.Scopes(WhereEgt("age", 23).Scope()).Find(&users6)
+	assert.Len(t, users6, 0)
+
+	// Elt
+	var users7, users8, users9 []User
+	DB.Scopes(WhereElt("age", 20).Scope()).Find(&users7)
+	assert.Len(t, users7, 2)
+
+	DB.Scopes(WhereElt("age", 22).Scope()).Find(&users8)
+	assert.Len(t, users8, 4)
+
+	DB.Scopes(WhereElt("age", 18).Scope()).Find(&users9)
+	assert.Len(t, users9, 1)
+
+	// Gt
+	var users10, users11, users12 []User
+	DB.Scopes(WhereGt("age", 20).Scope()).Find(&users10)
+	assert.Len(t, users10, 2)
+
+	DB.Scopes(WhereGt("age", 22).Scope()).Find(&users11)
+	assert.Len(t, users11, 0)
+
+	DB.Scopes(WhereGt("age", 18).Scope()).Find(&users12)
+	assert.Len(t, users12, 3)
+
+	// Lt
+	var users13, users14, users15 []User
+	DB.Scopes(WhereLt("age", 20).Scope()).Find(&users13)
+	assert.Len(t, users13, 1)
+
+	DB.Scopes(WhereLt("age", 22).Scope()).Find(&users14)
+	assert.Len(t, users14, 2)
+
+	DB.Scopes(WhereLt("age", 18).Scope()).Find(&users15)
+	assert.Len(t, users15, 0)
+
+	// Ne
+	var users16, users17, users18 []User
+	DB.Scopes(WhereNe("age", 20).Scope()).Find(&users16)
+	assert.Len(t, users16, 3)
+
+	DB.Scopes(WhereNe("age", 22).Scope()).Find(&users17)
+	assert.Len(t, users17, 2)
+
+	DB.Scopes(WhereNe("age", 18).Scope()).Find(&users18)
+	assert.Len(t, users18, 3)
+}

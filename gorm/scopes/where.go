@@ -66,24 +66,48 @@ func WhereNotLike(field string, value interface{}) *Scopes {
 	return New().WhereNotLike(field, value)
 }
 
+// WhereEq add where eq condition
+//
+//	WhereEq("name", "Flc")
+//	WhereEq("age", 18)
 func WhereEq(field string, value interface{}) *Scopes {
 	return New().WhereEq(field, value)
 }
 
+// WhereEgt add where egt condition
+//
+//	WhereEgt("age", 18)
 func WhereEgt(field string, value interface{}) *Scopes {
 	return New().WhereEgt(field, value)
 }
 
+// WhereGt add where gt condition
+//
+//	WhereGt("age", 18)
 func WhereGt(field string, value interface{}) *Scopes {
 	return New().WhereGt(field, value)
 }
 
+// WhereElt add where elt condition
+//
+//	WhereElt("age", 18)
 func WhereElt(field string, value interface{}) *Scopes {
 	return New().WhereElt(field, value)
 }
 
+// WhereLt add where lt condition
+//
+//	WhereLt("age", 18)
 func WhereLt(field string, value interface{}) *Scopes {
 	return New().WhereLt(field, value)
+}
+
+// WhereNe add where ne condition
+//
+//	WhereNe("name", "Flc")
+//	WhereNe("age", 18)
+func WhereNe(field string, value interface{}) *Scopes {
+	return New().WhereNe(field, value)
 }
 
 // Where add where condition
@@ -166,39 +190,65 @@ func (s *Scopes) WhereNotLike(column string, value interface{}) *Scopes {
 	})
 }
 
+// WhereEq add where eq condition
+//
+//	WhereEq("name", "Flc")
+//	WhereEq("age", 18)
 func (s *Scopes) WhereEq(column string, value interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
-		return db.Where("? = ?", column, value)
+		return db.Where(fmt.Sprintf("%s = ?", column), value)
 	})
 }
 
+// WhereEgt add where egt condition
+//
+//	WhereEgt("age", 18)
 func (s *Scopes) WhereEgt(column string, value interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
-		return db.Where("? >= ?", column, value)
+		return db.Where(fmt.Sprintf("%s >= ?", column), value)
 	})
 }
 
+// WhereGt add where gt condition
+//
+//	WhereGt("age", 18)
 func (s *Scopes) WhereGt(column string, value interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
-		return db.Where("? > ?", column, value)
+		return db.Where(fmt.Sprintf("%s > ?", column), value)
 	})
 }
 
+// WhereElt add where elt condition
+//
+//	WhereElt("age", 18)
 func (s *Scopes) WhereElt(column string, value interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
-		return db.Where("? <= ?", column, value)
+		return db.Where(fmt.Sprintf("%s <= ?", column), value)
 	})
 }
 
+// WhereLt add where lt condition
+//
+//	WhereLt("age", 18)
 func (s *Scopes) WhereLt(column string, value interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
-		return db.Where("? < ?", column, value)
+		return db.Where(fmt.Sprintf("%s < ?", column), value)
 	})
 }
 
+// WhereNe add where ne condition
+//
+//	WhereNe("name", "Flc")
+//	WhereNe("age", 18)
 func (s *Scopes) WhereNe(column string, value interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
-		return db.Where("? <> ?", column, value)
+		return db.Where(fmt.Sprintf("%s <> ?", column), value)
+	})
+}
+
+func (s *Scopes) WhereNot(query interface{}, args ...interface{}) *Scopes {
+	return s.Add(func(db *gorm.DB) *gorm.DB {
+		return db.Not(query, args...)
 	})
 }
 
