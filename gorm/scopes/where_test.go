@@ -35,10 +35,11 @@ func TestWhere_Between(t *testing.T) {
 		GetUser("WhereBetweenUser3", GetUserOptions{Age: 22}),
 	}
 
+	DB.Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&User{})
 	DB.Create(&users)
 
 	var users1, users2, users3 []User
-	DB.Debug().Scopes(WhereBetween("age", 18, 20).Scope()).Find(&users1)
+	DB.Scopes(WhereBetween("age", 18, 20).Scope()).Find(&users1)
 	assert.Len(t, users1, 2)
 
 	DB.Scopes(WhereBetween("age", 18, 19).Scope()).Find(&users2)
