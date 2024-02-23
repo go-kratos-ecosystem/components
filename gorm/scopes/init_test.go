@@ -16,10 +16,10 @@ var (
 
 type User struct {
 	gorm.Model
-	Name     string
-	Age      uint
-	Sex      string
-	Birthday *time.Time
+	Name     string     `gorm:"column:name"`
+	Age      uint       `gorm:"column:age"`
+	Sex      string     `gorm:"column:sex"`
+	Birthday *time.Time `gorm:"column:birthday"`
 }
 
 func init() {
