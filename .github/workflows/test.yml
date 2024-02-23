@@ -14,6 +14,7 @@ jobs:
       matrix:
         go-version: [ 1.18.x, 1.19.x, 1.20.x, 1.21.x, 1.22.x ]
         platform: [ ubuntu-latest ]
+        mysql-version: ['mysql:latest', 'mysql:5.7']
     runs-on: ${{ matrix.platform }}
 
     services:
@@ -23,6 +24,22 @@ jobs:
           --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
         ports:
           - 6379:6379
+          -
+      mysql:
+        image: ${{ matrix.mysql-version }}
+        env:
+          MYSQL_DATABASE: gorm
+          MYSQL_USER: gorm
+          MYSQL_PASSWORD: gorm
+          MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+        ports:
+          - 9910:3306
+        options: >-
+          --health-cmd "mysqladmin ping -ugorm -pgorm"
+          --health-interval 10s
+          --health-start-period 10s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - name: Checkout code
