@@ -1,6 +1,14 @@
-package scope
+package scopes
 
 import "gorm.io/gorm"
+
+func WhereBetween(field string, start, end interface{}) *Scopes {
+	return New().WhereBetween(field, start, end)
+}
+
+func WhereNotBetween(field string, start, end interface{}) *Scopes {
+	return New().WhereNotBetween(field, start, end)
+}
 
 func (s *Scopes) WhereBetween(column string, start, end interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {

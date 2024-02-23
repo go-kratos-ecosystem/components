@@ -3,16 +3,16 @@ package pagination
 import "encoding/json"
 
 type Paginator struct {
-	Page     int `json:"page"`
-	PageSize int `json:"page_size"`
-	Total    int `json:"total"`
+	Page    int `json:"page"`
+	PrePage int `json:"pre_page"`
+	Total   int `json:"total"`
 }
 
 func NewPaginator(page, pageSize, total int) *Paginator {
 	return &Paginator{
-		Page:     page,
-		PageSize: pageSize,
-		Total:    total,
+		Page:    page,
+		PrePage: pageSize,
+		Total:   total,
 	}
 }
 
@@ -21,7 +21,7 @@ func (p *Paginator) GetPage() int {
 }
 
 func (p *Paginator) GetPerPage() int {
-	return p.PageSize
+	return p.PrePage
 }
 
 func (p *Paginator) GetTotal() int {
@@ -29,19 +29,19 @@ func (p *Paginator) GetTotal() int {
 }
 
 func (p *Paginator) GetLastPage() int {
-	return (p.Total + p.PageSize - 1) / p.PageSize
+	return (p.Total + p.PrePage - 1) / p.PrePage
 }
 
 func (p *Paginator) GetOffset() int {
-	return (p.Page - 1) * p.PageSize
+	return (p.Page - 1) * p.PrePage
 }
 
 func (p *Paginator) GetLimit() int {
-	return p.PageSize
+	return p.PrePage
 }
 
 func (p *Paginator) HasMore() bool {
-	return p.Page*p.PageSize < p.Total
+	return p.Page*p.PrePage < p.Total
 }
 
 func (p *Paginator) GetNextPage() int {
@@ -61,7 +61,7 @@ func (p *Paginator) GetPrevPage() int {
 func (p *Paginator) ToMap() map[string]interface{} {
 	return map[string]interface{}{
 		"page":      p.Page,
-		"page_size": p.PageSize,
+		"pre_page":  p.PrePage,
 		"total":     p.Total,
 		"next_page": p.GetNextPage(),
 		"prev_page": p.GetPrevPage(),

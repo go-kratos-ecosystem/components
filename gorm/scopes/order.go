@@ -1,4 +1,4 @@
-package scope
+package scopes
 
 import (
 	"fmt"
@@ -6,6 +6,22 @@ import (
 
 	"gorm.io/gorm"
 )
+
+func OrderBy(column string, reorder ...string) *Scopes {
+	return New().OrderBy(column, reorder...)
+}
+
+func OrderByDesc(column string) *Scopes {
+	return New().OrderByDesc(column)
+}
+
+func OrderByAsc(column string) *Scopes {
+	return New().OrderByAsc(column)
+}
+
+func OrderByRaw(sql string, values ...interface{}) *Scopes {
+	return New().OrderByRaw(sql, values...)
+}
 
 func (s *Scopes) OrderBy(column string, reorder ...string) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
