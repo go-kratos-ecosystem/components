@@ -72,7 +72,7 @@ func TestWhere_In(t *testing.T) {
 	DB.Create(&users)
 
 	var users1, users2, users3 []User
-	DB.Scopes(WhereIn("name", "WhereInUser1", "WhereInUser2").Scope()).Find(&users1)
+	DB.Debug().Scopes(WhereIn("name", "WhereInUser1", "WhereInUser2").Scope()).Find(&users1)
 	assert.Len(t, users1, 2)
 
 	DB.Scopes(WhereIn("age", []int{18, 20}).Scope()).Find(&users2)

@@ -110,6 +110,10 @@ func WhereNe(field string, value interface{}) *Scopes {
 	return New().WhereNe(field, value)
 }
 
+func WhereNot(query interface{}, args ...interface{}) *Scopes {
+	return New().WhereNot(query, args...)
+}
+
 // Where add where condition
 //
 //	Where("name = ?", "Flc")

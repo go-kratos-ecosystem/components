@@ -4,6 +4,26 @@ import (
 	"gorm.io/gorm"
 )
 
+func (s *Scopes) Skip(offset int) *Scopes {
+	return s.Offset(offset)
+}
+
+func (s *Scopes) Offset(offset int) *Scopes {
+	return s.Add(func(db *gorm.DB) *gorm.DB {
+		return db.Offset(offset)
+	})
+}
+
+func (s *Scopes) Limit(limit int) *Scopes {
+	return s.Add(func(db *gorm.DB) *gorm.DB {
+		return db.Limit(limit)
+	})
+}
+
+func (s *Scopes) Take(limit int) *Scopes {
+	return s.Limit(limit)
+}
+
 func (s *Scopes) Page(page, pageSize int) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
 		return db.Offset((page - 1) * pageSize).Limit(pageSize)
