@@ -110,8 +110,26 @@ func WhereNe(field string, value interface{}) *Scopes {
 	return New().WhereNe(field, value)
 }
 
+// WhereNot add where not condition
+//
+//	WhereNot("name = ?", "Flc")
+//	WhereNot("name = ? AND age = ?", "Flc", 20)
 func WhereNot(query interface{}, args ...interface{}) *Scopes {
 	return New().WhereNot(query, args...)
+}
+
+// WhereNull add where null condition
+//
+//	WhereNull("name")
+func WhereNull(field string) *Scopes {
+	return New().WhereNull(field)
+}
+
+// WhereNotNull add where not null condition
+//
+//	WhereNotNull("name")
+func WhereNotNull(field string) *Scopes {
+	return New().WhereNotNull(field)
 }
 
 // Where add where condition
@@ -250,20 +268,30 @@ func (s *Scopes) WhereNe(column string, value interface{}) *Scopes {
 	})
 }
 
+// WhereNot add where not condition
+//
+//	WhereNot("name = ?", "Flc")
+//	WhereNot("name = ? AND age = ?", "Flc", 20)
 func (s *Scopes) WhereNot(query interface{}, args ...interface{}) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
 		return db.Not(query, args...)
 	})
 }
 
+// WhereNull add where null condition
+//
+//	WhereNull("name")
 func (s *Scopes) WhereNull(column string) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
-		return db.Where("? IS NULL", column)
+		return db.Where(fmt.Sprintf("%s IS NULL", column))
 	})
 }
 
+// WhereNotNull add where not null condition
+//
+//	WhereNotNull("name")
 func (s *Scopes) WhereNotNull(column string) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
-		return db.Where("? IS NOT NULL", column)
+		return db.Where(fmt.Sprintf("%s IS NOT NULL", column))
 	})
 }

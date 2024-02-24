@@ -20,6 +20,7 @@ type User struct {
 	Age      uint       `gorm:"column:age"`
 	Sex      string     `gorm:"column:sex"`
 	Birthday *time.Time `gorm:"column:birthday"`
+	Address  *string    `gorm:"column:address"`
 }
 
 func init() {
@@ -58,6 +59,7 @@ func runMigrations() {
 type GetUserOptions struct {
 	Age      int
 	Birthday *time.Time
+	Address  *string
 }
 
 func GetUser(name string, opts GetUserOptions) *User {
@@ -76,6 +78,10 @@ func GetUser(name string, opts GetUserOptions) *User {
 
 	if opts.Birthday != nil {
 		user.Birthday = opts.Birthday
+	}
+
+	if opts.Address != nil {
+		user.Address = opts.Address
 	}
 
 	return &user

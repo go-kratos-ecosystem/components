@@ -213,3 +213,46 @@ func TestWhere_OP(t *testing.T) {
 	DB.Scopes(WhereNe("age", 18).Scope()).Find(&users18)
 	assert.Len(t, users18, 3)
 }
+
+func TestWhere_WhereNot(t *testing.T) {
+	users := []*User{
+		GetUser("WhereLikeUser1", GetUserOptions{Age: 18}),
+		GetUser("WhereLikeUser2", GetUserOptions{Age: 20}),
+		GetUser("WhereLikeUser3", GetUserOptions{Age: 22}),
+	}
+
+	CleanUsers()
+	DB.Create(&users)
+
+	var users1 []User
+	DB.Scopes(WhereNot("name = ?", "WhereLikeUser1").Scope()).Find(&users1)
+	assert.Len(t, users1, 2)
+	assert.Equal(t, "WhereLikeUser2", users1[0].Name)
+	assert.Equal(t, "WhereLikeUser3", users1[1].Name)
+}
+
+func TestWhere_Null(t *testing.T) {
+	address2 := "WhereNullAddress2"
+	address3 := "WhereNullAddress3"
+	users := []*User{
+		GetUser("WhereNullUser1", GetUserOptions{Age: 18, Address: nil}),
+		GetUser("WhereNullUser2", GetUserOptions{Age: 20, Address: &address2}),
+		GetUser("WhereNullUser3", GetUserOptions{Age: 22, Address: &address3}),
+	}
+
+	CleanUsers()
+	DB.Create(&users)
+
+	// Null
+	var users1 []User
+	DB.Scopes(WhereNull("address").Scope()).Find(&users1)
+	assert.Len(t, users1, 1)
+	assert.Equal(t, "WhereNullUser1", users1[0].Name)
+
+	// NotNull
+	var users2 []User
+	DB.Scopes(WhereNotNull("address").Scope()).Find(&users2)
+	assert.Len(t, users2, 2)
+	assert.Equal(t, "WhereNullUser2", users2[0].Name)
+	assert.Equal(t, "WhereNullUser3", users2[1].Name)
+}
