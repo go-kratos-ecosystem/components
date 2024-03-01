@@ -6,10 +6,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMaps(t *testing.T) {
-	maps := Maps{}.Set("name", "Flc").When(true, func(maps Maps) Maps {
+func TestM(t *testing.T) {
+	maps := M{}.Set("name", "Flc").When(true, func(maps M) M {
 		return maps.Set("age", 18)
-	}).When(false, func(maps Maps) Maps {
+	}).When(false, func(maps M) M {
 		return maps.Set("age", 20)
 	}).Map(func(key string, value interface{}) (string, interface{}) {
 		if key == "age" { //nolint:goconst
@@ -65,19 +65,19 @@ func TestMaps(t *testing.T) {
 	maps.Delete("first_name")
 	assert.Nil(t, maps["first_name"])
 
-	maps.Merge(Maps{"year": "123"})
+	maps.Merge(M{"year": "123"})
 	assert.Equal(t, "123", maps["year"])
 
-	maps.Unless(true, func(maps Maps) Maps {
+	maps.Unless(true, func(maps M) M {
 		return maps.Set("sex", "woman")
-	}).Unless(false, func(maps Maps) Maps {
+	}).Unless(false, func(maps M) M {
 		return maps.Set("sex", "man")
 	})
 	assert.Equal(t, "man", maps["sex"])
 }
 
-func TestMaps_Get(t *testing.T) {
-	m := Maps{
+func TestM_Get(t *testing.T) {
+	m := M{
 		"name": "Flc",
 	}
 	name, ok := m.Get("name")

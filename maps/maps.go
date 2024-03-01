@@ -4,42 +4,42 @@ import (
 	"fmt"
 )
 
-type Maps map[string]interface{}
+type M map[string]interface{}
 
-func (m Maps) Maps() map[string]interface{} {
+func (m M) Maps() map[string]interface{} {
 	return m
 }
 
-func (m Maps) All() map[string]interface{} {
+func (m M) All() map[string]interface{} {
 	return m.Maps()
 }
 
-func (m Maps) Merge(n Maps) Maps {
+func (m M) Merge(n M) M {
 	for k, v := range n {
 		m[k] = v
 	}
 	return m
 }
 
-func (m Maps) Clone() Maps {
-	n := make(Maps, len(m))
+func (m M) Clone() M {
+	n := make(M, len(m))
 	for k, v := range m {
 		n[k] = v
 	}
 	return n
 }
 
-func (m Maps) Has(k string) bool {
+func (m M) Has(k string) bool {
 	_, ok := m[k]
 	return ok
 }
 
-func (m Maps) Get(k string) (interface{}, bool) {
+func (m M) Get(k string) (interface{}, bool) {
 	v, ok := m[k]
 	return v, ok
 }
 
-func (m Maps) GetX(k string) interface{} {
+func (m M) GetX(k string) interface{} {
 	if v, ok := m.Get(k); ok {
 		return v
 	}
@@ -47,17 +47,17 @@ func (m Maps) GetX(k string) interface{} {
 	panic(fmt.Sprintf("maps: key %s not exists", k))
 }
 
-func (m Maps) Set(k string, v interface{}) Maps {
+func (m M) Set(k string, v interface{}) M {
 	m[k] = v
 	return m
 }
 
-func (m Maps) Delete(k string) Maps {
+func (m M) Delete(k string) M {
 	delete(m, k)
 	return m
 }
 
-func (m Maps) Keys() []string {
+func (m M) Keys() []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
@@ -65,7 +65,7 @@ func (m Maps) Keys() []string {
 	return keys
 }
 
-func (m Maps) Values() []interface{} {
+func (m M) Values() []interface{} {
 	values := make([]interface{}, 0, len(m))
 	for _, v := range m {
 		values = append(values, v)
@@ -73,26 +73,26 @@ func (m Maps) Values() []interface{} {
 	return values
 }
 
-func (m Maps) Len() int {
+func (m M) Len() int {
 	return len(m)
 }
 
-func (m Maps) When(guard bool, fn func(maps Maps) Maps) Maps {
+func (m M) When(guard bool, fn func(maps M) M) M {
 	if guard {
 		return fn(m)
 	}
 	return m
 }
 
-func (m Maps) Unless(guard bool, fn func(maps Maps) Maps) Maps {
+func (m M) Unless(guard bool, fn func(maps M) M) M {
 	if !guard {
 		return fn(m)
 	}
 	return m
 }
 
-func (m Maps) Map(fn func(k string, v interface{}) (string, interface{})) Maps {
-	n := make(Maps, len(m))
+func (m M) Map(fn func(k string, v interface{}) (string, interface{})) M {
+	n := make(M, len(m))
 	for k, v := range m {
 		k, v := fn(k, v)
 		n[k] = v
@@ -100,7 +100,7 @@ func (m Maps) Map(fn func(k string, v interface{}) (string, interface{})) Maps {
 	return n
 }
 
-func (m Maps) Each(fn func(k string, v interface{})) {
+func (m M) Each(fn func(k string, v interface{})) {
 	for k, v := range m {
 		fn(k, v)
 	}
