@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	m := maps.Maps{}
+	m := maps.M{}
 
 	m.Merge(map[string]interface{}{
 		"name":    "Flc",

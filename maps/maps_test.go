@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMaps(t *testing.T) {
+func TestM(t *testing.T) {
 	maps := M{}.Set("name", "Flc").When(true, func(maps M) M {
 		return maps.Set("age", 18)
 	}).When(false, func(maps M) M {
@@ -76,7 +76,7 @@ func TestMaps(t *testing.T) {
 	assert.Equal(t, "man", maps["sex"])
 }
 
-func TestMaps_Get(t *testing.T) {
+func TestM_Get(t *testing.T) {
 	m := M{
 		"name": "Flc",
 	}
