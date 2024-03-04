@@ -18,7 +18,7 @@ func TestTap_Struct(t *testing.T) {
 	assert.Equal(t, 0, f.Age)
 
 	f = Tap(f, func(f *foo) {
-		f.Name = "bar"
+		f.Name = "bar" //nolint:goconst
 		f.Age = 18
 	})
 	assert.Equal(t, "bar", f.Name)
@@ -37,13 +37,14 @@ func TestTap_Int(t *testing.T) {
 
 	b := 10
 	assert.Equal(t, 10, b)
-	b = Tap(b, func(f int) {
-		f = 20
+	b = Tap(b, func(b int) { //nolint:staticcheck
+		b = 20 //nolint:ineffassign,staticcheck
+		_ = b
 	})
 	assert.Equal(t, 10, b)
 
-	b2 := Tap(&b, func(f *int) {
-		*f = 20
+	b2 := Tap(&b, func(b *int) {
+		*b = 20
 	})
 	assert.Equal(t, 20, *b2)
 }
