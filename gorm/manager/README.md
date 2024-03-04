@@ -2,6 +2,8 @@
 
 ## Example
 
+> The Register method does not support concurrency safety.
+
 ```go
 package main
 
