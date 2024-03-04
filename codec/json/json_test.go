@@ -26,7 +26,7 @@ func TestJSON(t *testing.T) {
 	assert.Equal(t, bytes1, bytes2)
 
 	// unmarshal
-	dest1, dest2 := make(map[string]interface{}), make(map[string]interface{})
+	dest1, dest2 := make(map[string]any), make(map[string]any)
 	assert.NoError(t, json.Unmarshal(bytes1, &dest1))
 	assert.NoError(t, j1.Unmarshal(bytes1, &dest2))
 
