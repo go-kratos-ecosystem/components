@@ -5,6 +5,7 @@ import (
 	"reflect"
 )
 
+// Deprecated: use helper.Tap instead
 // Tap calls the given callback with the given value then returns the value.
 func Tap(value interface{}, callbacks ...func(interface{})) interface{} {
 	for _, callback := range callbacks {
@@ -14,6 +15,7 @@ func Tap(value interface{}, callbacks ...func(interface{})) interface{} {
 	return value
 }
 
+// Deprecated: use helper.With instead
 // With calls the given callbacks with the given value then return the value.
 func With(value interface{}, callbacks ...func(interface{}) interface{}) interface{} {
 	for _, callback := range callbacks {
