@@ -10,10 +10,10 @@ var Codec codec.Codec = &jsonCodec{}
 
 type jsonCodec struct{}
 
-func (j *jsonCodec) Marshal(data interface{}) ([]byte, error) {
+func (j *jsonCodec) Marshal(data any) ([]byte, error) {
 	return json.Marshal(data)
 }
 
-func (j *jsonCodec) Unmarshal(src []byte, dest interface{}) error {
+func (j *jsonCodec) Unmarshal(src []byte, dest any) error {
 	return json.Unmarshal(src, dest)
 }
