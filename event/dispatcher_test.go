@@ -10,8 +10,8 @@ import (
 
 type result struct {
 	event Event
-	data  interface{}
-	err   interface{}
+	data  any
+	err   any
 }
 
 var recv = make(chan result, 1)
@@ -31,7 +31,7 @@ func (l *testListener) Listen() []Event {
 	}
 }
 
-func (l *testListener) Handle(event Event, data interface{}) {
+func (l *testListener) Handle(event Event, data any) {
 	if s, ok := data.(string); ok {
 		recv <- result{
 			event: event,
@@ -50,7 +50,7 @@ func (l *test2Listener) Listen() []Event {
 	}
 }
 
-func (l *test2Listener) Handle(event Event, data interface{}) {
+func (l *test2Listener) Handle(event Event, data any) {
 	recv <- result{
 		event: event,
 		data:  data,
@@ -60,7 +60,7 @@ func (l *test2Listener) Handle(event Event, data interface{}) {
 func TestDispatcher(t *testing.T) {
 	var (
 		d = NewDispatcher(
-			WithRecovery(func(err interface{}, _ Listener, event Event, data interface{}) {
+			WithRecovery(func(err any, _ Listener, event Event, data any) {
 				recv <- result{
 					event: event,
 					data:  data,

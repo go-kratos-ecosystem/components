@@ -114,7 +114,7 @@ func (s *Server) Stop(_ context.Context) error {
 	return nil
 }
 
-func (s *Server) log(v ...interface{}) {
+func (s *Server) log(v ...any) {
 	if s.debug {
 		log.Println(v...)
 	}

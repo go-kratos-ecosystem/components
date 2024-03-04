@@ -16,10 +16,10 @@ func (e Event) String() string {
 
 type Listener interface {
 	Listen() []Event
-	Handle(event Event, data interface{})
+	Handle(event Event, data any)
 }
 
-type RecoveryHandler func(err interface{}, listener Listener, event Event, data interface{})
+type RecoveryHandler func(err any, listener Listener, event Event, data any)
 
 type Dispatcher struct {
 	listeners map[Event][]Listener
@@ -38,7 +38,7 @@ func WithRecovery(handler RecoveryHandler) Option {
 	}
 }
 
-var DefaultRecovery RecoveryHandler = func(err interface{}, listener Listener, event Event, data interface{}) {
+var DefaultRecovery RecoveryHandler = func(err any, listener Listener, event Event, data any) {
 	log.Errorf("[Event] handler panic listener: %v, event: %s, data: %v, err: %v", listener, event, data, err)
 }
 
@@ -69,7 +69,7 @@ func (d *Dispatcher) AddListener(listener ...Listener) {
 	}
 }
 
-func (d *Dispatcher) Dispatch(event Event, data interface{}) {
+func (d *Dispatcher) Dispatch(event Event, data any) {
 	d.rw.RLock()
 	defer d.rw.RUnlock()
 
@@ -85,7 +85,7 @@ func (d *Dispatcher) Dispatch(event Event, data interface{}) {
 	}
 }
 
-func (d *Dispatcher) handle(listener Listener, event Event, data interface{}) {
+func (d *Dispatcher) handle(listener Listener, event Event, data any) {
 	if d.recovery != nil {
 		defer func() {
 			if err := recover(); err != nil {
