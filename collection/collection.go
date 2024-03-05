@@ -166,3 +166,18 @@ func (c *Collection[T]) SortBy(fn func(T, T) bool) *Collection[T] {
 func (c *Collection[T]) Dump() {
 	debug.Dump(c.items)
 }
+
+func (c *Collection[T]) When(condition bool, fns ...func(*Collection[T])) *Collection[T] {
+	if condition {
+		for _, fn := range fns {
+			if fn != nil {
+				fn(c)
+			}
+		}
+	}
+	return c
+}
+
+func (c *Collection[T]) Unless(condition bool, fns ...func(*Collection[T])) *Collection[T] {
+	return c.When(!condition, fns...)
+}

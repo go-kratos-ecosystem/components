@@ -316,3 +316,31 @@ func TestCollection_Ptr(t *testing.T) {
 		c.Dump()
 	})
 }
+
+func TestCollection_When(t *testing.T) {
+	c := New([]int{1, 2, 3})
+	c.When(true, func(c *Collection[int]) {
+		c.Add(4)
+	})
+	assert.Equal(t, 4, c.Len())
+	assert.Equal(t, []int{1, 2, 3, 4}, c.Items())
+	c.When(false, func(c *Collection[int]) {
+		c.Add(5)
+	})
+	assert.Equal(t, 4, c.Len())
+	assert.Equal(t, []int{1, 2, 3, 4}, c.Items())
+}
+
+func TestCollection_Unless(t *testing.T) {
+	c := New([]int{1, 2, 3})
+	c.Unless(false, func(c *Collection[int]) {
+		c.Add(4)
+	})
+	assert.Equal(t, 4, c.Len())
+	assert.Equal(t, []int{1, 2, 3, 4}, c.Items())
+	c.Unless(true, func(c *Collection[int]) {
+		c.Add(5)
+	})
+	assert.Equal(t, 4, c.Len())
+	assert.Equal(t, []int{1, 2, 3, 4}, c.Items())
+}
