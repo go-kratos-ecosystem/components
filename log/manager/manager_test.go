@@ -1,4 +1,4 @@
-package logging
+package manager
 
 import (
 	"testing"
@@ -27,5 +27,7 @@ func TestManager_Channel(t *testing.T) {
 func TestManager_Log(t *testing.T) {
 	m := New(nil)
 
-	assert.EqualError(t, m.Log(log.LevelDebug, "test", "test"), ErrNoLogger.Error())
+	assert.Panics(t, func() {
+		m.Log(log.LevelDebug, "test", "test") //nolint:errcheck
+	})
 }
