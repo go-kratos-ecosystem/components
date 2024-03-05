@@ -88,4 +88,14 @@ func TestProxy_Struct(t *testing.T) {
 
 	mock5 := proxy.Target()
 	assert.NotEqual(t, mock, mock5)
+
+	mock6 := proxy.Unless(true, func(p proxyMock) proxyMock {
+		p.Name = "quux"
+		p.Age = 24
+		return p
+	})
+	assert.Equal(t, "qux", proxy.target.Name)
+	assert.Equal(t, 22, proxy.target.Age)
+	assert.Equal(t, "qux", mock6.Name)
+	assert.NotEqual(t, mock, mock6)
 }

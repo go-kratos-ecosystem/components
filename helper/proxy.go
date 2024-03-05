@@ -38,6 +38,10 @@ func (p *Proxy[T]) When(condition bool, callbacks ...func(T) T) T {
 	return p.target
 }
 
+func (p *Proxy[T]) Unless(condition bool, callbacks ...func(T) T) T {
+	return p.When(!condition, callbacks...)
+}
+
 func (p *Proxy[T]) Target() T {
 	return p.target
 }

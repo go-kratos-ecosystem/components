@@ -112,7 +112,7 @@ func TestWhen(t *testing.T) {
 	assert.Equal(t, 18, f2.Age)
 
 	f3 := When(f, false, func(f *foo) *foo {
-		f.Name = "baz"
+		f.Name = "baz" //nolint:goconst
 		f.Age = 20
 		return f
 	})
