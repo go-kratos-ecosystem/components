@@ -1,4 +1,4 @@
-package manager
+package log
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
@@ -9,7 +9,7 @@ type Manager struct {
 	loggers map[string]log.Logger
 }
 
-func New(logger log.Logger) *Manager {
+func NewManager(logger log.Logger) *Manager {
 	return &Manager{
 		Logger:  logger,
 		loggers: make(map[string]log.Logger),

@@ -1,4 +1,4 @@
-package manager
+package gorm
 
 import (
 	"testing"
@@ -13,7 +13,7 @@ var (
 )
 
 func init() {
-	m = New(db1)
+	m = NewManager(db1)
 	m.Register("db2", db2)
 	m.Register("db3", db3)
 	m.Register("db4", db4)

@@ -1,4 +1,4 @@
-package manager
+package log
 
 import (
 	"testing"
@@ -9,7 +9,7 @@ import (
 )
 
 func TestManager_Channel(t *testing.T) {
-	logger := New(log.DefaultLogger)
+	logger := NewManager(log.DefaultLogger)
 	logger.Register("ts", log.With(
 		log.DefaultLogger,
 		"ts", log.Timestamp(time.RFC3339),
@@ -25,7 +25,7 @@ func TestManager_Channel(t *testing.T) {
 }
 
 func TestManager_Log(t *testing.T) {
-	m := New(nil)
+	m := NewManager(nil)
 
 	assert.Panics(t, func() {
 		m.Log(log.LevelDebug, "test", "test") //nolint:errcheck

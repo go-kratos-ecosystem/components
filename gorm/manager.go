@@ -1,4 +1,4 @@
-package manager
+package gorm
 
 import "gorm.io/gorm"
 
@@ -10,7 +10,7 @@ type Manager struct {
 	connections map[string]*gorm.DB
 }
 
-func New(db *gorm.DB) *Manager {
+func NewManager(db *gorm.DB) *Manager {
 	return &Manager{
 		DB:          db,
 		connections: make(map[string]*gorm.DB),
