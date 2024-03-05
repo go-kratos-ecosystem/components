@@ -1,4 +1,4 @@
-# Logging
+# Manager
 
 ## Usage
 
@@ -9,7 +9,7 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/log"
 
-	"github.com/go-kratos-ecosystem/components/v2/log/logging"
+	"github.com/go-kratos-ecosystem/components/v2/log/manager"
 )
 
 func main() {
@@ -22,11 +22,12 @@ func main() {
 	}
 }
 
-func newLogger() *logging.Logger {
-	logger := logging.New(log.DefaultLogger)
+func newLogger() *manager.Manager {
+	logger := manager.New(log.DefaultLogger)
 
 	logger.Register("ts", log.With(log.DefaultLogger))
 
 	return logger
 }
+
 ```
