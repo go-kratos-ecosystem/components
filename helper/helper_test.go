@@ -49,6 +49,39 @@ func TestTap_Int(t *testing.T) {
 	assert.Equal(t, 20, *b2)
 }
 
+func BenchmarkTap_UseTap(b *testing.B) {
+	f := &foo{Name: "foo"}
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			Tap(f, func(f *foo) {
+				f.Name = "bar"
+				f.Age = 18
+			})
+		}
+	})
+}
+
+func BenchmarkTap_UnUseTap(b *testing.B) {
+	f := &foo{Name: "foo"}
+	fc := func(f *foo, callbacks ...func(*foo)) {
+		for _, callback := range callbacks {
+			if callback != nil {
+				callback(f)
+			}
+		}
+	}
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			fc(f, func(f *foo) {
+				f.Name = "bar"
+				f.Age = 18
+			})
+		}
+	})
+}
+
 func TestWith(t *testing.T) {
 	f := &foo{Name: "foo"}
 
