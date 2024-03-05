@@ -21,11 +21,10 @@ func (l *Manager) Register(name string, logger log.Logger) {
 }
 
 func (l *Manager) Channel(names ...string) log.Logger {
-	if len(names) <= 0 {
-		return l.Logger
+	var name string
+	if len(names) > 0 {
+		name = names[0]
 	}
-
-	name := names[0]
 
 	if name == "" {
 		return l
