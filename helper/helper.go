@@ -24,6 +24,15 @@ func With[T any](value T, callbacks ...func(T) T) T {
 	return value
 }
 
+func Chain[T any](fns ...func(T) T) func(T) T {
+	return func(v T) T {
+		for _, fn := range fns {
+			v = fn(v)
+		}
+		return v
+	}
+}
+
 func When[T any](value T, condition bool, callbacks ...func(T) T) T {
 	if condition {
 		return With(value, callbacks...)
