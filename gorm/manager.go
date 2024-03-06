@@ -2,8 +2,6 @@ package gorm
 
 import "gorm.io/gorm"
 
-type ConnectionFunc func() *gorm.DB
-
 type Manager struct {
 	*gorm.DB
 
@@ -35,5 +33,5 @@ func (m *Manager) Conn(names ...string) *gorm.DB {
 		return c
 	}
 
-	panic("The connection [" + name + "] is not registered.")
+	panic("gorm: the connection [" + name + "] is not registered.")
 }
