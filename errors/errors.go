@@ -19,6 +19,19 @@ var (
 	IsClientClosed       = errors.IsClientClosed
 )
 
+// vars
+var (
+	ErrBadRequest         = BadRequest(http.StatusText(http.StatusBadRequest))
+	ErrUnauthorized       = Unauthorized(http.StatusText(http.StatusUnauthorized))
+	ErrForbidden          = Forbidden(http.StatusText(http.StatusForbidden))
+	ErrNotFound           = NotFound(http.StatusText(http.StatusNotFound))
+	ErrConflict           = Conflict(http.StatusText(http.StatusConflict))
+	ErrInternalServer     = InternalServer(http.StatusText(http.StatusInternalServerError))
+	ErrServiceUnavailable = ServiceUnavailable(http.StatusText(http.StatusServiceUnavailable))
+	ErrGatewayTimeout     = GatewayTimeout(http.StatusText(http.StatusGatewayTimeout))
+	ErrClientClosed       = ClientClosed("Client Closed")
+)
+
 func New(code int, message string) *errors.Error {
 	return errors.New(code, http.StatusText(code), message)
 }
