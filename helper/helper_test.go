@@ -120,6 +120,43 @@ func TestWhen(t *testing.T) {
 	assert.Equal(t, 18, f3.Age)
 }
 
+func TestChain(t *testing.T) {
+	// chain functions
+	chain := Chain(
+		func(s string) string {
+			return s + "1"
+		},
+		func(s string) string {
+			return s + "2"
+		},
+		func(s string) string {
+			return s + "3"
+		},
+	)
+
+	assert.Equal(t, "0123", chain("0"))
+
+	// chain functions
+	chain2 := Chain(
+		func(foo *foo) *foo {
+			foo.Name = "bar"
+			return foo
+		},
+		func(foo *foo) *foo {
+			foo.Age = 18
+			return foo
+		},
+	)
+
+	f := &foo{Name: "foo"}
+	assert.Equal(t, "foo", f.Name)
+	assert.Equal(t, 0, f.Age)
+
+	got := chain2(f)
+	assert.Equal(t, "bar", got.Name)
+	assert.Equal(t, 18, got.Age)
+}
+
 func TestScan_Basic(t *testing.T) {
 	// string
 	var foo string
