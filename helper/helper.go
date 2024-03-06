@@ -1,5 +1,9 @@
 package helper
 
+import (
+	"encoding/json"
+)
+
 func Tap[T any](value T, callbacks ...func(T)) T {
 	for _, callback := range callbacks {
 		if callback != nil {
@@ -26,4 +30,13 @@ func When[T any](value T, condition bool, callbacks ...func(T) T) T {
 	}
 
 	return value
+}
+
+func Scan(src any, dest any) error {
+	bytes, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(bytes, dest)
 }

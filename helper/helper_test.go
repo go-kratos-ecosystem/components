@@ -119,3 +119,107 @@ func TestWhen(t *testing.T) {
 	assert.Equal(t, "bar", f3.Name)
 	assert.Equal(t, 18, f3.Age)
 }
+
+func TestScan_Basic(t *testing.T) {
+	// string
+	var foo string
+	err := Scan("foo", &foo)
+	assert.Nil(t, err)
+	assert.Equal(t, "foo", foo)
+
+	// int
+	var bar int
+	err = Scan(1, &bar)
+	assert.Nil(t, err)
+	assert.Equal(t, 1, bar)
+
+	// struct
+	type Baz struct {
+		Name string
+	}
+
+	// struct.1
+	var baz Baz
+	err = Scan(Baz{
+		Name: "baz",
+	}, &baz)
+	assert.Nil(t, err)
+	assert.Equal(t, "baz", baz.Name)
+
+	// struct.2
+	assert.Error(t, Scan("foo", nil))
+	var baz2 *Baz
+	assert.Error(t, Scan("foo", baz2))
+
+	// struct.3
+	var baz3 Baz
+	err = Scan(func() interface{} {
+		return Baz{
+			Name: "baz",
+		}
+	}(), &baz3)
+	assert.Nil(t, err)
+	assert.Equal(t, "baz", baz3.Name)
+
+	// test lower
+	type test struct {
+		Name string
+	}
+	var tt test
+	err = Scan(func() interface{} {
+		return test{
+			Name: "test",
+		}
+	}(), &tt)
+	assert.Nil(t, err)
+	assert.Equal(t, "test", tt.Name)
+}
+
+func TestScan_ComplexStruct(t *testing.T) {
+	type AName struct {
+		Name string
+	}
+
+	type ACompany struct {
+		Name string
+	}
+
+	type A struct {
+		Name      *AName
+		Companies []*ACompany
+	}
+
+	type BName struct {
+		Name string
+	}
+
+	type BCompany struct {
+		Name string
+	}
+
+	type B struct {
+		Name      *BName
+		Companies []*BCompany
+	}
+
+	a := &A{
+		Name: &AName{
+			Name: "A",
+		},
+		Companies: []*ACompany{
+			{
+				Name: "A1",
+			},
+			{
+				Name: "A2",
+			},
+		},
+	}
+
+	var b B
+	err := Scan(a, &b)
+	assert.Nil(t, err)
+	assert.Equal(t, "A", b.Name.Name)
+	assert.Equal(t, "A1", b.Companies[0].Name)
+	assert.Equal(t, "A2", b.Companies[1].Name)
+}
