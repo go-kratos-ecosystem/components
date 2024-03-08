@@ -5,8 +5,9 @@ import (
 	"reflect"
 )
 
-// Deprecated: use helper.Tap instead
 // Tap calls the given callback with the given value then returns the value.
+//
+// Deprecated: use helper.Tap instead
 func Tap(value interface{}, callbacks ...func(interface{})) interface{} {
 	for _, callback := range callbacks {
 		callback(value)
@@ -15,8 +16,9 @@ func Tap(value interface{}, callbacks ...func(interface{})) interface{} {
 	return value
 }
 
-// Deprecated: use helper.With instead
 // With calls the given callbacks with the given value then return the value.
+//
+// Deprecated: use helper.With instead
 func With(value interface{}, callbacks ...func(interface{}) interface{}) interface{} {
 	for _, callback := range callbacks {
 		value = callback(value)
@@ -31,6 +33,8 @@ func With(value interface{}, callbacks ...func(interface{}) interface{}) interfa
 //
 //	var foo string
 //	ValueOf("bar", &foo)
+//
+// Deprecated: use helper.Scan instead
 func ValueOf(src interface{}, dest interface{}) error {
 	rv := reflect.ValueOf(dest)
 
