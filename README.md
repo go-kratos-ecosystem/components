@@ -41,7 +41,7 @@ go get github.com/go-kratos-ecosystem/components/v2
 
 ## Thanks
 
-![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png)
+<img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png" alt="JetBrains" width="120">
 
 
 ## License
