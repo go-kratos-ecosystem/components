@@ -39,6 +39,9 @@ go get github.com/go-kratos-ecosystem/components/v2
   - [log](x/log)
   - [log-adapter](x/log-adapter)
 
+## Thanks
+
+![JetBrains Logo (Main) logo](https://resources.jetbrains.com/storage/products/company/brand/logos/jb_beam.png)
 
 
 ## License
