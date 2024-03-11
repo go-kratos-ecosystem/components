@@ -19,5 +19,5 @@ func New(logger log.Logger) *Writer {
 }
 
 func (w *Writer) Write(p []byte) (n int, err error) {
-	return len(p), w.logger.Log(log.LevelInfo, string(p))
+	return len(p), w.logger.Log(log.LevelInfo, "msg", string(p))
 }

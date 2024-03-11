@@ -33,5 +33,6 @@ func TestWriter(t *testing.T) {
 
 	d := <-result
 	assert.Equal(t, log.LevelInfo, d.level)
-	assert.Equal(t, "test", d.keyvals[0])
+	assert.Equal(t, "msg", d.keyvals[0])
+	assert.Equal(t, "test", d.keyvals[1])
 }
