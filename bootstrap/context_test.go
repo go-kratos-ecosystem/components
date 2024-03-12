@@ -43,5 +43,5 @@ func TestContext(t *testing.T) {
 	assert.Error(t, err2)
 	assert.NotNil(t, ctx2)
 	assert.Equal(t, "mockProvider1", ctx2.Value(mockProviderStruct1{}))
-	assert.Nil(t, ctx2.Value(mockProviderStruct2{}))
+	assert.Nil(t, ctx2.Value(mockProviderStruct3{}))
 }
