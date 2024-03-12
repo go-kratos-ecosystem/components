@@ -33,6 +33,18 @@ func Chain[T any](fns ...func(T) T) func(T) T {
 	}
 }
 
+func ChainWithErr[T any](fns ...func(T) (T, error)) func(T) (T, error) {
+	var err error
+	return func(v T) (T, error) {
+		for _, fn := range fns {
+			if v, err = fn(v); err != nil {
+				return v, err
+			}
+		}
+		return v, nil
+	}
+}
+
 func When[T any](value T, condition bool, callbacks ...func(T) T) T {
 	if condition {
 		return With(value, callbacks...)

@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -259,4 +260,73 @@ func TestScan_ComplexStruct(t *testing.T) {
 	assert.Equal(t, "A", b.Name.Name)
 	assert.Equal(t, "A1", b.Companies[0].Name)
 	assert.Equal(t, "A2", b.Companies[1].Name)
+}
+
+func TestChainWithErr(t *testing.T) {
+	// chain functions
+	chain := ChainWithErr(
+		func(s string) (string, error) {
+			return s + "1", nil
+		},
+		func(s string) (string, error) {
+			return s + "2", nil
+		},
+		func(s string) (string, error) {
+			return s + "3", nil
+		},
+	)
+
+	got, err := chain("0")
+	assert.Nil(t, err)
+	assert.Equal(t, "0123", got)
+
+	// chain functions
+	chain2 := ChainWithErr(
+		func(foo *foo) (*foo, error) {
+			foo.Name = "bar"
+			return foo, nil
+		},
+		func(foo *foo) (*foo, error) {
+			foo.Age = 18
+			return foo, nil
+		},
+	)
+
+	f := &foo{Name: "foo"}
+	assert.Equal(t, "foo", f.Name)
+	assert.Equal(t, 0, f.Age)
+
+	got2, err := chain2(f)
+	assert.Nil(t, err)
+	assert.Equal(t, "bar", got2.Name)
+	assert.Equal(t, 18, got2.Age)
+
+	// context
+	chain3 := ChainWithErr(
+		func(ctx context.Context) (context.Context, error) {
+			return context.WithValue(ctx, "foo", "bar"), nil
+		},
+		func(ctx context.Context) (context.Context, error) {
+			return context.WithValue(ctx, "bar", "baz"), nil
+		},
+	)
+
+	ctx, err := chain3(context.Background())
+	assert.NoError(t, err)
+	assert.Equal(t, "bar", ctx.Value("foo"))
+	assert.Equal(t, "baz", ctx.Value("bar"))
+
+	// context with error
+	chain4 := ChainWithErr(
+		func(ctx context.Context) (context.Context, error) {
+			return context.WithValue(ctx, "foo", "bar"), nil
+		},
+		func(ctx context.Context) (context.Context, error) {
+			return nil, assert.AnError
+		},
+	)
+
+	ctx, err = chain4(context.Background())
+	assert.Error(t, err)
+	assert.Nil(t, ctx)
 }
