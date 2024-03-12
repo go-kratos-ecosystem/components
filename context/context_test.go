@@ -1,4 +1,4 @@
-package bootstrap
+package context
 
 import (
 	"context"
@@ -29,7 +29,7 @@ func TestContext(t *testing.T) {
 		}
 	)
 
-	ctx1, err1 := NewContext(
+	ctx1, err1 := Chain(
 		context.Background(),
 		mockProvider1, mockProvider2,
 	)
@@ -37,7 +37,7 @@ func TestContext(t *testing.T) {
 	assert.Equal(t, "mockProvider1", ctx1.Value(mockProviderStruct1{}))
 	assert.Equal(t, "mockProvider2", ctx1.Value(mockProviderStruct2{}))
 
-	ctx2, err2 := NewContext(
+	ctx2, err2 := Chain(
 		context.Background(),
 		mockProvider1, mockProvider3,
 	)

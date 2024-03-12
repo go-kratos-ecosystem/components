@@ -1,4 +1,4 @@
-package bootstrap
+package context
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 
 type Provider func(ctx context.Context) (context.Context, error)
 
-func NewContext(ctx context.Context, providers ...Provider) (context.Context, error) {
+func Chain(ctx context.Context, providers ...Provider) (context.Context, error) {
 	var err error
 	for _, provider := range providers {
 		if provider != nil {
