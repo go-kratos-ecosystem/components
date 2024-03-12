@@ -17,7 +17,7 @@ func Local(name string) Option {
 	}
 }
 
-func Provider(opts ...Option) func(ctx context.Context) error {
+func Provider(opts ...Option) func(ctx context.Context) (context.Context, error) {
 	op := options{
 		local: "UTC",
 	}
@@ -26,14 +26,14 @@ func Provider(opts ...Option) func(ctx context.Context) error {
 		opt(&op)
 	}
 
-	return func(context.Context) error {
+	return func(ctx context.Context) (context.Context, error) {
 		location, err := time.LoadLocation(op.local)
 		if err != nil {
-			return err
+			return ctx, err
 		}
 
 		time.Local = location
 
-		return nil
+		return NewContext(ctx, location), nil
 	}
 }
