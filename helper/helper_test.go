@@ -304,10 +304,10 @@ func TestChainWithErr(t *testing.T) {
 	// context
 	chain3 := ChainWithErr(
 		func(ctx context.Context) (context.Context, error) {
-			return context.WithValue(ctx, "foo", "bar"), nil
+			return context.WithValue(ctx, "foo", "bar"), nil //nolint:revive,staticcheck
 		},
 		func(ctx context.Context) (context.Context, error) {
-			return context.WithValue(ctx, "bar", "baz"), nil
+			return context.WithValue(ctx, "bar", "baz"), nil //nolint:revive,staticcheck
 		},
 	)
 
@@ -319,9 +319,9 @@ func TestChainWithErr(t *testing.T) {
 	// context with error
 	chain4 := ChainWithErr(
 		func(ctx context.Context) (context.Context, error) {
-			return context.WithValue(ctx, "foo", "bar"), nil
+			return context.WithValue(ctx, "foo", "bar"), nil //nolint:revive,staticcheck
 		},
-		func(ctx context.Context) (context.Context, error) {
+		func(context.Context) (context.Context, error) {
 			return nil, assert.AnError
 		},
 	)
