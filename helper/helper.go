@@ -61,3 +61,11 @@ func Scan(src any, dest any) error {
 
 	return json.Unmarshal(bytes, dest)
 }
+
+func If[T any](condition bool, trueVal T, falseVal T) T {
+	if condition {
+		return trueVal
+	}
+
+	return falseVal
+}
