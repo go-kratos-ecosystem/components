@@ -20,25 +20,23 @@ func (p *Proxy[T]) Tap(callbacks ...func(T)) T {
 	return p.target
 }
 
-func (p *Proxy[T]) With(callbacks ...func(T) T) T {
+func (p *Proxy[T]) With(callbacks ...func(T) T) *Proxy[T] {
 	for _, callback := range callbacks {
 		if callback != nil {
 			p.target = callback(p.target)
 		}
 	}
-
-	return p.target
+	return p
 }
 
-func (p *Proxy[T]) When(condition bool, callbacks ...func(T) T) T {
+func (p *Proxy[T]) When(condition bool, callbacks ...func(T) T) *Proxy[T] {
 	if condition {
 		return p.With(callbacks...)
 	}
-
-	return p.target
+	return p
 }
 
-func (p *Proxy[T]) Unless(condition bool, callbacks ...func(T) T) T {
+func (p *Proxy[T]) Unless(condition bool, callbacks ...func(T) T) *Proxy[T] {
 	return p.When(!condition, callbacks...)
 }
 

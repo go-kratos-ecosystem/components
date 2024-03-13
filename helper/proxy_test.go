@@ -31,7 +31,7 @@ func TestProxy_Point(t *testing.T) {
 		p.Name = "baz"
 		p.Age = 20
 		return p
-	})
+	}).Target()
 	assert.Equal(t, "baz", proxy.target.Name)
 	assert.Equal(t, 20, proxy.target.Age)
 	assert.Equal(t, "baz", mock.Name)
@@ -41,7 +41,7 @@ func TestProxy_Point(t *testing.T) {
 		p.Name = "qux"
 		p.Age = 22
 		return p
-	})
+	}).Target()
 	assert.Equal(t, "qux", proxy.target.Name)
 	assert.Equal(t, 22, proxy.target.Age)
 	assert.Equal(t, "qux", mock.Name)
@@ -70,7 +70,7 @@ func TestProxy_Struct(t *testing.T) {
 		p.Name = "baz"
 		p.Age = 20
 		return p
-	})
+	}).Target()
 	assert.Equal(t, "baz", proxy.target.Name)
 	assert.Equal(t, 20, proxy.target.Age)
 	assert.Equal(t, "baz", mock3.Name)
@@ -80,7 +80,7 @@ func TestProxy_Struct(t *testing.T) {
 		p.Name = "qux"
 		p.Age = 22
 		return p
-	})
+	}).Target()
 	assert.Equal(t, "qux", proxy.target.Name)
 	assert.Equal(t, 22, proxy.target.Age)
 	assert.Equal(t, "qux", mock4.Name)
@@ -93,7 +93,7 @@ func TestProxy_Struct(t *testing.T) {
 		p.Name = "quux"
 		p.Age = 24
 		return p
-	})
+	}).Target()
 	assert.Equal(t, "qux", proxy.target.Name)
 	assert.Equal(t, 22, proxy.target.Age)
 	assert.Equal(t, "qux", mock6.Name)
