@@ -13,6 +13,16 @@ func (e Env) String() string {
 	return string(e)
 }
 
+func (e Env) Is(envs ...Env) bool {
+	for _, env := range envs {
+		if e == env {
+			return true
+		}
+	}
+
+	return false
+}
+
 var currentEnv = Prod
 
 func SetEnv(env Env) {
@@ -24,13 +34,7 @@ func GetEnv() Env {
 }
 
 func Is(envs ...Env) bool {
-	for _, env := range envs {
-		if currentEnv == env {
-			return true
-		}
-	}
-
-	return false
+	return currentEnv.Is(envs...)
 }
 
 func IsDev() bool {
