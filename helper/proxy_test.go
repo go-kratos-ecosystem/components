@@ -21,7 +21,7 @@ func TestProxy_Point(t *testing.T) {
 	mock2 := proxy.Tap(func(p *proxyMock) {
 		p.Name = "bar"
 		p.Age = 18
-	})
+	}).Target()
 	assert.Equal(t, "bar", proxy.target.Name)
 	assert.Equal(t, 18, proxy.target.Age)
 	assert.Equal(t, "bar", mock.Name)
