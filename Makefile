@@ -1,9 +1,9 @@
 .PHONY: lint
 lint:
 	golangci-lint run
-	@echo "Linting complete"
+	@echo "✅ Linting completed"
 
 .PHONY: fix
 fix:
 	golangci-lint run --fix
-	@echo "Lint fixing complete"
+	@echo "✅ Lint fixing completed"

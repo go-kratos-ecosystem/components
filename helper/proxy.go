@@ -10,14 +10,13 @@ func NewProxy[T any](target T) *Proxy[T] {
 	}
 }
 
-func (p *Proxy[T]) Tap(callbacks ...func(T)) T {
+func (p *Proxy[T]) Tap(callbacks ...func(T)) *Proxy[T] {
 	for _, callback := range callbacks {
 		if callback != nil {
 			callback(p.target)
 		}
 	}
-
-	return p.target
+	return p
 }
 
 func (p *Proxy[T]) With(callbacks ...func(T) T) *Proxy[T] {
