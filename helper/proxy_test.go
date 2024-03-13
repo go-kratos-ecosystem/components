@@ -61,7 +61,7 @@ func TestProxy_Struct(t *testing.T) {
 	mock2 := proxy.Tap(func(p proxyMock) {
 		p.Name = "bar"
 		p.Age = 18
-	})
+	}).Target()
 	assert.Equal(t, "foo", proxy.target.Name)
 	assert.Equal(t, 0, proxy.target.Age)
 	assert.Equal(t, "foo", mock2.Name)
