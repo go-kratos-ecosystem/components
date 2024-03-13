@@ -330,3 +330,13 @@ func TestChainWithErr(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, ctx)
 }
+
+func TestIf(t *testing.T) {
+	// if true
+	got := If(true, "foo", "bar")
+	assert.Equal(t, "foo", got)
+
+	// if false
+	got = If(false, "foo", "bar")
+	assert.Equal(t, "bar", got)
+}
