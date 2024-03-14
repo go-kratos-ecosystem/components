@@ -14,7 +14,7 @@ type (
 	mockProviderStruct3 struct{}
 )
 
-var result = make(chan string, 3)
+var result chan string
 
 var (
 	mockProvider1 = func(ctx context.Context) (context.Context, error) {
@@ -34,6 +34,7 @@ var (
 )
 
 func TestPipe(t *testing.T) {
+	result = make(chan string, 2)
 	ctx1, err1 := Pipe(
 		context.Background(),
 		mockProvider1, mockProvider2,
@@ -56,6 +57,7 @@ func TestPipe(t *testing.T) {
 }
 
 func TestChain(t *testing.T) {
+	result = make(chan string, 2)
 	ctx1, err1 := Chain(
 		context.Background(),
 		mockProvider1, mockProvider2,
