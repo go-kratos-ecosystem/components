@@ -4,6 +4,14 @@ import (
 	"encoding/json"
 )
 
+func If[T any](condition bool, trueVal T, falseVal T) T {
+	if condition {
+		return trueVal
+	}
+
+	return falseVal
+}
+
 func Tap[T any](value T, callbacks ...func(T)) T {
 	for _, callback := range callbacks {
 		if callback != nil {
@@ -24,7 +32,7 @@ func With[T any](value T, callbacks ...func(T) T) T {
 	return value
 }
 
-func Chain[T any](fns ...func(T) T) func(T) T {
+func Pipe[T any](fns ...func(T) T) func(T) T {
 	return func(v T) T {
 		for _, fn := range fns {
 			v = fn(v)
@@ -33,7 +41,7 @@ func Chain[T any](fns ...func(T) T) func(T) T {
 	}
 }
 
-func ChainWithErr[T any](fns ...func(T) (T, error)) func(T) (T, error) {
+func PipeWithErr[T any](fns ...func(T) (T, error)) func(T) (T, error) {
 	var err error
 	return func(v T) (T, error) {
 		for _, fn := range fns {
@@ -60,12 +68,4 @@ func Scan(src any, dest any) error {
 	}
 
 	return json.Unmarshal(bytes, dest)
-}
-
-func If[T any](condition bool, trueVal T, falseVal T) T {
-	if condition {
-		return trueVal
-	}
-
-	return falseVal
 }
