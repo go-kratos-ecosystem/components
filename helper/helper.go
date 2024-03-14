@@ -2,6 +2,7 @@ package helper
 
 import (
 	"encoding/json"
+	"slices"
 )
 
 func If[T any](condition bool, trueVal T, falseVal T) T {
@@ -63,31 +64,16 @@ func PipeWithErr[T any](fns ...func(T) (T, error)) func(T) (T, error) {
 //
 //	Chain(m1, m2, m3)(value) => m1(m2(m3(value)))
 func Chain[T any](fns ...func(T) T) func(T) T {
-	return func(v T) T {
-		for i := len(fns) - 1; i >= 0; i-- {
-			if fns[i] != nil {
-				v = fns[i](v)
-			}
-		}
-		return v
-	}
+	slices.Reverse(fns)
+	return Pipe(fns...)
 }
 
 // ChainWithErr is a reverse PipeWithErr
 //
 //	ChainWithErr(m1, m2, m3)(value) => m1(m2(m3(value)))
 func ChainWithErr[T any](fns ...func(T) (T, error)) func(T) (T, error) {
-	var err error
-	return func(v T) (T, error) {
-		for i := len(fns) - 1; i >= 0; i-- {
-			if fns[i] != nil {
-				if v, err = fns[i](v); err != nil {
-					return v, err
-				}
-			}
-		}
-		return v, nil
-	}
+	slices.Reverse(fns)
+	return PipeWithErr(fns...)
 }
 
 func When[T any](value T, condition bool, callbacks ...func(T) T) T {
