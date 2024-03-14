@@ -1,3 +1,8 @@
+.PHONY: init
+init:
+	go install mvdan.cc/gofumpt@latest
+	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
 .PHONY: lint
 lint:
 	golangci-lint run
@@ -7,3 +12,18 @@ lint:
 fix:
 	golangci-lint run --fix
 	@echo "✅ Lint fixing completed"
+
+.PHONY: test
+test:
+	go test ./...
+	@echo "✅ Testing completed"
+
+.PHONY: fmt
+fmt:
+	gofmt -w -e "vendor" .
+	@echo "✅ Formatting completed"
+
+.PHONY: fumpt
+fumpt:
+	gofumpt -w -e "vendor" .
+	@echo "✅ Formatting completed"
