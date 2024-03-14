@@ -121,9 +121,9 @@ func TestWhen(t *testing.T) {
 	assert.Equal(t, 18, f3.Age)
 }
 
-func TestChain(t *testing.T) {
+func TestPipe(t *testing.T) {
 	// chain functions
-	chain := Chain(
+	chain := Pipe(
 		func(s string) string {
 			return s + "1"
 		},
@@ -138,7 +138,7 @@ func TestChain(t *testing.T) {
 	assert.Equal(t, "0123", chain("0"))
 
 	// chain functions
-	chain2 := Chain(
+	chain2 := Pipe(
 		func(foo *foo) *foo {
 			foo.Name = "bar"
 			return foo
@@ -262,9 +262,9 @@ func TestScan_ComplexStruct(t *testing.T) {
 	assert.Equal(t, "A2", b.Companies[1].Name)
 }
 
-func TestChainWithErr(t *testing.T) {
+func TestPipeWithErr(t *testing.T) {
 	// chain functions
-	chain := ChainWithErr(
+	chain := PipeWithErr(
 		func(s string) (string, error) {
 			return s + "1", nil
 		},
@@ -281,7 +281,7 @@ func TestChainWithErr(t *testing.T) {
 	assert.Equal(t, "0123", got)
 
 	// chain functions
-	chain2 := ChainWithErr(
+	chain2 := PipeWithErr(
 		func(foo *foo) (*foo, error) {
 			foo.Name = "bar"
 			return foo, nil
@@ -302,7 +302,7 @@ func TestChainWithErr(t *testing.T) {
 	assert.Equal(t, 18, got2.Age)
 
 	// context
-	chain3 := ChainWithErr(
+	chain3 := PipeWithErr(
 		func(ctx context.Context) (context.Context, error) {
 			return context.WithValue(ctx, "foo", "bar"), nil //nolint:revive,staticcheck
 		},
@@ -317,7 +317,7 @@ func TestChainWithErr(t *testing.T) {
 	assert.Equal(t, "baz", ctx.Value("bar"))
 
 	// context with error
-	chain4 := ChainWithErr(
+	chain4 := PipeWithErr(
 		func(ctx context.Context) (context.Context, error) {
 			return context.WithValue(ctx, "foo", "bar"), nil //nolint:revive,staticcheck
 		},
@@ -339,4 +339,38 @@ func TestIf(t *testing.T) {
 	// if false
 	got = If(false, "foo", "bar")
 	assert.Equal(t, "bar", got)
+}
+
+func TestChain(t *testing.T) {
+	chain := Chain(func(s string) string {
+		return s + "1"
+	}, func(s string) string {
+		return s + "2"
+	})
+
+	got := chain("0")
+	assert.Equal(t, "021", got)
+}
+
+func TestChainWithErr(t *testing.T) {
+	chain := ChainWithErr(func(s string) (string, error) {
+		return s + "1", nil
+	}, func(s string) (string, error) {
+		return s + "2", nil
+	})
+
+	got, err := chain("0")
+	assert.Nil(t, err)
+	assert.Equal(t, "021", got)
+
+	// with error
+	chain2 := ChainWithErr(func(s string) (string, error) {
+		return s + "1", nil
+	}, func(s string) (string, error) {
+		return s + "2", assert.AnError
+	})
+
+	got, err = chain2("0")
+	assert.Error(t, err)
+	assert.Equal(t, "02", got)
 }
