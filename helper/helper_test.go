@@ -340,3 +340,37 @@ func TestIf(t *testing.T) {
 	got = If(false, "foo", "bar")
 	assert.Equal(t, "bar", got)
 }
+
+func TestChain(t *testing.T) {
+	chain := Chain(func(s string) string {
+		return s + "1"
+	}, func(s string) string {
+		return s + "2"
+	})
+
+	got := chain("0")
+	assert.Equal(t, "021", got)
+}
+
+func TestChainWithErr(t *testing.T) {
+	chain := ChainWithErr(func(s string) (string, error) {
+		return s + "1", nil
+	}, func(s string) (string, error) {
+		return s + "2", nil
+	})
+
+	got, err := chain("0")
+	assert.Nil(t, err)
+	assert.Equal(t, "021", got)
+
+	// with error
+	chain2 := ChainWithErr(func(s string) (string, error) {
+		return s + "1", nil
+	}, func(s string) (string, error) {
+		return s + "2", assert.AnError
+	})
+
+	got, err = chain2("0")
+	assert.Error(t, err)
+	assert.Equal(t, "02", got)
+}
