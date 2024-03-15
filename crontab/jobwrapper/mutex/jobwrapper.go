@@ -15,6 +15,10 @@ type Job interface {
 	IsMutexJob()
 }
 
+type MutexJob struct{}
+
+func (m *MutexJob) IsMutexJob() {}
+
 type ExpirableJob feature.Expirable
 
 func SkipIfStillMutexRunning(opts ...Option) cron.JobWrapper {
