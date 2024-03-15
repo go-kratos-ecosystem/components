@@ -113,3 +113,134 @@ func TestIsEmptyAndIsNotEmpty(t *testing.T) {
 	assert.True(t, IsEmpty(s6))
 	assert.False(t, IsNotEmpty(s6))
 }
+
+func TestContains(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.True(t, Contains(s1, 1))
+	assert.False(t, Contains(s1, 4))
+
+	s2 := []string{"1", "2", "3"}
+	assert.True(t, Contains(s2, "1"))
+	assert.False(t, Contains(s2, "4"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	assert.True(t, Contains(s3, T{"1"}))
+	assert.False(t, Contains(s3, T{"4"}))
+}
+
+func TestIndexOf(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, 0, IndexOf(s1, 1))
+	assert.Equal(t, -1, IndexOf(s1, 4))
+
+	s2 := []string{"1", "2", "3"}
+	assert.Equal(t, 0, IndexOf(s2, "1"))
+	assert.Equal(t, -1, IndexOf(s2, "4"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	assert.Equal(t, 0, IndexOf(s3, T{"1"}))
+	assert.Equal(t, -1, IndexOf(s3, T{"4"}))
+}
+
+func TestLastIndexOf(t *testing.T) {
+	s1 := []int{1, 2, 3, 1}
+	assert.Equal(t, 3, LastIndexOf(s1, 1))
+	assert.Equal(t, -1, LastIndexOf(s1, 4))
+
+	s2 := []string{"1", "2", "3", "1"}
+	assert.Equal(t, 3, LastIndexOf(s2, "1"))
+	assert.Equal(t, -1, LastIndexOf(s2, "4"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}, {"1"}}
+	assert.Equal(t, 3, LastIndexOf(s3, T{"1"}))
+	assert.Equal(t, -1, LastIndexOf(s3, T{"4"}))
+}
+
+func TestUnique(t *testing.T) {
+	s1 := []int{1, 2, 3, 1, 2, 3}
+	assert.Equal(t, []int{1, 2, 3}, Unique(s1))
+
+	s2 := []string{"1", "2", "3", "1", "2", "3"}
+	assert.Equal(t, []string{"1", "2", "3"}, Unique(s2))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}, {"1"}, {"2"}, {"3"}}
+	assert.Equal(t, []T{{"1"}, {"2"}, {"3"}}, Unique(s3))
+}
+
+func TestDifference(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	s2 := []int{2, 3, 4}
+	assert.Equal(t, []int{1}, Difference(s1, s2))
+
+	s3 := []string{"1", "2", "3"}
+	s4 := []string{"2", "3", "4"}
+	assert.Equal(t, []string{"1"}, Difference(s3, s4))
+
+	s5 := []T{{"1"}, {"2"}, {"3"}}
+	s6 := []T{{"2"}, {"3"}, {"4"}}
+	assert.Equal(t, []T{{"1"}}, Difference(s5, s6))
+}
+
+func TestIntersect(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	s2 := []int{2, 3, 4}
+	assert.Equal(t, []int{2, 3}, Intersect(s1, s2))
+
+	s3 := []string{"1", "2", "3"}
+	s4 := []string{"2", "3", "4"}
+	assert.Equal(t, []string{"2", "3"}, Intersect(s3, s4))
+
+	s5 := []T{{"1"}, {"2"}, {"3"}}
+	s6 := []T{{"2"}, {"3"}, {"4"}}
+	assert.Equal(t, []T{{"2"}, {"3"}}, Intersect(s5, s6))
+}
+
+func TestOnly(t *testing.T) {
+	s1 := []int{1, 2, 3, 4}
+	assert.Equal(t, []int{2, 4}, Only(s1, 2, 4))
+
+	s2 := []string{"1", "2", "3", "4"}
+	assert.Equal(t, []string{"2", "4"}, Only(s2, "2", "4"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}, {"4"}}
+	assert.Equal(t, []T{{"2"}, {"4"}}, Only(s3, T{"2"}, T{"4"}))
+}
+
+func TestWithout(t *testing.T) {
+	s1 := []int{1, 2, 3, 4}
+	assert.Equal(t, []int{1, 3}, Without(s1, 2, 4))
+
+	s2 := []string{"1", "2", "3", "4"}
+	assert.Equal(t, []string{"1", "3"}, Without(s2, "2", "4"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}, {"4"}}
+	assert.Equal(t, []T{{"1"}, {"3"}, {"4"}}, Without(s3, T{"2"}))
+}
+
+func TestPartition(t *testing.T) {
+	s1 := []int{1, 2, 3, 4, 5}
+	odd, even := Partition(s1, func(n int) bool { return n%2 != 0 })
+	assert.Equal(t, []int{1, 3, 5}, odd)
+	assert.Equal(t, []int{2, 4}, even)
+
+	s2 := []string{"1", "2", "3", "4", "5"}
+	lessThan3, greaterThan3 := Partition(s2, func(s string) bool { return s < "3" })
+	assert.Equal(t, []string{"1", "2"}, lessThan3)
+	assert.Equal(t, []string{"3", "4", "5"}, greaterThan3)
+
+	s3 := []T{{"1"}, {"2"}, {"3"}, {"4"}, {"5"}}
+	lessThan4, greaterThan4 := Partition(s3, func(t T) bool { return t.A < "4" })
+	assert.Equal(t, []T{{"1"}, {"2"}, {"3"}}, lessThan4)
+	assert.Equal(t, []T{{"4"}, {"5"}}, greaterThan4)
+}
+
+func TestChunk(t *testing.T) {
+	s1 := []int{1, 2, 3, 4, 5}
+	assert.Equal(t, [][]int{{1, 2}, {3, 4}, {5}}, Chunk(s1, 2))
+
+	s2 := []string{"1", "2", "3", "4", "5"}
+	assert.Equal(t, [][]string{{"1", "2"}, {"3", "4"}, {"5"}}, Chunk(s2, 2))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}, {"4"}, {"5"}}
+	assert.Equal(t, [][]T{{{"1"}, {"2"}}, {{"3"}, {"4"}}, {{"5"}}}, Chunk(s3, 2))
+}
