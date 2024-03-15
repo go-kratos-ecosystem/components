@@ -41,8 +41,6 @@ func SkipIfStillMutexLock(opts ...Option) cron.JobWrapper {
 			}
 			defer o.locker.Unlock(name) //nolint:errcheck
 
-			o.logger.Info(fmt.Sprintf("crontab/jobwrapper/mutex: running job %s", j.Name()))
-
 			job.Run()
 		})
 	}
