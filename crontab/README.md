@@ -2,8 +2,7 @@
 
 ## Example
 
-```go
-package main
+```gopackage main
 
 import (
 	"log"
@@ -19,13 +18,15 @@ import (
 )
 
 type mutexJob struct {
-	mutex.MutexJob
+	mutex.MutexJob // 可以偷懒实现 IsMutexJob 方法
 }
 
+// Name 分布式锁名称，同名的任务只有一个会执行
 func (m *mutexJob) Name() string {
 	return "mutexJob"
 }
 
+// Run 任务执行的逻辑
 func (m *mutexJob) Run() {
 	log.Println("mutexJob running")
 }
@@ -57,7 +58,7 @@ func main() {
 		log.Println("Hello world")
 	})
 
-	// MutexJob，受分布式锁的影响
+	// MutexJob，受分布式锁的影响，job只需要实现 mutex.Job 接口即可
 	_, _ = c.AddJob("*/2 * * * * *", &mutexJob{})
 
 	app := kratos.New(
