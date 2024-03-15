@@ -17,7 +17,7 @@ type Job interface {
 
 type ExpirableJob feature.Expirable
 
-func SkipIfStillMutexLock(opts ...Option) cron.JobWrapper {
+func SkipIfStillMutexRunning(opts ...Option) cron.JobWrapper {
 	o := newOptions(opts...)
 
 	return func(job cron.Job) cron.Job {
