@@ -15,7 +15,7 @@ type Job interface {
 	IsMutexJob()
 }
 
-type MutexJob struct{}
+type MutexJob struct{} //nolint:revive
 
 func (m *MutexJob) IsMutexJob() {}
 
