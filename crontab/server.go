@@ -22,6 +22,7 @@ func (s *Server) Start(context.Context) error {
 }
 
 func (s *Server) Stop(context.Context) error {
-	s.Cron.Stop()
+	<-s.Cron.Stop().Done()
+
 	return nil
 }

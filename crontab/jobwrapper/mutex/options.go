@@ -32,7 +32,7 @@ func (o *options) applyDefault() {
 	}
 
 	if o.locker == nil {
-		panic("locker is required")
+		panic("crontab/jobwrapper/mutex: locker is required")
 	}
 
 	if o.logger == nil {

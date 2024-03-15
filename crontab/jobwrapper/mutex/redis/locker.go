@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
+
+	"github.com/go-kratos-ecosystem/components/v2/crontab/jobwrapper/mutex"
 )
 
 type Locker struct {
@@ -18,7 +20,12 @@ func NewLocker(client redis.Cmdable) *Locker {
 }
 
 func (m *Locker) Lock(name string, expiration time.Duration) error {
-	return m.SetNX(context.Background(), name, "1", expiration).Err()
+	if flag, err := m.SetNX(context.Background(), name, "1", expiration).Result(); err != nil {
+		return err
+	} else if !flag {
+		return mutex.ErrLocked
+	}
+	return nil
 }
 
 func (m *Locker) Unlock(name string) error {
