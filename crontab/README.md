@@ -2,7 +2,8 @@
 
 ## Example
 
-```gopackage main
+```go
+package main
 
 import (
 	"log"
