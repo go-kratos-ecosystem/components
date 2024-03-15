@@ -54,3 +54,102 @@ func IsEmpty[S ~[]E, E any](s S) bool {
 func IsNotEmpty[S ~[]E, E any](s S) bool {
 	return len(s) > 0
 }
+
+func Contains[S ~[]E, E comparable](s S, e E) bool {
+	for _, item := range s {
+		if item == e {
+			return true
+		}
+	}
+	return false
+}
+
+func IndexOf[S ~[]E, E comparable](s S, e E) int {
+	for i, item := range s {
+		if item == e {
+			return i
+		}
+	}
+	return -1
+}
+
+func LastIndexOf[S ~[]E, E comparable](s S, e E) int {
+	for i := len(s) - 1; i >= 0; i-- {
+		if s[i] == e {
+			return i
+		}
+	}
+	return -1
+}
+
+func Unique[S ~[]E, E comparable](s S) S {
+	var result S
+	for _, item := range s {
+		if !Contains(result, item) {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+func Difference[S ~[]E, E comparable](s1, s2 S) S {
+	var result S
+	for _, item := range s1 {
+		if !Contains(s2, item) {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+func Intersect[S ~[]E, E comparable](s1, s2 S) S {
+	var result S
+	for _, item := range s1 {
+		if Contains(s2, item) {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+func Only[S ~[]E, E comparable](s S, items ...E) S {
+	var result S
+	for _, item := range s {
+		if Contains(items, item) {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+func Without[S ~[]E, E comparable](s S, items ...E) S {
+	var result S
+	for _, item := range s {
+		if !Contains(items, item) {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+func Partition[S ~[]E, E any](s S, fn func(E) bool) (yes, no S) {
+	for _, item := range s {
+		if fn(item) {
+			yes = append(yes, item)
+		} else {
+			no = append(no, item)
+		}
+	}
+	return
+}
+
+func Chunk[S ~[]E, E any](s S, size int) (result []S) {
+	for i := 0; i < len(s); i += size {
+		end := i + size
+		if end > len(s) {
+			end = len(s)
+		}
+		result = append(result, s[i:end])
+	}
+	return
+}
