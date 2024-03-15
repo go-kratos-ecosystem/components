@@ -36,7 +36,7 @@ func SkipIfStillMutexRunning(opts ...Option) cron.JobWrapper {
 			}
 
 			if err := o.locker.Lock(name, expiration); err != nil {
-				o.logger.Info(fmt.Sprintf("crontab/jobwrapper/locker: skip job [%s], because still mutex lock", j.Name()))
+				o.logger.Info(fmt.Sprintf("crontab/jobwrapper/mutex: skip job [%s], because still mutex lock", j.Name()))
 				return
 			}
 			defer o.locker.Unlock(name) //nolint:errcheck
