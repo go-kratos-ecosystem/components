@@ -8,6 +8,14 @@
 [![tests](https://github.com/go-kratos-ecosystem/components/actions/workflows/test.yml/badge.svg)](https://github.com/go-kratos-ecosystem/components/actions/workflows/test.yml)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
+> ⚠️ **Note:** `v2.x` may introduce situations that are not backward compatible.
+> 
+> When releasing a new version, backward compatibility is the default behavior. If there are any incompatibilities, they will be indicated in the release notes.
+> 
+> This is expected to be improved in the `v3.x` version.
+> 
+> Thanks. 😄
+
 ## Installation
 
 ```bash
