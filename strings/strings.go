@@ -41,14 +41,14 @@ func Is(pattern, value string) bool {
 	return match
 }
 
-// InArray checks if a string is in a string array.
+// InSlice checks if a string is in a string slice.
 //
 // Example:
 //
-//	InArray("abc", []string{"abc", "def"}) // true
-func InArray(needle string, haystack []string) bool {
-	for _, v := range haystack {
-		if v == needle {
+//	InSlice([]string{"1", "2"}, "1") // true
+func InSlice(slice []string, s string) bool {
+	for _, v := range slice {
+		if v == s {
 			return true
 		}
 	}
