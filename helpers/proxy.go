@@ -1,4 +1,4 @@
-package helper
+package helpers
 
 type Proxy[T any] struct {
 	target T
