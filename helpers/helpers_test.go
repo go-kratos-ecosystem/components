@@ -1,4 +1,4 @@
-package helper
+package helpers
 
 import (
 	"context"
@@ -122,8 +122,8 @@ func TestWhen(t *testing.T) {
 }
 
 func TestPipe(t *testing.T) {
-	// chain functions
-	chain := Pipe(
+	// pipe functions
+	pipe := Pipe(
 		func(s string) string {
 			return s + "1"
 		},
@@ -135,10 +135,10 @@ func TestPipe(t *testing.T) {
 		},
 	)
 
-	assert.Equal(t, "0123", chain("0"))
+	assert.Equal(t, "0123", pipe("0"))
 
-	// chain functions
-	chain2 := Pipe(
+	// pipe functions
+	pipe2 := Pipe(
 		func(foo *foo) *foo {
 			foo.Name = "bar"
 			return foo
@@ -153,7 +153,7 @@ func TestPipe(t *testing.T) {
 	assert.Equal(t, "foo", f.Name)
 	assert.Equal(t, 0, f.Age)
 
-	got := chain2(f)
+	got := pipe2(f)
 	assert.Equal(t, "bar", got.Name)
 	assert.Equal(t, 18, got.Age)
 }
@@ -263,8 +263,8 @@ func TestScan_ComplexStruct(t *testing.T) {
 }
 
 func TestPipeWithErr(t *testing.T) {
-	// chain functions
-	chain := PipeWithErr(
+	// pipe functions
+	pipe := PipeWithErr(
 		func(s string) (string, error) {
 			return s + "1", nil
 		},
@@ -276,12 +276,12 @@ func TestPipeWithErr(t *testing.T) {
 		},
 	)
 
-	got, err := chain("0")
+	got, err := pipe("0")
 	assert.Nil(t, err)
 	assert.Equal(t, "0123", got)
 
-	// chain functions
-	chain2 := PipeWithErr(
+	// pipe functions
+	pipe2 := PipeWithErr(
 		func(foo *foo) (*foo, error) {
 			foo.Name = "bar"
 			return foo, nil
@@ -296,13 +296,13 @@ func TestPipeWithErr(t *testing.T) {
 	assert.Equal(t, "foo", f.Name)
 	assert.Equal(t, 0, f.Age)
 
-	got2, err := chain2(f)
+	got2, err := pipe2(f)
 	assert.Nil(t, err)
 	assert.Equal(t, "bar", got2.Name)
 	assert.Equal(t, 18, got2.Age)
 
 	// context
-	chain3 := PipeWithErr(
+	pipe3 := PipeWithErr(
 		func(ctx context.Context) (context.Context, error) {
 			return context.WithValue(ctx, "foo", "bar"), nil //nolint:revive,staticcheck
 		},
@@ -311,13 +311,13 @@ func TestPipeWithErr(t *testing.T) {
 		},
 	)
 
-	ctx, err := chain3(context.Background())
+	ctx, err := pipe3(context.Background())
 	assert.NoError(t, err)
 	assert.Equal(t, "bar", ctx.Value("foo"))
 	assert.Equal(t, "baz", ctx.Value("bar"))
 
 	// context with error
-	chain4 := PipeWithErr(
+	pipe4 := PipeWithErr(
 		func(ctx context.Context) (context.Context, error) {
 			return context.WithValue(ctx, "foo", "bar"), nil //nolint:revive,staticcheck
 		},
@@ -326,7 +326,7 @@ func TestPipeWithErr(t *testing.T) {
 		},
 	)
 
-	ctx, err = chain4(context.Background())
+	ctx, err = pipe4(context.Background())
 	assert.Error(t, err)
 	assert.Nil(t, ctx)
 }
