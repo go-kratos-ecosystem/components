@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/json"
+	"time"
 )
 
 // If returns trueVal if condition is true, otherwise falseVal
@@ -54,6 +55,18 @@ func With[T any](value T, callbacks ...func(T) T) T {
 	}
 
 	return value
+}
+
+// Transform calls the given callback with the given value then return the result.
+//
+// Example:
+//
+//	Transform(1, strconv.Itoa) // "1"
+//	Transform("foo", func(s string) *foo {
+//		return &foo{Name: s}
+//	}) // &foo{Name: "foo"}
+func Transform[T, R any](value T, callback func(T) R) R {
+	return callback(value)
 }
 
 // Pipe is a function that takes a value and returns a value
@@ -147,4 +160,40 @@ func Scan(src any, dest any) error {
 	}
 
 	return json.Unmarshal(bytes, dest)
+}
+
+// Retry retries the given function until it returns nil or the attempts are exhausted.
+func Retry(fn func() error, attempts int, sleeps ...time.Duration) (err error) {
+	var sleep time.Duration
+	if len(sleeps) > 0 {
+		sleep = sleeps[0]
+	}
+
+	for i := 0; i < attempts; i++ {
+		if err = fn(); err == nil {
+			return nil
+		}
+		if sleep > 0 {
+			time.Sleep(sleep)
+		}
+	}
+	return
+}
+
+// Default returns defaultValue if value is zero, otherwise value.
+func Default[T comparable](value T, defaultValue T) T {
+	var zero T
+	if value == zero {
+		return defaultValue
+	}
+	return value
+}
+
+// DefaultWith returns defaultValue if value is zero, otherwise value.
+func DefaultWith[T comparable](value T, defaultValue func() T) T {
+	var zero T
+	if value == zero {
+		return defaultValue()
+	}
+	return value
 }
