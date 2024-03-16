@@ -153,3 +153,56 @@ func Chunk[S ~[]E, E any](s S, size int) (result []S) {
 	}
 	return
 }
+
+func GroupBy[S ~[]E, E any, K comparable](s S, fn func(E) K) map[K]S {
+	result := make(map[K]S)
+	for _, item := range s {
+		key := fn(item)
+		result[key] = append(result[key], item)
+	}
+	return result
+}
+
+func First[S ~[]E, E any](s S) (E, bool) {
+	if len(s) == 0 {
+		var zero E
+		return zero, false
+	}
+	return s[0], true
+}
+
+func Last[S ~[]E, E any](s S) (E, bool) {
+	if len(s) == 0 {
+		var zero E
+		return zero, false
+	}
+	return s[len(s)-1], true
+}
+
+func Find[S ~[]E, E any](s S, fn func(E) bool) (E, bool) {
+	for _, item := range s {
+		if fn(item) {
+			return item, true
+		}
+	}
+	var zero E
+	return zero, false
+}
+
+func Index[S ~[]E, E any](s S, fn func(E) bool) (int, bool) {
+	for i, item := range s {
+		if fn(item) {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
+func LastIndex[S ~[]E, E any](s S, fn func(E) bool) (int, bool) {
+	for i := len(s) - 1; i >= 0; i-- {
+		if fn(s[i]) {
+			return i, true
+		}
+	}
+	return -1, false
+}
