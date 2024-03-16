@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"context"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -119,6 +120,15 @@ func TestWhen(t *testing.T) {
 	})
 	assert.Equal(t, "bar", f3.Name)
 	assert.Equal(t, 18, f3.Age)
+}
+
+func TestTransform(t *testing.T) {
+	got := Transform("foo", func(s string) *foo {
+		return &foo{Name: s}
+	})
+	assert.Equal(t, "foo", got.Name)
+
+	assert.Equal(t, "1", Transform(1, strconv.Itoa))
 }
 
 func TestPipe(t *testing.T) {
@@ -373,4 +383,69 @@ func TestChainWithErr(t *testing.T) {
 	got, err = chain2("0")
 	assert.Error(t, err)
 	assert.Equal(t, "02", got)
+}
+
+func TestRetry(t *testing.T) {
+	// success
+	var i int
+	err := Retry(func() error {
+		i++
+		if i < 3 {
+			return assert.AnError
+		}
+		return nil
+	}, 3)
+	assert.Nil(t, err)
+	assert.Equal(t, 3, i)
+
+	// failed
+	err = Retry(func() error {
+		return assert.AnError
+	}, 3)
+	assert.Error(t, err)
+	assert.Equal(t, 3, i)
+}
+
+func TestDefault(t *testing.T) {
+	// string
+	got := Default("", "foo")
+	assert.Equal(t, "foo", got)
+
+	// int
+	got2 := Default(0, 10)
+	assert.Equal(t, 10, got2)
+
+	// struct
+	got3 := Default(foo{}, foo{Name: "bar"})
+	assert.Equal(t, "bar", got3.Name)
+
+	// ptr
+	got4 := Default(nil, &foo{Name: "bar"})
+	assert.Equal(t, "bar", got4.Name)
+}
+
+func TestDefaultWith(t *testing.T) {
+	// string
+	got := DefaultWith("", func() string {
+		return "foo"
+	})
+	assert.Equal(t, "foo", got)
+
+	// int
+	got2 := DefaultWith(0, func() int {
+		return 10
+	})
+	assert.Equal(t, 10, got2)
+
+	// struct
+	got3 := DefaultWith(foo{}, func() foo {
+		return foo{Name: "bar"}
+	})
+	assert.Equal(t, "bar", got3.Name)
+
+	// ptr
+	got4 := DefaultWith(nil, func() *foo {
+		return &foo{Name: "bar"}
+	})
+	assert.Equal(t, "bar", got4.Name)
 }
