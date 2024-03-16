@@ -20,11 +20,11 @@ func TestIs(t *testing.T) {
 	assert.False(t, Is("*dd/d", "dd/"))
 }
 
-func TestInArray(t *testing.T) {
-	assert.True(t, InArray("1", []string{"1", "2"}))
-	assert.True(t, InArray("2", []string{"1", "2"}))
-	assert.False(t, InArray("3", []string{"1", "2"}))
-	assert.False(t, InArray("12", []string{"1", "2"}))
+func TestInSlice(t *testing.T) {
+	assert.True(t, InSlice([]string{"1", "2"}, "1"))
+	assert.True(t, InSlice([]string{"1", "2"}, "2"))
+	assert.False(t, InSlice([]string{"1", "2"}, "3"))
+	assert.False(t, InSlice([]string{"1", "2"}, "12"))
 }
 
 func TestMd5(t *testing.T) {
@@ -44,7 +44,7 @@ func TestReplace(t *testing.T) {
 }
 
 func TestStrShuffle(t *testing.T) {
-	assert.True(t, InArray(Shuffle("abc"), []string{"abc", "acb", "bac", "bca", "cab", "cba"}))
+	assert.True(t, InSlice([]string{"abc", "acb", "bac", "bca", "cab", "cba"}, Shuffle("abc")))
 }
 
 func TestRandom(t *testing.T) {
