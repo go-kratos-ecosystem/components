@@ -26,12 +26,20 @@ type BeforeEvent struct {
 	From From
 }
 
+func (b *BeforeEvent) Name() string {
+	return BeforeName
+}
+
 type AfterEvent struct {
 	Ctx   context.Context
 	Req   interface{}
 	Reply interface{}
 	Err   error
 	From  From
+}
+
+func (a *AfterEvent) Name() string {
+	return AfterName
 }
 
 func Server(d *event.Dispatcher) middleware.Middleware {
@@ -46,7 +54,7 @@ func newMiddleware(d *event.Dispatcher, from From) middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
 			if d != nil {
-				d.Dispatch(BeforeName, &BeforeEvent{
+				d.Dispatch(&BeforeEvent{
 					Ctx: ctx, Req: req, From: from,
 				})
 			}
@@ -54,7 +62,7 @@ func newMiddleware(d *event.Dispatcher, from From) middleware.Middleware {
 			reply, err = handler(ctx, req)
 
 			if d != nil {
-				d.Dispatch(AfterName, &AfterEvent{
+				d.Dispatch(&AfterEvent{
 					Ctx: ctx, Req: req, Reply: reply, Err: err, From: from,
 				})
 			}
