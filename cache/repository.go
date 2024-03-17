@@ -3,8 +3,6 @@ package cache
 import (
 	"context"
 	"time"
-
-	"github.com/go-kratos-ecosystem/components/v2/helpers"
 )
 
 type Repository interface {
@@ -79,7 +77,7 @@ func (r *repository) Remember(
 			return err
 		}
 
-		return helpers.Scan(v, dest)
+		return values.Scan(v, dest)
 	}
 
 	return r.Get(ctx, key, dest)

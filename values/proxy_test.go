@@ -1,4 +1,4 @@
-package helpers
+package values
 
 import (
 	"testing"
@@ -15,15 +15,15 @@ func TestProxy_Point(t *testing.T) {
 	mock := &proxyMock{Name: "foo"}
 
 	proxy := NewProxy(mock)
-	assert.Equal(t, "foo", proxy.target.Name)
-	assert.Equal(t, 0, proxy.target.Age)
+	assert.Equal(t, "foo", proxy.value.Name)
+	assert.Equal(t, 0, proxy.value.Age)
 
 	mock2 := proxy.Tap(func(p *proxyMock) {
 		p.Name = "bar"
 		p.Age = 18
-	}).Target()
-	assert.Equal(t, "bar", proxy.target.Name)
-	assert.Equal(t, 18, proxy.target.Age)
+	}).Value()
+	assert.Equal(t, "bar", proxy.value.Name)
+	assert.Equal(t, 18, proxy.value.Age)
 	assert.Equal(t, "bar", mock.Name)
 	assert.Equal(t, mock, mock2)
 
@@ -31,9 +31,9 @@ func TestProxy_Point(t *testing.T) {
 		p.Name = "baz"
 		p.Age = 20
 		return p
-	}).Target()
-	assert.Equal(t, "baz", proxy.target.Name)
-	assert.Equal(t, 20, proxy.target.Age)
+	}).Value()
+	assert.Equal(t, "baz", proxy.value.Name)
+	assert.Equal(t, 20, proxy.value.Age)
 	assert.Equal(t, "baz", mock.Name)
 	assert.Equal(t, mock, mock3)
 
@@ -41,13 +41,13 @@ func TestProxy_Point(t *testing.T) {
 		p.Name = "qux"
 		p.Age = 22
 		return p
-	}).Target()
-	assert.Equal(t, "qux", proxy.target.Name)
-	assert.Equal(t, 22, proxy.target.Age)
+	}).Value()
+	assert.Equal(t, "qux", proxy.value.Name)
+	assert.Equal(t, 22, proxy.value.Age)
 	assert.Equal(t, "qux", mock.Name)
 	assert.Equal(t, mock, mock4)
 
-	mock5 := proxy.Target()
+	mock5 := proxy.Value()
 	assert.Equal(t, mock, mock5)
 }
 
@@ -55,24 +55,24 @@ func TestProxy_Struct(t *testing.T) {
 	mock := proxyMock{Name: "foo"}
 
 	proxy := NewProxy(mock)
-	assert.Equal(t, "foo", proxy.target.Name)
-	assert.Equal(t, 0, proxy.target.Age)
+	assert.Equal(t, "foo", proxy.value.Name)
+	assert.Equal(t, 0, proxy.value.Age)
 
 	mock2 := proxy.Tap(func(p proxyMock) {
 		p.Name = "bar"
 		p.Age = 18
-	}).Target()
-	assert.Equal(t, "foo", proxy.target.Name)
-	assert.Equal(t, 0, proxy.target.Age)
+	}).Value()
+	assert.Equal(t, "foo", proxy.value.Name)
+	assert.Equal(t, 0, proxy.value.Age)
 	assert.Equal(t, "foo", mock2.Name)
 
 	mock3 := proxy.With(func(p proxyMock) proxyMock {
 		p.Name = "baz"
 		p.Age = 20
 		return p
-	}).Target()
-	assert.Equal(t, "baz", proxy.target.Name)
-	assert.Equal(t, 20, proxy.target.Age)
+	}).Value()
+	assert.Equal(t, "baz", proxy.value.Name)
+	assert.Equal(t, 20, proxy.value.Age)
 	assert.Equal(t, "baz", mock3.Name)
 	assert.NotEqual(t, mock, mock3)
 
@@ -80,22 +80,22 @@ func TestProxy_Struct(t *testing.T) {
 		p.Name = "qux"
 		p.Age = 22
 		return p
-	}).Target()
-	assert.Equal(t, "qux", proxy.target.Name)
-	assert.Equal(t, 22, proxy.target.Age)
+	}).Value()
+	assert.Equal(t, "qux", proxy.value.Name)
+	assert.Equal(t, 22, proxy.value.Age)
 	assert.Equal(t, "qux", mock4.Name)
 	assert.NotEqual(t, mock, mock4)
 
-	mock5 := proxy.Target()
+	mock5 := proxy.Value()
 	assert.NotEqual(t, mock, mock5)
 
 	mock6 := proxy.Unless(true, func(p proxyMock) proxyMock {
 		p.Name = "quux"
 		p.Age = 24
 		return p
-	}).Target()
-	assert.Equal(t, "qux", proxy.target.Name)
-	assert.Equal(t, 22, proxy.target.Age)
+	}).Value()
+	assert.Equal(t, "qux", proxy.value.Name)
+	assert.Equal(t, 22, proxy.value.Age)
 	assert.Equal(t, "qux", mock6.Name)
 	assert.NotEqual(t, mock, mock6)
 }
