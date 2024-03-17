@@ -1,19 +1,19 @@
-package helpers
+package values
 
 type Proxy[T any] struct {
-	target T
+	value T
 }
 
-func NewProxy[T any](target T) *Proxy[T] {
+func NewProxy[T any](value T) *Proxy[T] {
 	return &Proxy[T]{
-		target: target,
+		value: value,
 	}
 }
 
 func (p *Proxy[T]) Tap(callbacks ...func(T)) *Proxy[T] {
 	for _, callback := range callbacks {
 		if callback != nil {
-			callback(p.target)
+			callback(p.value)
 		}
 	}
 	return p
@@ -22,7 +22,7 @@ func (p *Proxy[T]) Tap(callbacks ...func(T)) *Proxy[T] {
 func (p *Proxy[T]) With(callbacks ...func(T) T) *Proxy[T] {
 	for _, callback := range callbacks {
 		if callback != nil {
-			p.target = callback(p.target)
+			p.value = callback(p.value)
 		}
 	}
 	return p
@@ -39,6 +39,13 @@ func (p *Proxy[T]) Unless(condition bool, callbacks ...func(T) T) *Proxy[T] {
 	return p.When(!condition, callbacks...)
 }
 
-func (p *Proxy[T]) Target() T {
-	return p.target
+func (p *Proxy[T]) Transform(callback func(T) T) *Proxy[T] {
+	if callback != nil {
+		p.value = callback(p.value)
+	}
+	return p
+}
+
+func (p *Proxy[T]) Value() T {
+	return p.value
 }
