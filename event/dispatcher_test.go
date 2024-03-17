@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/go-kratos-ecosystem/components/v2/feature"
+	"github.com/go-kratos-ecosystem/components/v2/features"
 )
 
 type result struct {
@@ -17,7 +17,7 @@ type result struct {
 var recv = make(chan result, 1)
 
 type testListener struct {
-	feature.AsyncFeature
+	features.AsyncFeature
 }
 
 func newTestListener() *testListener {
@@ -72,7 +72,7 @@ func TestDispatcher(t *testing.T) {
 	)
 
 	d.AddListener(l, &test2Listener{})
-	assert.True(t, l.Async())
+	assert.True(t, l.AsyncFeature())
 
 	d.Dispatch("test", "test data")
 	r1 := <-recv

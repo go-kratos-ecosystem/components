@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 
-	"github.com/go-kratos-ecosystem/components/v2/feature"
+	"github.com/go-kratos-ecosystem/components/v2/features"
 )
 
 type Event string
@@ -76,7 +76,7 @@ func (d *Dispatcher) Dispatch(event Event, data any) {
 	if listeners, ok := d.listeners[event]; ok {
 		for _, listener := range listeners {
 			// if support Asyncable
-			if l, ok := listener.(feature.Asyncable); ok && l.Async() {
+			if l, ok := listener.(features.Asyncable); ok && l.Async() {
 				go d.handle(listener, event, data)
 			} else {
 				d.handle(listener, event, data)
