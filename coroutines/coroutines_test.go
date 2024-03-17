@@ -14,15 +14,15 @@ func TestWait(t *testing.T) {
 	)
 
 	Wait(func() {
-		time.Sleep(2 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 		ch <- struct{}{}
 	}, func() {
-		time.Sleep(2 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 		ch <- struct{}{}
 	})
 
 	assert.True(t, len(ch) == 2)
-	assert.True(t, time.Since(now) < 4*time.Millisecond)
+	assert.True(t, time.Since(now) < 400*time.Millisecond)
 }
 
 func TestParallel(t *testing.T) {
@@ -32,17 +32,17 @@ func TestParallel(t *testing.T) {
 	)
 
 	Parallel(2, func() {
-		time.Sleep(2 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 		ch <- struct{}{}
 	}, func() {
-		time.Sleep(2 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 		ch <- struct{}{}
 	}, func() {
-		time.Sleep(2 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 		ch <- struct{}{}
 	})
 
 	assert.True(t, len(ch) == 3)
-	assert.True(t, time.Since(now) < 6*time.Millisecond)
-	assert.True(t, time.Since(now) > 4*time.Millisecond)
+	assert.True(t, time.Since(now) < 600*time.Millisecond)
+	assert.True(t, time.Since(now) > 400*time.Millisecond)
 }

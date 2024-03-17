@@ -50,27 +50,27 @@ func TestUntil(t *testing.T) {
 	ok = Until(func() bool {
 		i++
 		return i == 3
-	}, 1*time.Millisecond)
+	}, 100*time.Millisecond)
 	assert.True(t, ok)
 	assert.Equal(t, 3, i)
-	assert.True(t, time.Since(now) > 2*time.Millisecond)
+	assert.True(t, time.Since(now) > 200*time.Millisecond)
 }
 
 func TestTimeout(t *testing.T) {
 	// success
 	err := Timeout(func() error {
-		time.Sleep(2 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 		return nil
-	}, 5*time.Millisecond)
+	}, 500*time.Millisecond)
 	assert.Nil(t, err)
 
 	// failed
 	err = Timeout(func() error {
-		time.Sleep(5 * time.Millisecond)
+		time.Sleep(500 * time.Millisecond)
 		return assert.AnError
-	}, 2*time.Millisecond)
+	}, 200*time.Millisecond)
 	assert.Error(t, err)
-	assert.Equal(t, "helpers: timeout after 2ms", err.Error())
+	assert.Equal(t, "helpers: timeout after 200ms", err.Error())
 }
 
 func TestPipe(t *testing.T) {
