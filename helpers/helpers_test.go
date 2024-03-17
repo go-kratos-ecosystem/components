@@ -3,6 +3,7 @@ package helpers
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -31,6 +32,45 @@ func TestRetry(t *testing.T) {
 	}, 3)
 	assert.Error(t, err)
 	assert.Equal(t, 3, i)
+}
+
+func TestUntil(t *testing.T) {
+	// no sleep
+	var i int
+	ok := Until(func() bool {
+		i++
+		return i == 3
+	})
+	assert.True(t, ok)
+	assert.Equal(t, 3, i)
+
+	// has sleep
+	i = 0
+	now := time.Now()
+	ok = Until(func() bool {
+		i++
+		return i == 3
+	}, 1*time.Millisecond)
+	assert.True(t, ok)
+	assert.Equal(t, 3, i)
+	assert.True(t, time.Since(now) > 2*time.Millisecond)
+}
+
+func TestTimeout(t *testing.T) {
+	// success
+	err := Timeout(func() error {
+		time.Sleep(2 * time.Millisecond)
+		return nil
+	}, 5*time.Millisecond)
+	assert.Nil(t, err)
+
+	// failed
+	err = Timeout(func() error {
+		time.Sleep(5 * time.Millisecond)
+		return assert.AnError
+	}, 2*time.Millisecond)
+	assert.Error(t, err)
+	assert.Equal(t, "helpers: timeout after 2ms", err.Error())
 }
 
 func TestPipe(t *testing.T) {
