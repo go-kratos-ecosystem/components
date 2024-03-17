@@ -72,7 +72,7 @@ func TestDispatcher(t *testing.T) {
 	)
 
 	d.AddListener(l, &test2Listener{})
-	assert.True(t, l.AsyncFeature())
+	assert.True(t, l.Async())
 
 	d.Dispatch("test", "test data")
 	r1 := <-recv
