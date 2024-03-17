@@ -1,6 +1,9 @@
 package helpers
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 // Retry retries the given function until it returns nil or the attempts are exhausted.
 func Retry(fn func() error, attempts int, sleeps ...time.Duration) (err error) {
@@ -18,6 +21,44 @@ func Retry(fn func() error, attempts int, sleeps ...time.Duration) (err error) {
 		}
 	}
 	return
+}
+
+// Until retries the given function until it returns true.
+// `sleeps` is the time to sleep between each attempt.
+// If `sleeps` is not provided, it will not sleep.
+//
+//	Until(func() bool { return true }) => true
+//	Until(func() bool { return true }, time.Second) => true
+func Until(fn func() bool, sleeps ...time.Duration) bool {
+	var sleep time.Duration
+	if len(sleeps) > 0 {
+		sleep = sleeps[0]
+	}
+
+	for !fn() {
+		if sleep > 0 {
+			time.Sleep(sleep)
+		}
+	}
+	return true
+}
+
+// Timeout runs the given function with a timeout.
+// If the function does not return before the timeout, it returns an error.
+//
+//	Timeout(func() error { return nil }, time.Second) => nil
+func Timeout(fn func() error, timeout time.Duration) error {
+	ch := make(chan error, 1)
+	defer close(ch)
+	go func() {
+		ch <- fn()
+	}()
+	select {
+	case err := <-ch:
+		return err
+	case <-time.After(timeout):
+		return fmt.Errorf("helpers: timeout after %s", timeout.String())
+	}
 }
 
 // Pipe is a function that takes a value and returns a value
