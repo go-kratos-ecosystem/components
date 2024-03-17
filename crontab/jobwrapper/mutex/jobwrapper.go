@@ -5,12 +5,12 @@ import (
 
 	"github.com/robfig/cron/v3"
 
-	"github.com/go-kratos-ecosystem/components/v2/feature"
+	"github.com/go-kratos-ecosystem/components/v2/features"
 )
 
 type Job interface {
 	cron.Job
-	feature.Named
+	features.Named
 
 	IsMutexJob()
 }
@@ -19,7 +19,7 @@ type MutexJob struct{} //nolint:revive
 
 func (m *MutexJob) IsMutexJob() {}
 
-type ExpirableJob feature.Expirable
+type ExpirableJob features.Expirable
 
 func SkipIfStillMutexRunning(opts ...Option) cron.JobWrapper {
 	o := newOptions(opts...)

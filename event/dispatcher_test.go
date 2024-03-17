@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/go-kratos-ecosystem/components/v2/feature"
+	"github.com/go-kratos-ecosystem/components/v2/features"
 )
 
 type result struct {
@@ -17,7 +17,7 @@ type result struct {
 var recv = make(chan result, 1)
 
 type testListener struct {
-	feature.AsyncFeature
+	features.AsyncFeature
 }
 
 func newTestListener() *testListener {

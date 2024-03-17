@@ -14,6 +14,12 @@ func Wait(fns ...func()) {
 	wg.Wait()
 }
 
+func Run(fns ...func()) {
+	for _, fn := range fns {
+		go fn()
+	}
+}
+
 func Parallel(max int, fns ...func()) {
 	var wg sync.WaitGroup
 	ch := make(chan struct{}, max)

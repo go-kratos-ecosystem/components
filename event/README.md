@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"github.com/go-kratos-ecosystem/components/v2/event"
-	"github.com/go-kratos-ecosystem/components/v2/feature"
+	"github.com/go-kratos-ecosystem/components/v2/features"
 )
 
 type testListener struct {
-	feature.AsyncFeature  // async feature
+	features.AsyncFeature  // async features
 }
 
 func (l *testListener) Listen() []event.Event {
