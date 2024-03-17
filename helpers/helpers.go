@@ -49,12 +49,12 @@ func Until(fn func() bool, sleeps ...time.Duration) bool {
 //	Timeout(func() error { return nil }, time.Second) => nil
 func Timeout(fn func() error, timeout time.Duration) error {
 	ch := make(chan error, 1)
-	defer close(ch)
 	go func() {
 		ch <- fn()
 	}()
 	select {
 	case err := <-ch:
+		defer close(ch)
 		return err
 	case <-time.After(timeout):
 		return fmt.Errorf("helpers: timeout after %s", timeout.String())
