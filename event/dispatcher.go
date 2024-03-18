@@ -2,8 +2,6 @@ package event
 
 import (
 	"sync"
-
-	"github.com/go-kratos-ecosystem/components/v2/features"
 )
 
 type Event interface {
@@ -59,13 +57,15 @@ func (d *Dispatcher) AddListener(listener ...Listener) {
 func (d *Dispatcher) Dispatch(event Event) {
 	if listeners, ok := d.listeners[event.Event()]; ok {
 		for _, listener := range listeners {
-			if l, ok := listener.(features.Asyncable); ok && l.Async() {
-				go d.handle(listener, event)
-				continue
-			}
 			d.handle(listener, event)
 		}
 	}
+}
+
+func (d *Dispatcher) DispatchAsync(event Event) {
+	go func() {
+		d.Dispatch(event)
+	}()
 }
 
 func (d *Dispatcher) handle(listener Listener, event Event) {

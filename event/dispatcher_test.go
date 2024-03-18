@@ -61,4 +61,10 @@ func TestDispatcher(t *testing.T) {
 	assert.NotPanics(t, func() {
 		d.Dispatch(&test2Event{})
 	})
+	assert.Len(t, ch, 0)
+
+	d.DispatchAsync(&testEvent{
+		Payload: "345",
+	})
+	assert.Equal(t, "345", <-ch)
 }
