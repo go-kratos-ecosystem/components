@@ -26,8 +26,8 @@ type BeforeEvent struct {
 	From From
 }
 
-func (b *BeforeEvent) Name() string {
-	return BeforeName
+func (b *BeforeEvent) Name() any {
+	return BeforeEvent{}
 }
 
 type AfterEvent struct {
@@ -38,8 +38,8 @@ type AfterEvent struct {
 	From  From
 }
 
-func (a *AfterEvent) Name() string {
-	return AfterName
+func (a *AfterEvent) Name() any {
+	return AfterEvent{}
 }
 
 func Server(d *event.Dispatcher) middleware.Middleware {

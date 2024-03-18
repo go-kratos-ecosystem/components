@@ -12,16 +12,16 @@ type testEvent struct {
 	Payload string
 }
 
-func (e *testEvent) Name() string {
-	return "test"
+func (e *testEvent) Name() any {
+	return testEvent{}
 }
 
 type test2Event struct {
 	Payload string
 }
 
-func (e *test2Event) Name() string {
-	return "test2"
+func (e *test2Event) Name() any {
+	return test2Event{}
 }
 
 type testListener struct{}

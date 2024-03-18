@@ -27,12 +27,12 @@ func (l *listener) Listen() []event.Event {
 func (l *listener) Handle(event event.Event) {
 	switch e := event.(type) {
 	case *BeforeEvent:
-		assert.Equal(l.t, BeforeName, event.Name())
+		assert.Equal(l.t, BeforeEvent{}, event.Name())
 		assert.Equal(l.t, e.Req, "req")
 		assert.Equal(l.t, e.Ctx, context.Background())
 		c <- e.From
 	case *AfterEvent:
-		assert.Equal(l.t, AfterName, event.Name())
+		assert.Equal(l.t, AfterEvent{}, event.Name())
 		assert.Equal(l.t, e.Req, "req")
 		assert.Equal(l.t, e.Reply, "reply")
 		assert.Nil(l.t, e.Err)
