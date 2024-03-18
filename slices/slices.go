@@ -104,7 +104,7 @@ func Unique[S ~[]E, E comparable](s S) S {
 	return result
 }
 
-func UniqueFunc[S ~[]E, E any, K comparable](s S, fn func(E) K) S {
+func UniqueBy[S ~[]E, E any, K comparable](s S, fn func(E) K) S {
 	var result S
 	seeds := make(map[K]struct{})
 	for _, item := range s {
