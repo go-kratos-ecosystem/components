@@ -58,6 +58,7 @@ func TestReduce(t *testing.T) {
 
 	s2 := []int{1, 2, 3, 4, 5}
 	assert.Equal(t, 0, Reduce(s2, func(acc, n int) int { return acc * n }))
+	assert.Equal(t, 120, Reduce(s2, func(acc, n int) int { return acc * n }, 1))
 
 	s3 := []string{"1", "2", "3", "4", "5"}
 	assert.Equal(t, "12345", Reduce(s3, func(acc, s string) string { return acc + s }))

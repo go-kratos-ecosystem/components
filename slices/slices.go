@@ -24,8 +24,11 @@ func Filter[S ~[]E, E any](s S, fn func(E) bool) []E {
 	return result
 }
 
-func Reduce[S ~[]E, E, R any](s S, fn func(R, E) R) R {
+func Reduce[S ~[]E, E, R any](s S, fn func(R, E) R, defaults ...R) R {
 	var result R
+	if len(defaults) > 0 {
+		result = defaults[0]
+	}
 	for _, item := range s {
 		result = fn(result, item)
 	}
