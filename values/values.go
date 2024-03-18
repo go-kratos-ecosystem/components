@@ -6,8 +6,6 @@ import (
 
 // If returns trueVal if condition is true, otherwise falseVal
 //
-// Example:
-//
 //	If(true, "foo", "bar") // "foo"
 //	If(false, "foo", "bar") // "bar"
 func If[T any](condition bool, trueVal T, falseVal T) T {
@@ -19,8 +17,6 @@ func If[T any](condition bool, trueVal T, falseVal T) T {
 }
 
 // Tap calls the given callback with the given value then returns the value.
-//
-// Example:
 //
 //	Tap("foo", func(s string) {
 //		fmt.Println(s) // "foo" and os.Stdout will print "foo"
@@ -39,8 +35,6 @@ func Tap[T any](value T, callbacks ...func(T)) T {
 
 // With calls the given callbacks with the given value then return the value.
 //
-// Example:
-//
 //	With("foo", func(s string) string {
 //		return s + "bar"
 //	}, func(s string) string {
@@ -58,8 +52,6 @@ func With[T any](value T, callbacks ...func(T) T) T {
 
 // Transform calls the given callback with the given value then return the result.
 //
-// Example:
-//
 //	Transform(1, strconv.Itoa) // "1"
 //	Transform("foo", func(s string) *foo {
 //		return &foo{Name: s}
@@ -69,8 +61,6 @@ func Transform[T, R any](value T, callback func(T) R) R {
 }
 
 // When calls the given callbacks with the given value if condition is true then return the value.
-//
-// Example:
 //
 //	When("foo", true, func(s string) string {
 //		return s + "bar"
@@ -87,8 +77,6 @@ func When[T any](value T, condition bool, callbacks ...func(T) T) T {
 
 // Scan sets the value of dest to the value of src.
 //
-// Example:
-//
 //	var foo string
 //	Scan("bar", &foo) // foo == "bar"
 //
@@ -104,6 +92,9 @@ func Scan(src any, dest any) error {
 }
 
 // Default returns defaultValue if value is zero, otherwise value.
+//
+//	Default("", "foo") // "foo"
+//	Default("bar", "foo") // "bar"
 func Default[T comparable](value T, defaultValue T) T {
 	var zero T
 	if value == zero {
@@ -113,6 +104,9 @@ func Default[T comparable](value T, defaultValue T) T {
 }
 
 // DefaultWithFunc returns defaultValue if value is zero, otherwise value.
+//
+//	DefaultWithFunc("", func() string { return "foo" }) // "foo"
+//	DefaultWithFunc("bar", func() string { return "foo" }) // "bar"
 func DefaultWithFunc[T comparable](value T, defaultValue func() T) T {
 	var zero T
 	if value == zero {

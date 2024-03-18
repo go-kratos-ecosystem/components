@@ -14,6 +14,14 @@ func Each[S ~[]E, E any](s S, fn func(E)) {
 	}
 }
 
+func Prepend[S ~[]E, E any](s S, items ...E) S {
+	return append(items, s...)
+}
+
+func Append[S ~[]E, E any](s S, items ...E) S {
+	return append(s, items...)
+}
+
 func Filter[S ~[]E, E any](s S, fn func(E) bool) []E {
 	var result []E
 	for _, item := range s {
@@ -24,8 +32,11 @@ func Filter[S ~[]E, E any](s S, fn func(E) bool) []E {
 	return result
 }
 
-func Reduce[S ~[]E, E, R any](s S, fn func(R, E) R) R {
+func Reduce[S ~[]E, E, R any](s S, fn func(R, E) R, defaults ...R) R {
 	var result R
+	if len(defaults) > 0 {
+		result = defaults[0]
+	}
 	for _, item := range s {
 		result = fn(result, item)
 	}
@@ -93,6 +104,19 @@ func Unique[S ~[]E, E comparable](s S) S {
 	return result
 }
 
+func UniqueBy[S ~[]E, E any, K comparable](s S, fn func(E) K) S {
+	var result S
+	seeds := make(map[K]struct{})
+	for _, item := range s {
+		key := fn(item)
+		if _, ok := seeds[key]; !ok {
+			seeds[key] = struct{}{}
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
 func Difference[S ~[]E, E comparable](s1, s2 S) S {
 	var result S
 	for _, item := range s1 {
@@ -145,10 +169,11 @@ func Partition[S ~[]E, E any](s S, fn func(E) bool) (yes, no S) {
 }
 
 func Chunk[S ~[]E, E any](s S, size int) (result []S) {
-	for i := 0; i < len(s); i += size {
+	length := len(s)
+	for i := 0; i < length; i += size {
 		end := i + size
-		if end > len(s) {
-			end = len(s)
+		if end > length {
+			end = length
 		}
 		result = append(result, s[i:end])
 	}
@@ -206,4 +231,11 @@ func LastIndex[S ~[]E, E any](s S, fn func(E) bool) (int, bool) {
 		}
 	}
 	return -1, false
+}
+
+func Fill[S ~[]E, E any](s S, value E) S {
+	for i := range s {
+		s[i] = value
+	}
+	return s
 }

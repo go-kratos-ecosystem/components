@@ -51,16 +51,3 @@ func Sum[T constraints.Ordered](nums ...T) (T, error) {
 	}
 	return sum, nil
 }
-
-func Average[T constraints.Integer | constraints.Float](nums ...T) (T, error) {
-	if len(nums) == 0 {
-		var zero T
-		return zero, ErrorEmpty
-	}
-
-	sum, err := Sum(nums...)
-	if err != nil {
-		return sum, err
-	}
-	return sum / T(len(nums)), nil
-}

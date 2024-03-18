@@ -38,6 +38,28 @@ func TestEach(t *testing.T) {
 	Each(s3, func(s string) { result3 = append(result3, T{s}) })
 }
 
+func TestPrepend(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, []int{0, 1, 2, 3}, Prepend(s1, 0))
+
+	s2 := []string{"1", "2", "3"}
+	assert.Equal(t, []string{"0", "1", "2", "3"}, Prepend(s2, "0"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	assert.Equal(t, []T{{"0"}, {"1"}, {"2"}, {"3"}}, Prepend(s3, T{"0"}))
+}
+
+func TestAppend(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, []int{1, 2, 3, 4}, Append(s1, 4))
+
+	s2 := []string{"1", "2", "3"}
+	assert.Equal(t, []string{"1", "2", "3", "4"}, Append(s2, "4"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	assert.Equal(t, []T{{"1"}, {"2"}, {"3"}, {"4"}}, Append(s3, T{"4"}))
+}
+
 func TestFilter(t *testing.T) {
 	s1 := []int{1, 2, 3, 4, 5}
 	assert.Equal(t, []int{2, 4}, Filter(s1, func(n int) bool { return n%2 == 0 }))
@@ -58,6 +80,7 @@ func TestReduce(t *testing.T) {
 
 	s2 := []int{1, 2, 3, 4, 5}
 	assert.Equal(t, 0, Reduce(s2, func(acc, n int) int { return acc * n }))
+	assert.Equal(t, 120, Reduce(s2, func(acc, n int) int { return acc * n }, 1))
 
 	s3 := []string{"1", "2", "3", "4", "5"}
 	assert.Equal(t, "12345", Reduce(s3, func(acc, s string) string { return acc + s }))
@@ -165,6 +188,17 @@ func TestUnique(t *testing.T) {
 
 	s3 := []T{{"1"}, {"2"}, {"3"}, {"1"}, {"2"}, {"3"}}
 	assert.Equal(t, []T{{"1"}, {"2"}, {"3"}}, Unique(s3))
+}
+
+func TestUniqueBy(t *testing.T) {
+	s1 := []int{1, 2, 3, 1, 2, 3}
+	assert.Equal(t, []int{1, 2, 3}, UniqueBy(s1, func(n int) int { return n }))
+
+	s2 := []string{"1", "2", "3", "1", "2", "3"}
+	assert.Equal(t, []string{"1", "2", "3"}, UniqueBy(s2, func(s string) string { return s }))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}, {"1"}, {"2"}, {"3"}}
+	assert.Equal(t, []T{{"1"}, {"2"}, {"3"}}, UniqueBy(s3, func(t T) string { return t.A }))
 }
 
 func TestDifference(t *testing.T) {
@@ -417,4 +451,18 @@ func TestLastIndex(t *testing.T) {
 	index6, ok6 := LastIndex(s6, func(t *T) bool { return t.A == "2" })
 	assert.Equal(t, -1, index6)
 	assert.False(t, ok6)
+}
+
+func TestFill(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, []int{1, 1, 1}, Fill(s1, 1))
+
+	s2 := []string{"1", "2", "3"}
+	assert.Equal(t, []string{"1", "1", "1"}, Fill(s2, "1"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	assert.Equal(t, []T{{"1"}, {"1"}, {"1"}}, Fill(s3, T{"1"}))
+
+	s4 := make([]int, 3)
+	assert.Equal(t, []int{1, 1, 1}, Fill(s4, 1))
 }
