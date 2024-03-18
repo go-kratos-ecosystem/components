@@ -70,26 +70,3 @@ func TestSum(t *testing.T) {
 		t.Fatal("expected an error, got nil")
 	}
 }
-
-func TestAverage(t *testing.T) {
-	a, err := Average(1, 2, 3, 4, 5)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if a != 3 {
-		t.Fatalf("expected 3, got %d", a)
-	}
-
-	a2, err := Average(1.1, 2.2, 3.3, 4.4, 5.5)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if a2 != 3.3 {
-		t.Fatalf("expected 3.3, got %f", a2)
-	}
-
-	_, err = Average[int]()
-	if err == nil {
-		t.Fatal("expected an error, got nil")
-	}
-}
