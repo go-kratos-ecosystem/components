@@ -452,3 +452,17 @@ func TestLastIndex(t *testing.T) {
 	assert.Equal(t, -1, index6)
 	assert.False(t, ok6)
 }
+
+func TestFill(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, []int{1, 1, 1}, Fill(s1, 1))
+
+	s2 := []string{"1", "2", "3"}
+	assert.Equal(t, []string{"1", "1", "1"}, Fill(s2, "1"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	assert.Equal(t, []T{{"1"}, {"1"}, {"1"}}, Fill(s3, T{"1"}))
+
+	s4 := make([]int, 3)
+	assert.Equal(t, []int{1, 1, 1}, Fill(s4, 1))
+}

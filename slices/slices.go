@@ -169,10 +169,11 @@ func Partition[S ~[]E, E any](s S, fn func(E) bool) (yes, no S) {
 }
 
 func Chunk[S ~[]E, E any](s S, size int) (result []S) {
-	for i := 0; i < len(s); i += size {
+	length := len(s)
+	for i := 0; i < length; i += size {
 		end := i + size
-		if end > len(s) {
-			end = len(s)
+		if end > length {
+			end = length
 		}
 		result = append(result, s[i:end])
 	}
@@ -230,4 +231,11 @@ func LastIndex[S ~[]E, E any](s S, fn func(E) bool) (int, bool) {
 		}
 	}
 	return -1, false
+}
+
+func Fill[S ~[]E, E any](s S, value E) S {
+	for i := range s {
+		s[i] = value
+	}
+	return s
 }
