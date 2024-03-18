@@ -12,7 +12,7 @@ type testEvent struct {
 	Payload string
 }
 
-func (e *testEvent) Name() any {
+func (e *testEvent) Event() any {
 	return testEvent{}
 }
 
@@ -20,7 +20,7 @@ type test2Event struct {
 	Payload string
 }
 
-func (e *test2Event) Name() any {
+func (e *test2Event) Event() any {
 	return test2Event{}
 }
 

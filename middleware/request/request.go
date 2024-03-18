@@ -26,7 +26,7 @@ type BeforeEvent struct {
 	From From
 }
 
-func (b *BeforeEvent) Name() any {
+func (b *BeforeEvent) Event() any {
 	return BeforeEvent{}
 }
 
@@ -38,7 +38,7 @@ type AfterEvent struct {
 	From  From
 }
 
-func (a *AfterEvent) Name() any {
+func (a *AfterEvent) Event() any {
 	return AfterEvent{}
 }
 
