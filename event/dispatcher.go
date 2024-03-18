@@ -7,7 +7,7 @@ import (
 )
 
 type Event interface {
-	Name() string
+	Name() any
 }
 
 type Listener interface {
@@ -16,7 +16,7 @@ type Listener interface {
 }
 
 type Dispatcher struct {
-	listeners map[string][]Listener
+	listeners map[any][]Listener
 	mu        sync.RWMutex
 	recovery  func(err any, listener Listener, event Event)
 }
@@ -31,7 +31,7 @@ func WithRecovery(recovery func(err any, listener Listener, event Event)) Option
 
 func NewDispatcher(opts ...Option) *Dispatcher {
 	d := &Dispatcher{
-		listeners: make(map[string][]Listener),
+		listeners: make(map[any][]Listener),
 	}
 
 	for _, opt := range opts {
