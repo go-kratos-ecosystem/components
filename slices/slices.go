@@ -104,6 +104,19 @@ func Unique[S ~[]E, E comparable](s S) S {
 	return result
 }
 
+func UniqueFunc[S ~[]E, E any, K comparable](s S, fn func(E) K) S {
+	var result S
+	seeds := make(map[K]struct{})
+	for _, item := range s {
+		key := fn(item)
+		if _, ok := seeds[key]; !ok {
+			seeds[key] = struct{}{}
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
 func Difference[S ~[]E, E comparable](s1, s2 S) S {
 	var result S
 	for _, item := range s1 {

@@ -190,6 +190,17 @@ func TestUnique(t *testing.T) {
 	assert.Equal(t, []T{{"1"}, {"2"}, {"3"}}, Unique(s3))
 }
 
+func TestUniqueFunc(t *testing.T) {
+	s1 := []int{1, 2, 3, 1, 2, 3}
+	assert.Equal(t, []int{1, 2, 3}, UniqueFunc(s1, func(n int) int { return n }))
+
+	s2 := []string{"1", "2", "3", "1", "2", "3"}
+	assert.Equal(t, []string{"1", "2", "3"}, UniqueFunc(s2, func(s string) string { return s }))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}, {"1"}, {"2"}, {"3"}}
+	assert.Equal(t, []T{{"1"}, {"2"}, {"3"}}, UniqueFunc(s3, func(t T) string { return t.A }))
+}
+
 func TestDifference(t *testing.T) {
 	s1 := []int{1, 2, 3}
 	s2 := []int{2, 3, 4}
