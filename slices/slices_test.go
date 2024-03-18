@@ -38,6 +38,28 @@ func TestEach(t *testing.T) {
 	Each(s3, func(s string) { result3 = append(result3, T{s}) })
 }
 
+func TestPrepend(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, []int{0, 1, 2, 3}, Prepend(s1, 0))
+
+	s2 := []string{"1", "2", "3"}
+	assert.Equal(t, []string{"0", "1", "2", "3"}, Prepend(s2, "0"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	assert.Equal(t, []T{{"0"}, {"1"}, {"2"}, {"3"}}, Prepend(s3, T{"0"}))
+}
+
+func TestAppend(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, []int{1, 2, 3, 4}, Append(s1, 4))
+
+	s2 := []string{"1", "2", "3"}
+	assert.Equal(t, []string{"1", "2", "3", "4"}, Append(s2, "4"))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	assert.Equal(t, []T{{"1"}, {"2"}, {"3"}, {"4"}}, Append(s3, T{"4"}))
+}
+
 func TestFilter(t *testing.T) {
 	s1 := []int{1, 2, 3, 4, 5}
 	assert.Equal(t, []int{2, 4}, Filter(s1, func(n int) bool { return n%2 == 0 }))

@@ -14,6 +14,14 @@ func Each[S ~[]E, E any](s S, fn func(E)) {
 	}
 }
 
+func Prepend[S ~[]E, E any](s S, items ...E) S {
+	return append(items, s...)
+}
+
+func Append[S ~[]E, E any](s S, items ...E) S {
+	return append(s, items...)
+}
+
 func Filter[S ~[]E, E any](s S, fn func(E) bool) []E {
 	var result []E
 	for _, item := range s {
