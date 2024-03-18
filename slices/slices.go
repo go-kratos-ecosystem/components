@@ -40,10 +40,11 @@ func Reverse[S ~[]E, E any](s S) S {
 	return result
 }
 
-func Concat[S ~[]E, E any](s1, s2 S) S {
-	result := make(S, 0, len(s1)+len(s2))
-	result = append(result, s1...)
-	result = append(result, s2...)
+func Concat[S ~[]E, E any](slices ...S) S {
+	var result S
+	for _, slice := range slices {
+		result = append(result, slice...)
+	}
 	return result
 }
 
