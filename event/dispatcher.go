@@ -45,11 +45,11 @@ func (d *Dispatcher) AddListener(listener ...Listener) {
 
 	for _, l := range listener {
 		for _, event := range l.Listen() {
-			event := event.Event()
-			if _, ok := d.listeners[event]; !ok {
-				d.listeners[event] = make([]Listener, 0)
+			e := event.Event()
+			if _, ok := d.listeners[e]; !ok {
+				d.listeners[e] = make([]Listener, 0)
 			}
-			d.listeners[event] = append(d.listeners[event], l)
+			d.listeners[e] = append(d.listeners[e], l)
 		}
 	}
 }
