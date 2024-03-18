@@ -63,9 +63,11 @@ func (d *Dispatcher) Dispatch(event Event) {
 }
 
 func (d *Dispatcher) DispatchAsync(event Event) {
-	go func() {
-		d.Dispatch(event)
-	}()
+	if listeners, ok := d.listeners[event.Event()]; ok {
+		for _, listener := range listeners {
+			go d.handle(listener, event)
+		}
+	}
 }
 
 func (d *Dispatcher) handle(listener Listener, event Event) {
