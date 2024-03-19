@@ -3,6 +3,7 @@ package values
 import (
 	"strconv"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -286,4 +287,36 @@ func TestDefaultWith(t *testing.T) {
 		return &foo{Name: "bar"}
 	})
 	assert.Equal(t, "bar", got4.Name)
+}
+
+func TestPtrAndVal(t *testing.T) {
+	// string
+	got := Ptr("foo")
+	assert.Equal(t, "foo", *got)
+	assert.Equal(t, "foo", Val(got))
+
+	// int
+	got2 := Ptr(10)
+	assert.Equal(t, 10, *got2)
+	assert.Equal(t, 10, Val(got2))
+
+	// struct
+	got3 := Ptr(foo{Name: "bar"})
+	assert.Equal(t, "bar", got3.Name)
+	assert.Equal(t, "bar", Val(got3).Name)
+
+	// time.Time
+	now := time.Now()
+	got4 := Ptr(now)
+	assert.Equal(t, now.String(), got4.String())
+	assert.Equal(t, now.String(), Val(got4).String())
+
+	// nil
+	got5 := Ptr[*int](nil)
+	assert.Nil(t, *got5)
+
+	// nil val
+	var nilVal *int
+	got6 := Val(nilVal)
+	assert.Equal(t, 0, got6)
 }
