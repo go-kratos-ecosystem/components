@@ -141,6 +141,16 @@ func TestIf(t *testing.T) {
 	assert.Equal(t, "bar", got)
 }
 
+func TestUnless(t *testing.T) {
+	// unless true
+	got := Unless(true, "foo", "bar")
+	assert.Equal(t, "bar", got)
+
+	// unless false
+	got = Unless(false, "foo", "bar")
+	assert.Equal(t, "foo", got)
+}
+
 func TestOptional(t *testing.T) {
 	// not nil
 	got1 := Optional(&foo{Name: "bar"})
