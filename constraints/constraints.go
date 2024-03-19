@@ -30,3 +30,8 @@ type Complex interface {
 type Ordered interface {
 	Integer | Float | ~string
 }
+
+// Numeric is a constraint that permits any numeric type.
+type Numeric interface {
+	Integer | Float | Complex
+}
