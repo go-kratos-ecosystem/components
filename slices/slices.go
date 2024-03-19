@@ -1,16 +1,16 @@
 package slices
 
-func Map[S ~[]E, E, R any](s S, fn func(E) R) []R {
+func Map[S ~[]E, E, R any](s S, fn func(E, int) R) []R {
 	result := make([]R, 0, len(s))
-	for _, item := range s {
-		result = append(result, fn(item))
+	for i, item := range s {
+		result = append(result, fn(item, i))
 	}
 	return result
 }
 
-func Each[S ~[]E, E any](s S, fn func(E)) {
-	for _, item := range s {
-		fn(item)
+func Each[S ~[]E, E any](s S, fn func(E, int)) {
+	for i, item := range s {
+		fn(item, i)
 	}
 }
 
@@ -22,23 +22,23 @@ func Append[S ~[]E, E any](s S, items ...E) S {
 	return append(s, items...)
 }
 
-func Filter[S ~[]E, E any](s S, fn func(E) bool) []E {
+func Filter[S ~[]E, E any](s S, fn func(E, int) bool) []E {
 	var result []E
-	for _, item := range s {
-		if fn(item) {
+	for i, item := range s {
+		if fn(item, i) {
 			result = append(result, item)
 		}
 	}
 	return result
 }
 
-func Reduce[S ~[]E, E, R any](s S, fn func(R, E) R, defaults ...R) R {
+func Reduce[S ~[]E, E, R any](s S, fn func(R, E, int) R, defaults ...R) R {
 	var result R
 	if len(defaults) > 0 {
 		result = defaults[0]
 	}
-	for _, item := range s {
-		result = fn(result, item)
+	for i, item := range s {
+		result = fn(result, item, i)
 	}
 	return result
 }
@@ -106,11 +106,11 @@ func Unique[S ~[]E, E comparable](s S) S {
 	return result
 }
 
-func UniqueBy[S ~[]E, E any, K comparable](s S, fn func(E) K) S {
+func UniqueBy[S ~[]E, E any, K comparable](s S, fn func(E, int) K) S {
 	var result S
 	seeds := make(map[K]struct{})
-	for _, item := range s {
-		key := fn(item)
+	for i, item := range s {
+		key := fn(item, i)
 		if _, ok := seeds[key]; !ok {
 			seeds[key] = struct{}{}
 			result = append(result, item)
@@ -159,9 +159,9 @@ func Without[S ~[]E, E comparable](s S, items ...E) S {
 	return result
 }
 
-func Partition[S ~[]E, E any](s S, fn func(E) bool) (yes, no S) {
-	for _, item := range s {
-		if fn(item) {
+func Partition[S ~[]E, E any](s S, fn func(E, int) bool) (yes, no S) {
+	for i, item := range s {
+		if fn(item, i) {
 			yes = append(yes, item)
 		} else {
 			no = append(no, item)
@@ -182,10 +182,10 @@ func Chunk[S ~[]E, E any](s S, size int) (result []S) {
 	return
 }
 
-func GroupBy[S ~[]E, E any, K comparable](s S, fn func(E) K) map[K]S {
+func GroupBy[S ~[]E, E any, K comparable](s S, fn func(E, int) K) map[K]S {
 	result := make(map[K]S)
-	for _, item := range s {
-		key := fn(item)
+	for i, item := range s {
+		key := fn(item, i)
 		result[key] = append(result[key], item)
 	}
 	return result
@@ -207,9 +207,9 @@ func Last[S ~[]E, E any](s S) (E, bool) {
 	return s[len(s)-1], true
 }
 
-func Find[S ~[]E, E any](s S, fn func(E) bool) (E, bool) {
-	for _, item := range s {
-		if fn(item) {
+func Find[S ~[]E, E any](s S, fn func(E, int) bool) (E, bool) {
+	for i, item := range s {
+		if fn(item, i) {
 			return item, true
 		}
 	}
@@ -217,18 +217,18 @@ func Find[S ~[]E, E any](s S, fn func(E) bool) (E, bool) {
 	return zero, false
 }
 
-func Index[S ~[]E, E any](s S, fn func(E) bool) (int, bool) {
+func Index[S ~[]E, E any](s S, fn func(E, int) bool) (int, bool) {
 	for i, item := range s {
-		if fn(item) {
+		if fn(item, i) {
 			return i, true
 		}
 	}
 	return -1, false
 }
 
-func LastIndex[S ~[]E, E any](s S, fn func(E) bool) (int, bool) {
+func LastIndex[S ~[]E, E any](s S, fn func(E, int) bool) (int, bool) {
 	for i := len(s) - 1; i >= 0; i-- {
-		if fn(s[i]) {
+		if fn(s[i], i) {
 			return i, true
 		}
 	}
