@@ -96,8 +96,10 @@ func LastIndexOf[S ~[]E, E comparable](s S, e E) int {
 
 func Unique[S ~[]E, E comparable](s S) S {
 	var result S
+	seeds := make(map[E]struct{})
 	for _, item := range s {
-		if !Contains(result, item) {
+		if _, ok := seeds[item]; !ok {
+			seeds[item] = struct{}{}
 			result = append(result, item)
 		}
 	}
