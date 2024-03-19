@@ -214,6 +214,9 @@ func TestUniqueBy(t *testing.T) {
 
 	s3 := []T{{"1"}, {"2"}, {"3"}, {"1"}, {"2"}, {"3"}}
 	assert.Equal(t, []T{{"1"}, {"2"}, {"3"}}, UniqueBy(s3, func(t T, _ int) string { return t.A }))
+
+	s4 := []string{"apple", "apple2", "cherry"}
+	assert.Equal(t, []string{"apple", "cherry"}, UniqueBy(s4, func(s string, _ int) string { return s[:1] }))
 }
 
 func TestDifference(t *testing.T) {
@@ -400,6 +403,38 @@ func TestFind(t *testing.T) {
 
 	var s6 []*T
 	find6, ok6 := Find(s6, func(t *T, _ int) bool { return t.A == "2" })
+	assert.Equal(t, (*T)(nil), find6)
+	assert.False(t, ok6)
+}
+
+func TestFindLast(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	find1, ok1 := FindLast(s1, func(n, _ int) bool { return n%2 == 0 })
+	assert.Equal(t, 2, find1)
+	assert.True(t, ok1)
+
+	s2 := []string{"1", "2", "3"}
+	find2, ok2 := FindLast(s2, func(s string, _ int) bool { return s == "2" })
+	assert.Equal(t, "2", find2)
+	assert.True(t, ok2)
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	find3, ok3 := FindLast(s3, func(t T, _ int) bool { return t.A == "2" })
+	assert.Equal(t, T{"2"}, find3)
+	assert.True(t, ok3)
+
+	s4 := []int{}
+	find4, ok4 := FindLast(s4, func(n, _ int) bool { return n%2 == 0 })
+	assert.Equal(t, 0, find4)
+	assert.False(t, ok4)
+
+	s5 := []string{}
+	find5, ok5 := FindLast(s5, func(s string, _ int) bool { return s == "2" })
+	assert.Equal(t, "", find5)
+	assert.False(t, ok5)
+
+	var s6 []*T
+	find6, ok6 := FindLast(s6, func(t *T, _ int) bool { return t.A == "2" })
 	assert.Equal(t, (*T)(nil), find6)
 	assert.False(t, ok6)
 }
