@@ -14,14 +14,6 @@ func If[T any](condition bool, trueVal T, falseVal T) T {
 	return falseVal
 }
 
-func NilIf[T any](condition bool, trueVal T) *T {
-	if condition {
-		return &trueVal
-	}
-
-	return nil
-}
-
 // Tap calls the given callback with the given value then returns the value.
 //
 //	Tap("foo", func(s string) {
