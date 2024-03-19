@@ -2,7 +2,7 @@ package values
 
 import "encoding/json"
 
-// If returns trueVal if condition is true, otherwise falseVal
+// If returns trueVal if condition is true, otherwise falseVal.
 //
 //	If(true, "foo", "bar") // "foo"
 //	If(false, "foo", "bar") // "bar"
@@ -12,6 +12,19 @@ func If[T any](condition bool, trueVal T, falseVal T) T {
 	}
 
 	return falseVal
+}
+
+// Optional returns the value if it is not nil, otherwise the zero value.
+//
+//	Optional(&foo{Name: "bar"}) // &foo{Name: "bar"}
+//	Optional[foo](nil) // &foo{}
+//	Optional[int](nil) // *int(0)
+func Optional[T any](value *T) *T {
+	if value != nil {
+		return value
+	}
+	var zero T
+	return &zero
 }
 
 // Tap calls the given callback with the given value then returns the value.

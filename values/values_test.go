@@ -245,6 +245,25 @@ func TestIf(t *testing.T) {
 	assert.Equal(t, "bar", got)
 }
 
+func TestOptional(t *testing.T) {
+	// not nil
+	got1 := Optional(&foo{Name: "bar"})
+	assert.Equal(t, "bar", got1.Name)
+
+	// nil
+	got2 := Optional[foo](nil)
+	assert.Equal(t, "", got2.Name)
+
+	// nil val
+	var nilVal *foo
+	got3 := Optional(nilVal)
+	assert.Equal(t, "", got3.Name)
+
+	// int ptr
+	got4 := Optional[int](nil)
+	assert.Equal(t, 0, *got4)
+}
+
 func TestDefault(t *testing.T) {
 	// string
 	got := Default("", "foo")
