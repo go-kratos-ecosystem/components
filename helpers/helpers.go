@@ -7,6 +7,12 @@ import (
 )
 
 // Retry retries the given function until it returns nil or the attempts are exhausted.
+// `sleeps` is the time to sleep between each attempt.
+// If `sleeps` is not provided, it will not sleep.
+//
+//	Retry(func() error { return nil }, 3) => nil
+//	Retry(func() error { return nil }, 3, time.Second) => nil
+//	Retry(func() error { return fmt.Errorf("error") }, 3) => error
 func Retry(fn func() error, attempts int, sleeps ...time.Duration) (err error) {
 	var sleep time.Duration
 	if len(sleeps) > 0 {
@@ -48,6 +54,7 @@ func Until(fn func() bool, sleeps ...time.Duration) bool {
 // If the function does not return before the timeout, it returns an error.
 //
 //	Timeout(func() error { return nil }, time.Second) => nil
+//	Timeout(func() error { time.Sleep(2 * time.Second); return nil }, time.Second) => error
 func Timeout(fn func() error, timeout time.Duration) error {
 	ch := make(chan error, 1)
 	go func() {

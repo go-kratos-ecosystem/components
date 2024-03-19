@@ -12,6 +12,14 @@ func If[T any](condition bool, trueVal T, falseVal T) T {
 	return falseVal
 }
 
+// Unless returns falseVal if condition is true, otherwise trueVal.
+//
+//	Unless(true, "foo", "bar") // "bar"
+//	Unless(false, "foo", "bar") // "foo"
+func Unless[T any](condition bool, falseVal T, trueVal T) T {
+	return If(condition, trueVal, falseVal)
+}
+
 // Optional returns the value if it is not nil, otherwise the zero value.
 //
 //	Optional(&foo{Name: "bar"}) // &foo{Name: "bar"}
