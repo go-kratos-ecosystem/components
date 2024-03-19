@@ -212,3 +212,39 @@ func TestChainWithErr(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, "02", got)
 }
+
+func TestErrorIf(t *testing.T) {
+	// if true
+	got := ErrorIf(true, "foo")
+	assert.Equal(t, "foo", got.Error())
+
+	// if false
+	got = ErrorIf(false, "foo")
+	assert.Nil(t, got)
+
+	// format
+	got = ErrorIf(true, "foo %s", "bar")
+	assert.Equal(t, "foo bar", got.Error())
+}
+
+func TestPanicIf(t *testing.T) {
+	// if true
+	assert.PanicsWithValue(t, "foo", func() {
+		PanicIf(true, "foo")
+	})
+
+	// if false
+	assert.NotPanics(t, func() {
+		PanicIf(false, "foo")
+	})
+
+	// format
+	assert.PanicsWithValue(t, "foo bar", func() {
+		PanicIf(true, "foo %s", "bar")
+	})
+
+	// format
+	assert.PanicsWithValue(t, "foo bar", func() {
+		PanicIf(true, "foo %s", "bar")
+	})
+}

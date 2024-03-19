@@ -1,6 +1,8 @@
 package values
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 // If returns trueVal if condition is true, otherwise falseVal.
 //

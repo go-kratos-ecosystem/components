@@ -61,6 +61,29 @@ func Timeout(fn func() error, timeout time.Duration) error {
 	}
 }
 
+// ErrorIf returns an error if the condition is true.
+//
+//	ErrorIf(true, "error") => error
+//	ErrorIf(false, "error") => nil
+//	ErrorIf(true, "error %s", "with value") => error with value
+func ErrorIf(condition bool, format string, a ...interface{}) error {
+	if condition {
+		return fmt.Errorf(format, a...)
+	}
+	return nil
+}
+
+// PanicIf panics if the condition is true.
+//
+//	PanicIf(true, "error") => panic("error")
+//	PanicIf(false, "error") => nil
+//	PanicIf(true, "error %s", "with value") => panic("error with value")
+func PanicIf(condition bool, format string, a ...interface{}) {
+	if condition {
+		panic(fmt.Sprintf(format, a...))
+	}
+}
+
 // Pipe is a function that takes a value and returns a value
 //
 //	Pipe(m1, m2, m3)(value) => m3(m2(m1(value)))
