@@ -1,9 +1,5 @@
 package values
 
-import (
-	"encoding/json"
-)
-
 // If returns trueVal if condition is true, otherwise falseVal.
 //
 //	If(true, "foo", "bar") // "foo"
@@ -131,20 +127,4 @@ func Val[T any](value *T) T {
 	}
 	var zero T
 	return zero
-}
-
-// Scan sets the value of dest to the value of src.
-//
-//	var foo string
-//	Scan("bar", &foo) // foo == "bar"
-//
-//	var bar struct {A string}
-//	Scan(struct{A string}{"foo"}, &bar) // bar == struct{A string}{"foo"}
-func Scan(src any, dest any) error {
-	bytes, err := json.Marshal(src)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(bytes, dest)
 }
