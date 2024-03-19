@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -61,6 +62,29 @@ func Timeout(fn func() error, timeout time.Duration) error {
 	}
 }
 
+// ErrorIf returns an error if the condition is true.
+//
+//	ErrorIf(true, "error") => error
+//	ErrorIf(false, "error") => nil
+//	ErrorIf(true, "error %s", "with value") => error with value
+func ErrorIf(condition bool, format string, a ...any) error {
+	if condition {
+		return fmt.Errorf(format, a...)
+	}
+	return nil
+}
+
+// PanicIf panics if the condition is true.
+//
+//	PanicIf(true, "error") => panic("error")
+//	PanicIf(false, "error") => nil
+//	PanicIf(true, "error %s", "with value") => panic("error with value")
+func PanicIf(condition bool, format string, a ...any) {
+	if condition {
+		panic(fmt.Sprintf(format, a...))
+	}
+}
+
 // Pipe is a function that takes a value and returns a value
 //
 //	Pipe(m1, m2, m3)(value) => m3(m2(m1(value)))
@@ -117,4 +141,20 @@ func ChainWithErr[T any](fns ...func(T) (T, error)) func(T) (T, error) {
 		}
 		return v, nil
 	}
+}
+
+// Scan sets the value of dest to the value of src.
+//
+//	var foo string
+//	Scan("bar", &foo) // foo == "bar"
+//
+//	var bar struct {A string}
+//	Scan(struct{A string}{"foo"}, &bar) // bar == struct{A string}{"foo"}
+func Scan(src any, dest any) error {
+	bytes, err := json.Marshal(src)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(bytes, dest)
 }
