@@ -516,3 +516,86 @@ func TestFill(t *testing.T) {
 	s4 := make([]int, 3)
 	assert.Equal(t, []int{1, 1, 1}, Fill(s4, 1))
 }
+
+func TestRandom(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Contains(t, s1, Random(s1))
+	assert.True(t, func() bool {
+		for {
+			v1, v2 := Random(s1), Random(s1)
+			if v1 != v2 {
+				return true
+			}
+		}
+	}())
+
+	s2 := []string{"1", "2", "3"}
+	assert.Contains(t, s2, Random(s2))
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	assert.Contains(t, s3, Random(s3))
+}
+
+func TestShuffle(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.True(t, func() bool {
+		for {
+			shuffled := Shuffle(s1)
+			if s1[0] != shuffled[0] || s1[1] != shuffled[1] || s1[2] != shuffled[2] {
+				return true
+			}
+		}
+	}())
+
+	s2 := []string{"1", "2", "3"}
+	assert.True(t, func() bool {
+		for {
+			shuffled := Shuffle(s2)
+			if s2[0] != shuffled[0] || s2[1] != shuffled[1] || s2[2] != shuffled[2] {
+				return true
+			}
+		}
+	}())
+
+	s3 := []T{{"1"}, {"2"}, {"3"}}
+	assert.True(t, func() bool {
+		for {
+			shuffled := Shuffle(s3)
+			if s3[0] != shuffled[0] || s3[1] != shuffled[1] || s3[2] != shuffled[2] {
+				return true
+			}
+		}
+	}())
+}
+
+func TestMin(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, 1, Min(s1))
+
+	s2 := []string{"1", "2", "3"}
+	assert.Equal(t, "1", Min(s2))
+}
+
+func TestMax(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, 3, Max(s1))
+
+	s2 := []string{"1", "2", "3"}
+	assert.Equal(t, "3", Max(s2))
+}
+
+func TestSum(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, 6, Sum(s1))
+
+	s2 := []int{}
+	assert.Equal(t, 0, Sum(s2))
+}
+
+func TestLength(t *testing.T) {
+	s1 := []int{1, 2, 3}
+	assert.Equal(t, 3, Length(s1))
+
+	s2 := []int{}
+	assert.Equal(t, 0, Length(s2))
+}

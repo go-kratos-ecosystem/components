@@ -1,5 +1,11 @@
 package slices
 
+import (
+	"math/rand"
+
+	"github.com/go-kratos-ecosystem/components/v2/constraints"
+)
+
 // Map returns a new slice containing the results of applying the given function to each item of a given slice.
 //
 //	Map([]int{1, 2, 3}, func(i, _ int) int { return i * 2 }) // []int{2, 4, 6}
@@ -374,4 +380,71 @@ func Fill[S ~[]E, E any](s S, value E) S {
 		s[i] = value
 	}
 	return s
+}
+
+// Random returns a random item of a given slice.
+//
+//	Random([]int{1, 2, 3}) // 2
+//	Random([]string{"a", "b", "c"}) // "b"
+func Random[S ~[]E, E any](s S) E {
+	return s[rand.Intn(len(s))]
+}
+
+// Shuffle returns a new slice containing the items of a given slice shuffled.
+//
+//	Shuffle([]int{1, 2, 3}) // []int{3, 1, 2}
+func Shuffle[S ~[]E, E any](s S) S {
+	result := make(S, len(s))
+	copy(result, s)
+	rand.Shuffle(len(result), func(i, j int) {
+		result[i], result[j] = result[j], result[i]
+	})
+	return result
+}
+
+// Min returns the minimum item of a given slice.
+//
+//	Min([]int{1, 2, 3}) // 1
+//	Min([]string{"a", "b", "c"}) // "a"
+func Min[S ~[]E, E constraints.Ordered](s S) E {
+	m := s[0]
+	for _, item := range s {
+		if item < m {
+			m = item
+		}
+	}
+	return m
+}
+
+// Max returns the maximum item of a given slice.
+//
+//	Max([]int{1, 2, 3}) // 3
+//	Max([]string{"a", "b", "c"}) // "c"
+func Max[S ~[]E, E constraints.Ordered](s S) E {
+	m := s[0]
+	for _, item := range s {
+		if item > m {
+			m = item
+		}
+	}
+	return m
+}
+
+// Sum returns the sum of the items of a given slice.
+//
+//	Sum([]int{1, 2, 3}) // 6
+func Sum[S ~[]E, E constraints.Numeric](s S) E {
+	var sum E
+	for _, item := range s {
+		sum += item
+	}
+	return sum
+}
+
+// Length returns the length of a given slice.
+//
+//	Length([]int{1, 2, 3}) // 3
+//	Length([]string{"a", "b", "c"}) // 3
+func Length[S ~[]E, E any](s S) int {
+	return len(s)
 }
