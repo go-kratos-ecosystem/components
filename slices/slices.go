@@ -18,6 +18,21 @@ func Map[S ~[]E, E, R any](s S, fn func(E, int) R) []R {
 	return result
 }
 
+// KeyMap returns a new map containing the results of applying the given function to each item of a given slice.
+//
+//	KeyMap([]int{1, 2, 3}, func(i, _ int) (int, int) { return i, i * 2 }) // map[int]int{1: 2, 2: 4, 3: 6}
+//	KeyMap([]string{"a", "b", "c"}, func(s string, _ int) (string, string) {
+//		return s, s + "!"
+//	}) // map[string]string{"a": "a!", "b": "b!", "c": "c!"}
+func KeyMap[S ~[]E, E, R any, K comparable](s S, fn func(E, int) (K, R)) map[K]R {
+	result := make(map[K]R)
+	for i, item := range s {
+		key, value := fn(item, i)
+		result[key] = value
+	}
+	return result
+}
+
 // Each calls the given function for each item of a given slice.
 //
 //	Each([]int{1, 2, 3}, func(i int, _ int) { fmt.Println(i) }) // 1\n2\n3\n
