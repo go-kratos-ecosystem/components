@@ -136,3 +136,30 @@ func Val[T any](value *T) T {
 	var zero T
 	return zero
 }
+
+// IsType returns true if the value is the type.
+//
+//	IsType[int](1) // true
+//	IsType[int]("foo") // false
+func IsType[T any](value any) bool {
+	_, ok := value.(T)
+	return ok
+}
+
+// IsZero returns true if the value is zero.
+//
+//	IsZero(0) // true
+//	IsZero("") // true
+//	IsZero("foo") // false
+func IsZero[T comparable](value T) bool {
+	var zero T
+	return value == zero
+}
+
+// IsEmpty returns true if the value is zero.
+//
+//	IsEmpty(0) // true
+//	IsEmpty("") // true
+func IsEmpty[T comparable](value T) bool {
+	return IsZero(value)
+}
