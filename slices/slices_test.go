@@ -29,6 +29,31 @@ func TestMap(t *testing.T) {
 	assert.Equal(t, []T{{"1"}, {"2"}, {"3"}, {"4"}, {"5"}}, Map(s3, func(s string, _ int) T { return T{s} }))
 }
 
+func TestKeyMap(t *testing.T) {
+	s1 := []int{1, 2, 3, 4, 5}
+	assert.Equal(t, map[int]int{1: 2, 2: 4, 3: 6, 4: 8, 5: 10}, KeyMap(s1, func(n, _ int) (int, int) {
+		return n, n * 2
+	}))
+
+	s2 := []int{1, 2, 3, 4, 5}
+	assert.Equal(t, map[int]string{1: "1", 2: "2", 3: "3", 4: "4", 5: "5"}, KeyMap(s2, func(n, _ int) (int, string) {
+		return n, strconv.Itoa(n)
+	}))
+
+	s3 := []string{"1", "2", "3", "4", "5"}
+	assert.Equal(t, map[string]T{"1": {"1"}, "2": {"2"}, "3": {"3"}, "4": {"4"}, "5": {"5"}}, KeyMap(s3, func(s string, _ int) (string, T) { //nolint:lll
+		return s, T{s}
+	}))
+
+	s4 := []string{"1", "2", "3", "3", "5"}
+	assert.Equal(t, map[string]int{"1": 1, "2": 2, "3": 4, "5": 5}, KeyMap(s4, func(s string, i int) (string, int) {
+		if i == 2 {
+			assert.Equal(t, "3", s)
+		}
+		return s, i + 1
+	}))
+}
+
 func TestEach(t *testing.T) {
 	s1 := []int{1, 2, 3, 4, 5}
 	var result []int
