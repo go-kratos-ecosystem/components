@@ -22,8 +22,8 @@ type mutexJob struct {
 	mutex.MutexJob // 可以偷懒实现 IsMutexJob 方法
 }
 
-// Name 分布式锁名称，同名的任务只有一个会执行
-func (m *mutexJob) Name() string {
+// Slug 分布式锁名称，同名的任务只有一个会执行
+func (m *mutexJob) Slug() string {
 	return "mutexJob"
 }
 
