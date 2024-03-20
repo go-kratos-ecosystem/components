@@ -1,6 +1,7 @@
 package values
 
 import (
+	"errors"
 	"strconv"
 	"testing"
 	"time"
@@ -12,6 +13,14 @@ type foo struct {
 	Name string
 	Age  int
 }
+
+type testInterface interface {
+	testFunc()
+}
+
+type testStruct struct{}
+
+func (t testStruct) testFunc() {}
 
 func TestTap_Struct(t *testing.T) {
 	f := &foo{Name: "foo"}
@@ -244,4 +253,59 @@ func TestPtrAndVal(t *testing.T) {
 	var nilVal *int
 	got6 := Val(nilVal)
 	assert.Equal(t, 0, got6)
+}
+
+func TestIsType(t *testing.T) {
+	assert.True(t, IsType[int](10))
+	assert.False(t, IsType[int](int8(10)))
+
+	assert.True(t, IsType[string]("foo"))
+	assert.False(t, IsType[string](10))
+
+	assert.True(t, IsType[time.Time](time.Now()))
+	assert.False(t, IsType[time.Time](10))
+
+	assert.True(t, IsType[foo](foo{}))
+	assert.False(t, IsType[foo](10))
+
+	assert.True(t, IsType[*foo](&foo{}))
+	assert.False(t, IsType[foo](&foo{}))
+	assert.False(t, IsType[*foo](nil))
+
+	assert.True(t, IsType[testInterface](testStruct{}))
+	assert.True(t, IsType[interface{}](testStruct{}))
+	assert.True(t, IsType[any](testStruct{}))
+
+	assert.True(t, IsType[error](errors.New("foo")))
+	assert.False(t, IsType[error](nil))
+}
+
+func TestIsZero(t *testing.T) {
+	assert.True(t, IsZero(0))
+	assert.True(t, IsZero(""))
+	assert.True(t, IsZero(false))
+	assert.True(t, IsZero[*foo](nil))
+	assert.True(t, IsZero(0.0))
+	assert.True(t, IsZero(0.0+0i))
+
+	assert.False(t, IsZero(1))
+	assert.False(t, IsZero("foo"))
+	assert.False(t, IsZero(true))
+	assert.False(t, IsZero(1.0))
+	assert.False(t, IsZero(1.0+0i))
+}
+
+func TestIsEmpty(t *testing.T) {
+	assert.True(t, IsEmpty(""))
+	assert.True(t, IsEmpty[*foo](nil))
+	assert.True(t, IsEmpty(0))
+	assert.True(t, IsEmpty(false))
+	assert.True(t, IsEmpty(0.0))
+	assert.True(t, IsEmpty(0.0+0i))
+
+	assert.False(t, IsEmpty("foo"))
+	assert.False(t, IsEmpty(1))
+	assert.False(t, IsEmpty(true))
+	assert.False(t, IsEmpty(1.0))
+	assert.False(t, IsEmpty(1.0+0i))
 }
