@@ -11,7 +11,7 @@ type testJob struct{}
 func (t *testJob) Run() {
 }
 
-func (t *testJob) Name() string {
+func (t *testJob) Slug() string {
 	return "testJob"
 }
 

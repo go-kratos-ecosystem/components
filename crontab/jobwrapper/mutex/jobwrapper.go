@@ -10,7 +10,7 @@ import (
 
 type Job interface {
 	cron.Job
-	features.Named
+	features.Slug
 
 	IsMutexJob()
 }
@@ -33,17 +33,17 @@ func SkipIfStillMutexRunning(opts ...Option) cron.JobWrapper {
 				return
 			}
 
-			name := o.prefix + j.Name()
+			slug := o.prefix + j.Slug()
 			expiration := o.expiration
 			if ej, ok := job.(ExpirableJob); ok {
 				expiration = ej.Expiration()
 			}
 
-			if err := o.locker.Lock(name, expiration); err != nil {
-				o.logger.Info(fmt.Sprintf("crontab/jobwrapper/mutex: skip job [%s], because still mutex lock", j.Name()))
+			if err := o.locker.Lock(slug, expiration); err != nil {
+				o.logger.Info(fmt.Sprintf("crontab/jobwrapper/mutex: skip job [%s], because still mutex lock", j.Slug()))
 				return
 			}
-			defer o.locker.Unlock(name) //nolint:errcheck
+			defer o.locker.Unlock(slug) //nolint:errcheck
 
 			job.Run()
 		})

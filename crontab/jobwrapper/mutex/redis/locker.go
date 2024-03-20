@@ -19,8 +19,8 @@ func NewLocker(client redis.Cmdable) *Locker {
 	}
 }
 
-func (m *Locker) Lock(name string, expiration time.Duration) error {
-	if flag, err := m.SetNX(context.Background(), name, "1", expiration).Result(); err != nil {
+func (m *Locker) Lock(slug string, expiration time.Duration) error {
+	if flag, err := m.SetNX(context.Background(), slug, "1", expiration).Result(); err != nil {
 		return err
 	} else if !flag {
 		return mutex.ErrLocked
@@ -28,6 +28,6 @@ func (m *Locker) Lock(name string, expiration time.Duration) error {
 	return nil
 }
 
-func (m *Locker) Unlock(name string) error {
-	return m.Del(context.Background(), name).Err()
+func (m *Locker) Unlock(slug string) error {
+	return m.Del(context.Background(), slug).Err()
 }

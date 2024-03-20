@@ -8,6 +8,6 @@ import (
 var ErrLocked = errors.New("crontab/jobwrapper/mutex: job is locked")
 
 type Locker interface {
-	Lock(name string, expiration time.Duration) error
-	Unlock(name string) error
+	Lock(slug string, expiration time.Duration) error
+	Unlock(slug string) error
 }
