@@ -10,7 +10,7 @@ type Worker struct {
 }
 
 // NewWorker creates a new worker for running tasks in parallel.
-// The num parameter is the number of goroutines to run in parallel.
+// The max parameter specifies the maximum number of goroutines that can run at the same time.
 //
 // Example:
 //
@@ -20,12 +20,12 @@ type Worker struct {
 //	  // do something
 //	}...)
 //	w.Wait()
-func NewWorker(num int) *Worker {
+func NewWorker(max int) *Worker {
 	s := &Worker{
-		fns: make(chan func(), num*2), //nolint:gomnd
+		fns: make(chan func(), max*2), //nolint:gomnd
 	}
 
-	go s.work(num)
+	go s.work(max)
 
 	return s
 }
