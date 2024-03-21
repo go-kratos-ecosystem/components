@@ -14,14 +14,6 @@ type foo struct {
 	Age  int
 }
 
-type testInterface interface {
-	testFunc()
-}
-
-type testStruct struct{}
-
-func (t testStruct) testFunc() {}
-
 func TestTap_Struct(t *testing.T) {
 	f := &foo{Name: "foo"}
 
@@ -255,6 +247,14 @@ func TestPtrAndVal(t *testing.T) {
 	assert.Equal(t, 0, got6)
 }
 
+type testInterface interface {
+	testFunc()
+}
+
+type testStruct struct{}
+
+func (t testStruct) testFunc() {}
+
 func TestIsType(t *testing.T) {
 	assert.True(t, IsType[int](10))
 	assert.False(t, IsType[int](int8(10)))
@@ -278,6 +278,27 @@ func TestIsType(t *testing.T) {
 
 	assert.True(t, IsType[error](errors.New("foo")))
 	assert.False(t, IsType[error](nil))
+}
+
+func testIsType(value any) bool {
+	_, ok := value.(int)
+	return ok
+}
+
+func BenchmarkIsType_Native(b *testing.B) {
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			testIsType(10)
+		}
+	})
+}
+
+func BenchmarkIsType_Generics(b *testing.B) {
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			IsType[int](10)
+		}
+	})
 }
 
 func TestIsZero(t *testing.T) {
