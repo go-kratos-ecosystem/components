@@ -73,6 +73,24 @@ func TestTimeout(t *testing.T) {
 	assert.Equal(t, "helpers: timeout after 200ms", err.Error())
 }
 
+func TestRepeat(t *testing.T) {
+	// success
+	var i int
+	assert.NoError(t, Repeat(3, func() error { i++; return nil }))
+	assert.Equal(t, 3, i)
+
+	// failed
+	var j int
+	assert.Error(t, Repeat(3, func() error {
+		j++
+		if j == 2 {
+			return assert.AnError
+		}
+		return nil
+	}))
+	assert.Equal(t, 2, j)
+}
+
 func TestPipe(t *testing.T) {
 	// pipe functions
 	pipe := Pipe(
