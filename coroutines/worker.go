@@ -1,12 +1,25 @@
 package coroutines
 
-import "sync"
+import (
+	"sync"
+)
 
 type Worker struct {
 	fns chan func()
 	wg  sync.WaitGroup
 }
 
+// NewWorker creates a new worker for running tasks in parallel.
+// The num parameter is the number of goroutines to run in parallel.
+//
+// Example:
+//
+//	w := coroutines.NewWorker(10)
+//	defer w.Close()
+//	w.Push(func() {
+//	  // do something
+//	}...)
+//	w.Wait()
 func NewWorker(num int) *Worker {
 	s := &Worker{
 		fns: make(chan func(), num*2), //nolint:gomnd
@@ -21,22 +34,16 @@ func (s *Worker) work(num int) {
 	ch := make(chan struct{}, num)
 	defer close(ch)
 
-	for {
-		select {
-		case fn, ok := <-s.fns:
-			if !ok {
-				return
-			}
-			ch <- struct{}{}
-			go func(fn func()) {
-				defer func() {
-					<-ch
-					s.wg.Done()
-				}()
+	for fn := range s.fns {
+		ch <- struct{}{}
+		go func(fn func()) {
+			defer func() {
+				<-ch
+				s.wg.Done()
+			}()
 
-				fn()
-			}(fn)
-		}
+			fn()
+		}(fn)
 	}
 }
 
