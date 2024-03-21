@@ -69,6 +69,19 @@ func Timeout(fn func() error, timeout time.Duration) error {
 	}
 }
 
+// Repeat runs the given function `times` times or until an error is returned.
+//
+//	Repeat(3, func() error { fmt.Println("hello"); return nil }) => prints hello 3 times and returns nil
+//	Repeat(3, func() error { return fmt.Errorf("error") }) => returns error
+func Repeat(times int, fn func() error) error {
+	for i := 0; i < times; i++ {
+		if err := fn(); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // ErrorIf returns an error if the condition is true.
 //
 //	ErrorIf(true, "error") => error
