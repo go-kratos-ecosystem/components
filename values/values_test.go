@@ -140,6 +140,26 @@ func TestIf(t *testing.T) {
 	// if false
 	got = If(false, "foo", "bar")
 	assert.Equal(t, "bar", got)
+
+	// slices
+	opts := []string{"foo", "bar"}
+	got2 := If(true, append(opts, "baz"), opts)
+	assert.Equal(t, []string{"foo", "bar", "baz"}, got2)
+	got3 := If(false, append(opts, "baz"), opts)
+	assert.Equal(t, []string{"foo", "bar"}, got3)
+
+	// pointers
+	f := &foo{Name: "foo"}
+	got4 := If(true, &foo{Name: "bar"}, f)
+	assert.Equal(t, "bar", got4.Name)
+	got5 := If(false, &foo{Name: "bar"}, f)
+	assert.Equal(t, "foo", got5.Name)
+
+	// pointers is nil
+	var nilVal *foo
+	assert.Panics(t, func() {
+		If(nilVal != nil, nilVal.Name, "")
+	})
 }
 
 func TestUnless(t *testing.T) {

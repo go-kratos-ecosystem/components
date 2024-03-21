@@ -4,6 +4,15 @@ package values
 //
 //	If(true, "foo", "bar") // "foo"
 //	If(false, "foo", "bar") // "bar"
+//
+// Warning: that the trueVal and falseVal in this method will
+// also be executed during runtime, and there may be panics
+// during use. Please be cautious when using it.
+//
+// Example:
+//
+//	var nilVal *foo
+//	If(nilVal != nil, nilVal.Name, "") // panic: runtime error: invalid memory address or nil pointer dereference
 func If[T any](condition bool, trueVal T, falseVal T) T {
 	if condition {
 		return trueVal
