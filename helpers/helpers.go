@@ -10,10 +10,10 @@ import (
 // `sleeps` is the time to sleep between each attempt.
 // If `sleeps` is not provided, it will not sleep.
 //
-//	Retry(func() error { return nil }, 3) => nil
-//	Retry(func() error { return nil }, 3, time.Second) => nil
-//	Retry(func() error { return fmt.Errorf("error") }, 3) => error
-func Retry(fn func() error, attempts int, sleeps ...time.Duration) (err error) {
+//	Retry(3, func() error { return nil }) => nil
+//	Retry(3, func() error { return nil }, time.Second) => nil
+//	Retry(3, func() error { return fmt.Errorf("error") }) => error
+func Retry(attempts int, fn func() error, sleeps ...time.Duration) (err error) {
 	var sleep time.Duration
 	if len(sleeps) > 0 {
 		sleep = sleeps[0]

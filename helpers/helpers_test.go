@@ -16,20 +16,20 @@ type foo struct {
 func TestRetry(t *testing.T) {
 	// success
 	var i int
-	err := Retry(func() error {
+	err := Retry(3, func() error {
 		i++
 		if i < 3 {
 			return assert.AnError
 		}
 		return nil
-	}, 3)
+	})
 	assert.Nil(t, err)
 	assert.Equal(t, 3, i)
 
 	// failed
-	err = Retry(func() error {
+	err = Retry(3, func() error {
 		return assert.AnError
-	}, 3)
+	})
 	assert.Error(t, err)
 	assert.Equal(t, 3, i)
 }
