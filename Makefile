@@ -27,3 +27,12 @@ fmt:
 fumpt:
 	gofumpt -w -e "vendor" .
 	@echo "✅ Formatting completed"
+
+.PHONY: nilaway-install
+nilaway-install:
+	go install go.uber.org/nilaway/cmd/nilaway@latest
+
+.PHONY: nilaway
+nilaway:
+	nilaway ./...
+	@echo "✅ Nilaway completed"

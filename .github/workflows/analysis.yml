@@ -1,0 +1,24 @@
+name: Go Static Analysis
+
+on:
+  push:
+    branches:
+      - 1.x
+      - 2.x
+  pull_request:
+    branches:
+      - 1.x
+      - 2.x
+
+jobs:
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install nilaway
+        run: go install go.uber.org/nilaway/cmd/nilaway@latest
+
+      - name: nilaway
+        run: nilaway ./...
