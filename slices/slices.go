@@ -60,8 +60,8 @@ func Append[S ~[]E, E any](s S, items ...E) S {
 //
 //	Filter([]int{1, 2, 3}, func(i int, _ int) bool { return i > 1 }) // []int{2, 3}
 //	Filter([]string{"a", "b", "c"}, func(s string, _ int) bool { return s != "b" }) // []string{"a", "c"}
-func Filter[S ~[]E, E any](s S, fn func(E, int) bool) []E {
-	var result []E
+func Filter[S ~[]E, R []E, E any](s S, fn func(E, int) bool) R {
+	var result R
 	for i, item := range s {
 		if fn(item, i) {
 			result = append(result, item)
