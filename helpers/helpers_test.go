@@ -76,18 +76,18 @@ func TestTimeout(t *testing.T) {
 func TestRepeat(t *testing.T) {
 	// success
 	var i int
-	assert.NoError(t, Repeat(3, func() error { i++; return nil }))
+	assert.NoError(t, Repeat(func() error { i++; return nil }, 3))
 	assert.Equal(t, 3, i)
 
 	// failed
 	var j int
-	assert.Error(t, Repeat(3, func() error {
+	assert.Error(t, Repeat(func() error {
 		j++
 		if j == 2 {
 			return assert.AnError
 		}
 		return nil
-	}))
+	}, 3))
 	assert.Equal(t, 2, j)
 }
 

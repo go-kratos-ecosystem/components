@@ -15,17 +15,17 @@ func TestWorker(t *testing.T) {
 		ch  = make(chan struct{}, 200)
 		now = time.Now()
 	)
-	_ = helpers.Repeat(200, func() error {
+	_ = helpers.Repeat(func() error {
 		ch <- struct{}{}
 		return nil
-	})
-	_ = helpers.Repeat(100, func() error {
+	}, 200)
+	_ = helpers.Repeat(func() error {
 		fns = append(fns, func() {
 			time.Sleep(100 * time.Millisecond)
 			<-ch
 		})
 		return nil
-	})
+	}, 100)
 
 	assert.Len(t, ch, 200)
 	assert.Len(t, fns, 100)
