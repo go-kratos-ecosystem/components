@@ -1,8 +1,11 @@
 module github.com/go-kratos-ecosystem/components/v2
 
-go 1.20
+go 1.21
+
+toolchain go1.22.0
 
 require (
+	entgo.io/ent v0.13.1
 	github.com/cheggaaa/pb/v3 v3.1.5
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.16.0
@@ -54,6 +57,7 @@ require (
 	golang.org/x/arch v0.7.0 // indirect
 	golang.org/x/crypto v0.19.0 // indirect
 	golang.org/x/net v0.21.0 // indirect
+	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240213162025-012b6fc9bca9 // indirect
