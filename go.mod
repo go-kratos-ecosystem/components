@@ -1,6 +1,6 @@
 module github.com/go-kratos-ecosystem/components/v2
 
-go 1.22
+go 1.21
 
 require (
 	entgo.io/ent v0.13.1
