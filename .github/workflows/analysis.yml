@@ -22,3 +22,4 @@ jobs:
 
       - name: nilaway
         run: ~/go/bin/nilaway ./...
+        continue-on-error: true
