@@ -2,71 +2,119 @@ package pagination
 
 import "encoding/json"
 
+const (
+	defaultPerPage = 10
+	defaultPage    = 1
+)
+
 type Paginator struct {
-	Page    int `json:"page"`
-	PrePage int `json:"pre_page"`
-	Total   int `json:"total"`
+	page    int
+	prePage int
+	total   int
+
+	lastPage int
+	offset   int
+	hasMore  bool
+	prevPage int
+	nextPage int
 }
 
-func NewPaginator(page, pageSize, total int) *Paginator {
-	return &Paginator{
-		Page:    page,
-		PrePage: pageSize,
-		Total:   total,
+func NewPaginator(page, prePage, total int) *Paginator {
+	p := &Paginator{
+		page:    page,
+		prePage: prePage,
+		total:   total,
+	}
+
+	p.init()
+
+	return p
+}
+
+func (p *Paginator) init() {
+	p.setPrePage()
+	p.setLastPage()
+	p.setPage()
+
+	p.offset = (p.page - 1) * p.prePage
+	p.hasMore = p.page*p.prePage < p.total
+
+	p.prevPage = p.page
+	if p.page > 1 {
+		p.prevPage = p.page - 1
+	}
+
+	p.nextPage = p.page
+	if p.HasMore() {
+		p.nextPage = p.page + 1
+	}
+}
+
+func (p *Paginator) setPrePage() {
+	if p.prePage < 1 {
+		p.prePage = defaultPerPage
+	}
+}
+
+func (p *Paginator) setLastPage() {
+	p.lastPage = (p.total + p.prePage - 1) / p.prePage
+	if p.lastPage < 1 {
+		p.lastPage = 1
+	}
+}
+
+func (p *Paginator) setPage() {
+	if p.page < 1 {
+		p.page = defaultPage
+	}
+
+	if p.page > p.lastPage {
+		p.page = p.lastPage
 	}
 }
 
 func (p *Paginator) GetPage() int {
-	return p.Page
+	return p.page
 }
 
 func (p *Paginator) GetPerPage() int {
-	return p.PrePage
+	return p.prePage
 }
 
 func (p *Paginator) GetTotal() int {
-	return p.Total
+	return p.total
 }
 
 func (p *Paginator) GetLastPage() int {
-	return (p.Total + p.PrePage - 1) / p.PrePage
+	return p.lastPage
 }
 
 func (p *Paginator) GetOffset() int {
-	return (p.Page - 1) * p.PrePage
-}
-
-func (p *Paginator) GetLimit() int {
-	return p.PrePage
+	return p.offset
 }
 
 func (p *Paginator) HasMore() bool {
-	return p.Page*p.PrePage < p.Total
-}
-
-func (p *Paginator) GetNextPage() int {
-	if p.HasMore() {
-		return p.Page + 1
-	}
-	return p.Page
+	return p.hasMore
 }
 
 func (p *Paginator) GetPrevPage() int {
-	if p.Page > 1 {
-		return p.Page - 1
-	}
-	return p.Page
+	return p.prevPage
+}
+
+func (p *Paginator) GetNextPage() int {
+	return p.nextPage
 }
 
 func (p *Paginator) ToMap() map[string]interface{} {
 	return map[string]interface{}{
-		"page":      p.Page,
-		"pre_page":  p.PrePage,
-		"total":     p.Total,
-		"next_page": p.GetNextPage(),
-		"prev_page": p.GetPrevPage(),
-		"last_page": p.GetLastPage(),
-		"has_more":  p.HasMore(),
+		"page":      p.page,
+		"pre_page":  p.prePage,
+		"total":     p.total,
+		"last_page": p.lastPage,
+		"offset":    p.offset,
+		"has_more":  p.hasMore,
+		"prev_page": p.prevPage,
+		"next_page": p.nextPage,
 	}
 }
 
