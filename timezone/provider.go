@@ -5,35 +5,33 @@ import (
 	"time"
 )
 
-type options struct {
-	local string
+var (
+	UTC       = time.UTC
+	PRC, _    = time.LoadLocation("Asia/Shanghai")
+	Taipei, _ = time.LoadLocation("Asia/Taipei")
+)
+
+func MustLoadLocation(name string) *time.Location {
+	loc, err := time.LoadLocation(name)
+	if err != nil {
+		panic(err)
+	}
+	return loc
 }
 
-type Option func(o *options)
-
-func Local(name string) Option {
-	return func(o *options) {
-		o.local = name
-	}
+type Provider struct {
+	local *time.Location
 }
 
-func Provider(opts ...Option) func(ctx context.Context) (context.Context, error) {
-	op := options{
-		local: "UTC",
-	}
+func NewProvider(local *time.Location) *Provider {
+	return &Provider{local: local}
+}
 
-	for _, opt := range opts {
-		opt(&op)
-	}
+func (p *Provider) Bootstrap(ctx context.Context) (context.Context, error) {
+	time.Local = p.local
+	return NewContext(ctx, p.local), nil
+}
 
-	return func(ctx context.Context) (context.Context, error) {
-		location, err := time.LoadLocation(op.local)
-		if err != nil {
-			return ctx, err
-		}
-
-		time.Local = location
-
-		return NewContext(ctx, location), nil
-	}
+func (p *Provider) Terminate(ctx context.Context) (context.Context, error) {
+	return ctx, nil
 }

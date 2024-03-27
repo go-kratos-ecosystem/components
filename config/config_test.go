@@ -18,11 +18,10 @@ type config2 struct {
 }
 
 func TestConfig(t *testing.T) {
-	ctx, err := Provider(&config{
+	ctx := NewContext(context.Background(), &config{
 		Host: "localhost",
 		Port: 8080,
-	})(context.Background())
-	assert.NoError(t, err)
+	})
 
 	cfg, ok := FromContext[*config](ctx)
 	assert.True(t, ok)

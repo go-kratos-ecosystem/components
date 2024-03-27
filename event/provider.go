@@ -1,9 +1,24 @@
 package event
 
-import "context"
+import (
+	"context"
+)
 
-func Provider(d *Dispatcher) func(ctx context.Context) (context.Context, error) {
-	return func(ctx context.Context) (context.Context, error) {
-		return NewContext(ctx, d), nil
+type Provider struct {
+	*Dispatcher
+}
+
+func NewProvider(dispatcher *Dispatcher) *Provider {
+	return &Provider{
+		Dispatcher: dispatcher,
 	}
+}
+
+func (p *Provider) Bootstrap(ctx context.Context) (context.Context, error) {
+	return NewContext(ctx, p.Dispatcher), nil
+}
+
+func (p *Provider) Terminate(ctx context.Context) (context.Context, error) {
+	p.Dispatcher.Wait() // wait for all events to be processed
+	return ctx, nil
 }

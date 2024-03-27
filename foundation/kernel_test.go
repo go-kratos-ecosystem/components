@@ -1,30 +1,65 @@
 package foundation
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-type application struct{}
+type (
+	contextKey1 struct{}
+	contextKey2 struct{}
+)
 
-func (a *application) Run() error {
-	return nil
+type provider struct {
+	t     *testing.T
+	key   any
+	value string
 }
 
-type provider struct{}
-
-func (p *provider) Bootstrap(Application) error {
-	return nil
+func newProvider(t *testing.T, key any, value string) *provider {
+	return &provider{
+		t:     t,
+		key:   key,
+		value: value,
+	}
 }
 
-func (p *provider) Terminate(Application) error {
-	return nil
+func (p *provider) Bootstrap(ctx context.Context) (context.Context, error) {
+	return context.WithValue(ctx, p.key, p.value), nil
+}
+
+func (p *provider) Terminate(ctx context.Context) (context.Context, error) {
+	v, ok := ctx.Value(p.key).(string)
+	assert.True(p.t, ok)
+	assert.Equal(p.t, p.value, v)
+
+	return ctx, nil
 }
 
 func TestKernel(t *testing.T) {
-	app := &application{}
-	k := NewKernel(app)
-	k.Register(&provider{}, &provider{})
+	ch := make(chan string, 1)
+	k := NewKernel(
+		WithHandler(HandlerFunc(func(ctx context.Context) error {
+			v1, ok := ctx.Value(contextKey1{}).(string)
+			assert.True(t, ok)
+			assert.Equal(t, "value1", v1)
+
+			v2, ok := ctx.Value(contextKey2{}).(string)
+			assert.True(t, ok)
+			assert.Equal(t, "value2", v2)
+
+			ch <- "done"
+
+			return nil
+		})),
+		WithContext(context.Background()),
+	)
+	k.Register(
+		newProvider(t, contextKey1{}, "value1"),
+		newProvider(t, contextKey2{}, "value2"),
+	)
 	assert.NoError(t, k.Run())
+	assert.Equal(t, "done", <-ch)
 }

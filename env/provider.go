@@ -1,11 +1,22 @@
 package env
 
-import "context"
+import (
+	"context"
+)
 
-func Provider(env Env) func(ctx context.Context) (context.Context, error) {
-	return func(ctx context.Context) (context.Context, error) {
-		SetEnv(env)
+type Provider struct {
+	env Env
+}
 
-		return NewContext(ctx, env), nil
-	}
+func NewProvider(env Env) *Provider {
+	return &Provider{env: env}
+}
+
+func (p *Provider) Bootstrap(ctx context.Context) (context.Context, error) {
+	SetEnv(p.env)
+	return NewContext(ctx, p.env), nil
+}
+
+func (p *Provider) Terminate(ctx context.Context) (context.Context, error) {
+	return ctx, nil
 }
