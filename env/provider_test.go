@@ -8,13 +8,20 @@ import (
 )
 
 func TestProvider(t *testing.T) {
-	ctx, err := Provider(Prod)(context.Background())
+	assert.False(t, Is(Debug))
+
+	p := NewProvider(Debug)
+	ctx, err := p.Bootstrap(context.Background())
 	assert.NoError(t, err)
 
-	env, ok := FromContext(ctx)
+	e1, ok := FromContext(ctx)
 	assert.True(t, ok)
-	assert.Equal(t, Prod, env)
+	assert.Equal(t, Debug, e1)
 
-	assert.True(t, Is(Prod))
-	assert.False(t, Is(Dev))
+	ctx2, err := p.Terminate(ctx)
+	assert.NoError(t, err)
+
+	e2, ok := FromContext(ctx2)
+	assert.True(t, ok)
+	assert.Equal(t, Debug, e2)
 }

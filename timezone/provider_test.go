@@ -8,25 +8,35 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestTimezone(t *testing.T) {
-	// before
+func TestProvider_Vars(t *testing.T) {
+	assert.Equal(t, time.UTC, UTC)
+	assert.Equal(t, "Asia/Shanghai", PRC.String())
+	assert.Equal(t, "Asia/Taipei", Taipei.String())
+}
+
+func TestMustLoadLocation(t *testing.T) {
+	assert.Panics(t, func() {
+		MustLoadLocation("invalid")
+	})
+	assert.Equal(t, "Asia/Shanghai", MustLoadLocation("Asia/Shanghai").String())
+}
+
+func TestProvider(t *testing.T) {
 	assert.Equal(t, "Local", time.Local.String())
-	ctx1, err1 := Provider()(context.Background())
-	assert.NoError(t, err1)
-	assert.Equal(t, "UTC", time.Local.String())
-	local1, ok1 := FromContext(ctx1)
-	assert.True(t, ok1)
-	assert.Equal(t, "UTC", local1.String())
 
-	// after
-	ctx2, err2 := Provider(Local("Asia/Shanghai"))(context.Background())
-	assert.NoError(t, err2)
+	p := NewProvider(PRC)
+
+	ctx, err := p.Bootstrap(context.Background())
+	assert.NoError(t, err)
 	assert.Equal(t, "Asia/Shanghai", time.Local.String())
-	local2, ok2 := FromContext(ctx2)
-	assert.True(t, ok2)
-	assert.Equal(t, "Asia/Shanghai", local2.String())
 
-	// err
-	_, err3 := Provider(Local("Asia/Beijing"))(context.Background())
-	assert.Error(t, err3)
+	l1, ok := FromContext(ctx)
+	assert.True(t, ok)
+	assert.Equal(t, "Asia/Shanghai", l1.String())
+
+	ctx2, err := p.Terminate(ctx)
+	assert.NoError(t, err)
+	l2, ok := FromContext(ctx2)
+	assert.True(t, ok)
+	assert.Equal(t, "Asia/Shanghai", l2.String())
 }

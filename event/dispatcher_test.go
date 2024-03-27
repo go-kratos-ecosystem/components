@@ -66,5 +66,6 @@ func TestDispatcher(t *testing.T) {
 	d.DispatchAsync(&testEvent{
 		Payload: "345",
 	})
+	d.Wait()
 	assert.Equal(t, "345", <-ch)
 }
