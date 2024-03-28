@@ -15,10 +15,8 @@ require (
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/term v0.18.0
 	gorm.io/driver/mysql v1.5.6
-	gorm.io/gorm v1.25.8
+	gorm.io/gorm v1.25.9
 )
-
-require golang.org/x/sync v0.6.0 // indirect
 
 require (
 	github.com/VividCortex/ewma v1.2.0 // indirect
