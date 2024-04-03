@@ -23,9 +23,15 @@ func (s *Server) Start(context.Context) error {
 	return nil
 }
 
-func (s *Server) Stop(context.Context) error {
+func (s *Server) Stop(ctx context.Context) error {
 	log.Info("[Crontab] server stopping")
-	<-s.Cron.Stop().Done()
 
-	return nil
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-s.Cron.Stop().Done():
+			return nil
+		}
+	}
 }
