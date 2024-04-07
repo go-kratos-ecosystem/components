@@ -162,6 +162,33 @@ func TestIf(t *testing.T) {
 	})
 }
 
+func TestIfFunc(t *testing.T) {
+	// if true
+	got := IfFunc(true, func() string {
+		return "foo" //nolint:goconst
+	}, func() string {
+		return "bar"
+	})
+	assert.Equal(t, "foo", got)
+
+	// if false
+	got = IfFunc(false, func() string {
+		return "foo"
+	}, func() string {
+		return "bar"
+	})
+	assert.Equal(t, "bar", got)
+
+	// zero pointer
+	var nilVal *foo
+	got = IfFunc(nilVal != nil, func() string {
+		return nilVal.Name
+	}, func() string {
+		return "nil foo"
+	})
+	assert.Equal(t, "nil foo", got)
+}
+
 func TestUnless(t *testing.T) {
 	// unless true
 	got := Unless(true, "foo", "bar")
