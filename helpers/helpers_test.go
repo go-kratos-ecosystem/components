@@ -110,7 +110,7 @@ func TestPipe(t *testing.T) {
 	// pipe functions
 	pipe2 := Pipe(
 		func(foo *foo) *foo {
-			foo.Name = "bar"
+			foo.Name = "bar" // nolint:goconst
 			return foo
 		},
 		func(foo *foo) *foo {
