@@ -8,6 +8,7 @@ package values
 // Warning: that the trueVal and falseVal in this method will
 // also be executed during runtime, and there may be panics
 // during use. Please be cautious when using it.
+// You can use IfFunc to avoid this situation.
 //
 // Example:
 //
@@ -19,6 +20,21 @@ func If[T any](condition bool, trueVal T, falseVal T) T {
 	}
 
 	return falseVal
+}
+
+// IfFunc returns trueFunc() if condition is true, otherwise falseFunc().
+//
+//	IfFunc(true, func() string {
+//		return "foo"
+//	}, func() string {
+//		return "bar"
+//	}) // "foo"
+func IfFunc[T any](condition bool, trueFunc func() T, falseFunc func() T) T {
+	if condition {
+		return trueFunc()
+	}
+
+	return falseFunc()
 }
 
 // Unless returns falseVal if condition is true, otherwise trueVal.
