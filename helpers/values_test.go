@@ -1,4 +1,4 @@
-package values
+package helpers
 
 import (
 	"errors"
@@ -8,11 +8,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 )
-
-type foo struct {
-	Name string
-	Age  int
-}
 
 func TestTap_Struct(t *testing.T) {
 	f := &foo{Name: "foo"}
