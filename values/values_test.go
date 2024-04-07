@@ -165,7 +165,7 @@ func TestIf(t *testing.T) {
 func TestIfFunc(t *testing.T) {
 	// if true
 	got := IfFunc(true, func() string {
-		return "foo"
+		return "foo" //nolint:goconst
 	}, func() string {
 		return "bar"
 	})
