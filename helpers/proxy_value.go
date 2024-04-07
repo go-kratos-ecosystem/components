@@ -1,4 +1,4 @@
-package values
+package helpers
 
 type Proxy[T any] struct {
 	value T
