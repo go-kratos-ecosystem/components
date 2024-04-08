@@ -54,6 +54,23 @@ func TestUntil(t *testing.T) {
 	assert.True(t, time.Since(now) > 200*time.Millisecond)
 }
 
+func TestUntilTimeout(t *testing.T) {
+	// success
+	err := UntilTimeout(func() bool {
+		time.Sleep(200 * time.Millisecond)
+		return true
+	}, 500*time.Millisecond)
+	assert.Nil(t, err)
+
+	// failed
+	err = UntilTimeout(func() bool {
+		time.Sleep(500 * time.Millisecond)
+		return false
+	}, 200*time.Millisecond)
+	assert.Error(t, err)
+	assert.Equal(t, "helpers: timeout after 200ms", err.Error())
+}
+
 func TestTimeout(t *testing.T) {
 	// success
 	err := Timeout(func() error {
