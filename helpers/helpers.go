@@ -50,6 +50,21 @@ func Until(fn func() bool, sleeps ...time.Duration) bool {
 	return true
 }
 
+func UntilTimeout(fn func() bool, timeout time.Duration, sleeps ...time.Duration) error {
+	ch := make(chan error, 1)
+	go func() {
+		Until(fn, sleeps...)
+		ch <- nil
+	}()
+	select {
+	case err := <-ch:
+		defer close(ch)
+		return err
+	case <-time.After(timeout):
+		return fmt.Errorf("helpers: timeout after %s", timeout.String())
+	}
+}
+
 // Timeout runs the given function with a timeout.
 // If the function does not return before the timeout, it returns an error.
 //
