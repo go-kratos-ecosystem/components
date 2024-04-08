@@ -37,21 +37,19 @@ func TestRetry(t *testing.T) {
 func TestUntil(t *testing.T) {
 	// no sleep
 	var i int
-	ok := Until(func() bool {
+	Until(func() bool {
 		i++
 		return i == 3
 	})
-	assert.True(t, ok)
 	assert.Equal(t, 3, i)
 
 	// has sleep
 	i = 0
 	now := time.Now()
-	ok = Until(func() bool {
+	Until(func() bool {
 		i++
 		return i == 3
 	}, 100*time.Millisecond)
-	assert.True(t, ok)
 	assert.Equal(t, 3, i)
 	assert.True(t, time.Since(now) > 200*time.Millisecond)
 }

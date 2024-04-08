@@ -34,9 +34,9 @@ func Retry(fn func() error, attempts int, sleeps ...time.Duration) (err error) {
 // `sleeps` is the time to sleep between each attempt.
 // If `sleeps` is not provided, it will not sleep.
 //
-//	Until(func() bool { return true }) => true
-//	Until(func() bool { return true }, time.Second) => true
-func Until(fn func() bool, sleeps ...time.Duration) bool {
+//	Until(func() bool { return true })
+//	Until(func() bool { return true }, time.Second)
+func Until(fn func() bool, sleeps ...time.Duration) {
 	var sleep time.Duration
 	if len(sleeps) > 0 {
 		sleep = sleeps[0]
@@ -47,7 +47,6 @@ func Until(fn func() bool, sleeps ...time.Duration) bool {
 			time.Sleep(sleep)
 		}
 	}
-	return true
 }
 
 // UntilTimeout retries the given function until it returns true or the timeout is reached.
