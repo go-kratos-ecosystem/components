@@ -50,6 +50,13 @@ func Until(fn func() bool, sleeps ...time.Duration) bool {
 	return true
 }
 
+// UntilTimeout retries the given function until it returns true or the timeout is reached.
+// `sleeps` is the time to sleep between each attempt.
+// If `sleeps` is not provided, it will not sleep.
+// The timeout includes the time to sleep.
+//
+//	UntilTimeout(func() bool { return true }, time.Second)
+//	UntilTimeout(func() bool { return true }, time.Second, time.Millisecond)
 func UntilTimeout(fn func() bool, timeout time.Duration, sleeps ...time.Duration) error {
 	ch := make(chan error, 1)
 	go func() {
