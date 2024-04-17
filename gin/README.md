@@ -15,7 +15,7 @@ import (
 func main() {
 	gs := ginS.NewServer(
 		gin.Default(),
-		ginS.WithAddr(":8080"),
+		ginS.Addr(":8080"),
 	)
 
 	gs.GET("/ping", func(c *gin.Context) {

@@ -1,4 +1,4 @@
-package gin
+package chi
 
 import (
 	"context"
@@ -7,32 +7,32 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestServer(t *testing.T) {
 	var (
 		srv = NewServer(
-			gin.New(),
-			Addr(":8080"),
+			chi.NewRouter(),
+			Addr(":8001"),
 		)
 		ch = make(chan string, 1)
 		wg sync.WaitGroup
 	)
 	wg.Add(1)
 
-	srv.GET("/ping", func(c *gin.Context) {
+	srv.Get("/ping", func(w http.ResponseWriter, _ *http.Request) {
 		defer wg.Done()
 		ch <- "pong"
-		c.String(200, "pong")
+		_, _ = w.Write([]byte("pong"))
 	})
 
 	go func() {
 		srv.Start(context.Background()) // nolint: errcheck
 	}()
 
-	resp, err := http.Get("http://localhost:8080/ping")
+	resp, err := http.Get("http://localhost:8001/ping")
 
 	wg.Wait()
 
