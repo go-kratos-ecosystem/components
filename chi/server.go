@@ -1,27 +1,20 @@
-package gin
+package chi
 
 import (
 	"context"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
 	"github.com/go-kratos/kratos/v2/log"
 )
 
 type Server struct {
-	*gin.Engine
-
+	*chi.Mux
 	server *http.Server
-
-	addr string
+	addr   string
 }
 
 type Option func(*Server)
-
-// Deprecated: use Addr
-func WithAddr(addr string) Option {
-	return Addr(addr)
-}
 
 func Addr(addr string) Option {
 	return func(s *Server) {
@@ -29,10 +22,10 @@ func Addr(addr string) Option {
 	}
 }
 
-func NewServer(e *gin.Engine, opts ...Option) *Server {
+func NewServer(c *chi.Mux, opts ...Option) *Server {
 	srv := &Server{
-		Engine: e,
-		addr:   ":8080",
+		Mux:  c,
+		addr: ":8080",
 	}
 
 	for _, opt := range opts {
@@ -41,18 +34,18 @@ func NewServer(e *gin.Engine, opts ...Option) *Server {
 
 	srv.server = &http.Server{
 		Addr:    srv.addr,
-		Handler: e,
+		Handler: c,
 	}
 
 	return srv
 }
 
 func (s *Server) Start(_ context.Context) error {
-	log.Infof("[GIN] server listening on: %s", s.addr)
+	log.Infof("[go-chi] server listening on: %s", s.addr)
 	return s.server.ListenAndServe()
 }
 
 func (s *Server) Stop(ctx context.Context) error {
-	log.Info("[GIN] server stopping")
+	log.Info("[go-chi] server stopping")
 	return s.server.Shutdown(ctx)
 }
