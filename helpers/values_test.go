@@ -287,6 +287,15 @@ func TestPtrAndVal(t *testing.T) {
 	var nilVal *int
 	got6 := Val(nilVal)
 	assert.Equal(t, 0, got6)
+
+	// zero value
+	got7 := Ptr(0)
+	assert.Equal(t, 0, *got7)
+	assert.Equal(t, 0, Val(got7))
+
+	got8 := Ptr("")
+	assert.Equal(t, "", *got8)
+	assert.Equal(t, "", Val(got8))
 }
 
 type testInterface interface {
