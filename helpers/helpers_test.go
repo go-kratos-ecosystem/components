@@ -385,3 +385,13 @@ func TestScan_ComplexStruct(t *testing.T) {
 	assert.Equal(t, "A1", b.Companies[0].Name)
 	assert.Equal(t, "A2", b.Companies[1].Name)
 }
+
+func TestOnce(t *testing.T) {
+	var i int
+	once := Once(func() {
+		i++
+	})
+	once()
+	once()
+	assert.Equal(t, 1, i)
+}
