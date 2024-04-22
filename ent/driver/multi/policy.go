@@ -2,6 +2,7 @@ package multi
 
 import (
 	"math/rand"
+	"sync/atomic"
 
 	"entgo.io/ent/dialect"
 )
@@ -17,10 +18,9 @@ func (f PolicyFunc) Resolve(drivers []dialect.Driver) dialect.Driver {
 }
 
 func RoundRobinPolicy() Policy {
-	var i int
+	var i int64
 	return PolicyFunc(func(drivers []dialect.Driver) dialect.Driver {
-		i = (i + 1) % len(drivers)
-		return drivers[i]
+		return drivers[int(atomic.AddInt64(&i, 1))%len(drivers)]
 	})
 }
 
