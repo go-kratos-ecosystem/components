@@ -2,6 +2,7 @@ package multi
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 
 	"entgo.io/ent"
@@ -65,6 +66,12 @@ func (d *Driver) Query(ctx context.Context, query string, args, v any) error {
 
 func (d *Driver) Tx(ctx context.Context) (dialect.Tx, error) {
 	return d.writer.Tx(ctx)
+}
+
+func (d *Driver) BeginTx(ctx context.Context, opts *sql.TxOptions) (dialect.Tx, error) {
+	return d.writer.(interface {
+		BeginTx(context.Context, *sql.TxOptions) (dialect.Tx, error)
+	}).BeginTx(ctx, opts)
 }
 
 func (d *Driver) Close() error {
