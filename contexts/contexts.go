@@ -4,10 +4,13 @@ import (
 	"context"
 )
 
-type Func func(ctx context.Context) (context.Context, error)
+type Handler func(ctx context.Context) (context.Context, error)
+
+// Deprecated: Use Handler instead.
+type Func Handler
 
 // Pipe returns a Provider that chains the provided Providers.
-func Pipe(ctx context.Context, fns ...Func) (context.Context, error) {
+func Pipe(ctx context.Context, fns ...Handler) (context.Context, error) {
 	var err error
 	for _, fn := range fns {
 		if fn != nil {
@@ -20,7 +23,7 @@ func Pipe(ctx context.Context, fns ...Func) (context.Context, error) {
 }
 
 // Chain is a reverse Pipe.
-func Chain(ctx context.Context, fns ...Func) (context.Context, error) {
+func Chain(ctx context.Context, fns ...Handler) (context.Context, error) {
 	var err error
 	for i := len(fns) - 1; i >= 0; i-- {
 		if fns[i] != nil {
