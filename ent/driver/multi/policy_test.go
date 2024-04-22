@@ -11,11 +11,13 @@ import (
 var driver1, driver2, driver3 dialect.Driver
 
 func TestPolicy_RoundRobinPolicy(t *testing.T) {
-	p := RoundRobinPolicy()
+	p1 := RoundRobinPolicy()
+	p2 := StrictRoundRobinPolicy()
 	drivers := []dialect.Driver{driver1, driver2, driver3}
 
 	for i := 0; i < 10; i++ {
-		assert.Equal(t, drivers[i%3], p.Resolve(drivers))
+		assert.Equal(t, drivers[i%3], p1.Resolve(drivers))
+		assert.Equal(t, drivers[i%3], p2.Resolve(drivers))
 	}
 }
 
@@ -28,8 +30,8 @@ func TestPolicy_RandomPolicy(t *testing.T) {
 	}
 }
 
-func BenchmarkPolicy_RoundRobinPolicy(b *testing.B) {
-	p := RoundRobinPolicy()
+func BenchmarkPolicy_StrictRoundRobinPolicy(b *testing.B) {
+	p := StrictRoundRobinPolicy()
 	drivers := []dialect.Driver{driver1, driver2, driver3}
 
 	var i int64

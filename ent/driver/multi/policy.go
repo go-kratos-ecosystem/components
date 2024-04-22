@@ -18,9 +18,17 @@ func (f PolicyFunc) Resolve(drivers []dialect.Driver) dialect.Driver {
 }
 
 func RoundRobinPolicy() Policy {
+	var i int
+	return PolicyFunc(func(drivers []dialect.Driver) dialect.Driver {
+		i = (i + 1) % len(drivers)
+		return drivers[i]
+	})
+}
+
+func StrictRoundRobinPolicy() Policy {
 	var i int64
 	return PolicyFunc(func(drivers []dialect.Driver) dialect.Driver {
-		return drivers[int(atomic.AddInt64(&i, 1))%len(drivers)]
+		return drivers[int(atomic.LoadInt64(&i))%len(drivers)]
 	})
 }
 
