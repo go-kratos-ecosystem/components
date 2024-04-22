@@ -3,6 +3,7 @@ package helpers
 import (
 	"encoding/json"
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -198,4 +199,16 @@ func Scan(src any, dest any) error {
 	}
 
 	return json.Unmarshal(bytes, dest)
+}
+
+// Once returns a function that calls the given function only once.
+//
+//	once := Once(func() { fmt.Println("hello") })
+//	once() // prints hello
+//	once() // does nothing
+func Once(fn func()) func() {
+	var once sync.Once
+	return func() {
+		once.Do(fn)
+	}
 }
