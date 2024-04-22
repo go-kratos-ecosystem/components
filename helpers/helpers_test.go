@@ -395,3 +395,18 @@ func TestOnce(t *testing.T) {
 	once()
 	assert.Equal(t, 1, i)
 }
+
+func BenchmarkOnce(b *testing.B) {
+	var i int
+	once := Once(func() {
+		i++
+	})
+
+	b.RunParallel(func(pb *testing.PB) {
+		for pb.Next() {
+			once()
+		}
+	})
+
+	assert.Equal(b, 1, i)
+}
