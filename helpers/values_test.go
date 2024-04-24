@@ -96,26 +96,40 @@ func TestWith(t *testing.T) {
 }
 
 func TestWhen(t *testing.T) {
-	f := &foo{Name: "foo"}
+	f1 := When(true, func() *foo {
+		return &foo{Name: "foo"}
+	}, nil)
+	assert.Equal(t, "foo", f1.Name)
 
-	assert.Equal(t, "foo", f.Name)
-	assert.Equal(t, 0, f.Age)
+	f2 := When(false, func() *foo {
+		return &foo{Name: "bar"}
+	}, &foo{Name: "foo"})
+	assert.Equal(t, "foo", f2.Name)
 
-	f2 := When(f, true, func(f *foo) *foo {
-		f.Name = "bar"
-		f.Age = 18
-		return f
+	f3 := When(false, func() *foo {
+		return &foo{Name: "bar"}
 	})
-	assert.Equal(t, "bar", f2.Name)
-	assert.Equal(t, 18, f2.Age)
+	assert.Nil(t, f3)
 
-	f3 := When(f, false, func(f *foo) *foo {
-		f.Name = "baz" //nolint:goconst
-		f.Age = 20
-		return f
+	f4 := When(true, func() *foo {
+		return nil
 	})
-	assert.Equal(t, "bar", f3.Name)
-	assert.Equal(t, 18, f3.Age)
+	assert.Nil(t, f4)
+
+	f5 := When(true, func() string {
+		return "foo"
+	})
+	assert.Equal(t, "foo", f5)
+
+	f6 := When(false, func() string {
+		return "foo"
+	})
+	assert.Equal(t, "", f6)
+
+	f7 := When(false, func() string {
+		return "foo"
+	}, "bar")
+	assert.Equal(t, "bar", f7)
 }
 
 func TestTransform(t *testing.T) {

@@ -103,18 +103,18 @@ func Transform[T, R any](value T, callback func(T) R) R {
 }
 
 // When calls the given callbacks with the given value if condition is true then return the value.
-//
-//	When("foo", true, func(s string) string {
-//		return s + "bar"
-//	}, func(s string) string {
-//		return s + "baz"
-//	}) // "foobarbaz"
-func When[T any](value T, condition bool, callbacks ...func(T) T) T {
+// Otherwise, return the value of the default or zero value.
+func When[T any](condition bool, callbacks func() T, defaults ...T) T {
 	if condition {
-		return With(value, callbacks...)
+		return callbacks()
 	}
 
-	return value
+	if len(defaults) > 0 {
+		return defaults[0]
+	}
+
+	var zero T
+	return zero
 }
 
 // Default returns defaultValue if value is zero, otherwise value.
