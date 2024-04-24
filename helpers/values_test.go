@@ -117,7 +117,7 @@ func TestWhen(t *testing.T) {
 	assert.Nil(t, f4)
 
 	f5 := When(true, func() string {
-		return "foo"
+		return "foo" //nolint:goconst
 	})
 	assert.Equal(t, "foo", f5)
 
