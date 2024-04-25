@@ -410,3 +410,18 @@ func BenchmarkOnce(b *testing.B) {
 
 	assert.Equal(b, 1, i)
 }
+
+func TestWhen(t *testing.T) {
+	// success
+	var i int
+	When(true, func() {
+		i++
+	})
+	assert.Equal(t, 1, i)
+
+	// failed
+	When(false, func() {
+		i++
+	})
+	assert.Equal(t, 1, i)
+}

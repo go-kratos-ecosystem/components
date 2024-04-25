@@ -212,3 +212,10 @@ func Once(fn func()) func() {
 		once.Do(fn)
 	}
 }
+
+// When calls the given callback with the given value if the condition is true.
+func When(condition bool, callback func()) {
+	if condition {
+		callback()
+	}
+}
