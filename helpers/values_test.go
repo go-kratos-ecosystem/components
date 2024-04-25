@@ -243,9 +243,60 @@ func TestDefault(t *testing.T) {
 	// ptr
 	got4 := Default(nil, &foo{Name: "bar"})
 	assert.Equal(t, "bar", got4.Name)
+
+	// more values
+	got5 := Default(0, 10, 20, 30)
+	assert.Equal(t, 10, got5)
+
+	got6 := Default(0, 0, 20)
+	assert.Equal(t, 20, got6)
 }
 
-func TestDefaultWith(t *testing.T) {
+func TestDefaultFunc(t *testing.T) {
+	// string
+	got := DefaultFunc(func() string {
+		return ""
+	}, func() string {
+		return "foo"
+	})
+	assert.Equal(t, "foo", got)
+
+	// int
+	got2 := DefaultFunc(func() int {
+		return 0
+	}, func() int {
+		return 10
+	})
+	assert.Equal(t, 10, got2)
+
+	// struct
+	got3 := DefaultFunc(func() foo {
+		return foo{}
+	}, func() foo {
+		return foo{Name: "bar"}
+	})
+	assert.Equal(t, "bar", got3.Name)
+
+	// ptr
+	got4 := DefaultFunc(func() *foo {
+		return nil
+	}, func() *foo {
+		return &foo{Name: "bar"}
+	})
+	assert.Equal(t, "bar", got4.Name)
+
+	// more values
+	got5 := DefaultFunc(func() int {
+		return 0
+	}, func() int {
+		return 0
+	}, func() int {
+		return 10
+	})
+	assert.Equal(t, 10, got5)
+}
+
+func TestDefaultWithFunc(t *testing.T) {
 	// string
 	got := DefaultWithFunc("", func() string {
 		return "foo"
@@ -269,6 +320,14 @@ func TestDefaultWith(t *testing.T) {
 		return &foo{Name: "bar"}
 	})
 	assert.Equal(t, "bar", got4.Name)
+
+	// more values
+	got5 := DefaultWithFunc(0, func() int {
+		return 0
+	}, func() int {
+		return 10
+	})
+	assert.Equal(t, 10, got5)
 }
 
 func TestPtrAndVal(t *testing.T) {
