@@ -250,6 +250,10 @@ func TestDefault(t *testing.T) {
 
 	got6 := Default(0, 0, 20)
 	assert.Equal(t, 20, got6)
+
+	// zero
+	got7 := Default(0, 0)
+	assert.Equal(t, 0, got7)
 }
 
 func TestDefaultFunc(t *testing.T) {
@@ -294,6 +298,14 @@ func TestDefaultFunc(t *testing.T) {
 		return 10
 	})
 	assert.Equal(t, 10, got5)
+
+	// zero
+	got6 := DefaultFunc(func() int {
+		return 0
+	}, func() int {
+		return 0
+	})
+	assert.Equal(t, 0, got6)
 }
 
 func TestDefaultWithFunc(t *testing.T) {
@@ -328,6 +340,12 @@ func TestDefaultWithFunc(t *testing.T) {
 		return 10
 	})
 	assert.Equal(t, 10, got5)
+
+	// zero
+	got6 := DefaultWithFunc(0, func() int {
+		return 0
+	})
+	assert.Equal(t, 0, got6)
 }
 
 func TestPtrAndVal(t *testing.T) {
