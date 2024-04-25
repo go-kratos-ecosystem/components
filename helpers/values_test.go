@@ -95,38 +95,38 @@ func TestWith(t *testing.T) {
 	assert.Equal(t, 18, f2.Age)
 }
 
-func TestWhen(t *testing.T) {
-	f1 := When(true, func() *foo {
+func TestReturnIf(t *testing.T) {
+	f1 := ReturnIf(true, func() *foo {
 		return &foo{Name: "foo"}
 	}, nil)
 	assert.Equal(t, "foo", f1.Name)
 
-	f2 := When(false, func() *foo {
+	f2 := ReturnIf(false, func() *foo {
 		return &foo{Name: "bar"}
 	}, &foo{Name: "foo"})
 	assert.Equal(t, "foo", f2.Name)
 
-	f3 := When(false, func() *foo {
+	f3 := ReturnIf(false, func() *foo {
 		return &foo{Name: "bar"}
 	})
 	assert.Nil(t, f3)
 
-	f4 := When(true, func() *foo {
+	f4 := ReturnIf(true, func() *foo {
 		return nil
 	})
 	assert.Nil(t, f4)
 
-	f5 := When(true, func() string {
+	f5 := ReturnIf(true, func() string {
 		return "foo" //nolint:goconst
 	})
 	assert.Equal(t, "foo", f5)
 
-	f6 := When(false, func() string {
+	f6 := ReturnIf(false, func() string {
 		return "foo"
 	})
 	assert.Equal(t, "", f6)
 
-	f7 := When(false, func() string {
+	f7 := ReturnIf(false, func() string {
 		return "foo"
 	}, "bar")
 	assert.Equal(t, "bar", f7)
