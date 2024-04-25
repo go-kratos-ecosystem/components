@@ -169,6 +169,7 @@ func TestIf(t *testing.T) {
 	assert.Panics(t, func() {
 		If(nilVal != nil, nilVal.Name, "")
 	})
+	assert.Equal(t, "", If(nilVal != nil, Optional(nilVal).Name, ""))
 }
 
 func TestIfFunc(t *testing.T) {
@@ -225,6 +226,25 @@ func TestOptional(t *testing.T) {
 	// int ptr
 	got4 := Optional[int](nil)
 	assert.Equal(t, 0, *got4)
+
+	// nil ptr
+	type nilStruct struct {
+		nilField *struct {
+			nilField *int
+		}
+	}
+	var nilStructVal *nilStruct
+	assert.Nil(t, Optional(nilStructVal).nilField)
+	assert.Nil(t, Optional(Optional(nilStructVal).nilField).nilField)
+	valStructVal := &nilStruct{
+		nilField: &struct {
+			nilField *int
+		}{
+			nilField: Ptr(10),
+		},
+	}
+	assert.Equal(t, 10, *Optional(valStructVal).nilField.nilField)
+	assert.Equal(t, 10, *Optional(Optional(valStructVal).nilField).nilField)
 }
 
 func TestDefault(t *testing.T) {

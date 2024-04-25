@@ -8,12 +8,13 @@ package helpers
 // Warning: that the trueVal and falseVal in this method will
 // also be executed during runtime, and there may be panics
 // during use. Please be cautious when using it.
-// You can use IfFunc to avoid this situation.
+// You can use IfFunc or Optional to avoid this situation.
 //
 // Example:
 //
 //	var nilVal *foo
 //	If(nilVal != nil, nilVal.Name, "") // panic: runtime error: invalid memory address or nil pointer dereference
+//	If(nilVal != nil, Optional(nilVal).Name, "") // ""
 func If[T any](condition bool, trueVal T, falseVal T) T {
 	if condition {
 		return trueVal
