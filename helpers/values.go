@@ -117,28 +117,54 @@ func When[T any](condition bool, callbacks func() T, defaults ...T) T {
 	return zero
 }
 
-// Default returns defaultValue if value is zero, otherwise value.
+// Default returns the first non-zero value.
+// If all values are zero, return the zero value.
 //
 //	Default("", "foo") // "foo"
 //	Default("bar", "foo") // "bar"
-func Default[T comparable](value T, defaultValue T) T {
+//	Default("", "", "foo") // "foo"
+func Default[T comparable](values ...T) T {
 	var zero T
-	if value == zero {
-		return defaultValue
+	for _, value := range values {
+		if value != zero {
+			return value
+		}
 	}
-	return value
+	return zero
+}
+
+func DefaultFunc[T comparable](callbacks ...func() T) T {
+	var zero, value T
+	for _, callback := range callbacks {
+		if callback != nil {
+			value = callback()
+			if value != zero {
+				return value
+			}
+		}
+	}
+	return zero
 }
 
 // DefaultWithFunc returns defaultValue if value is zero, otherwise value.
 //
 //	DefaultWithFunc("", func() string { return "foo" }) // "foo"
 //	DefaultWithFunc("bar", func() string { return "foo" }) // "bar"
-func DefaultWithFunc[T comparable](value T, defaultValue func() T) T {
+//	DefaultWithFunc("", func() string { return "" }, func() string { return "foo" }) // "foo"
+func DefaultWithFunc[T comparable](value T, callbacks ...func() T) T {
 	var zero T
-	if value == zero {
-		return defaultValue()
+	if value != zero {
+		return value
 	}
-	return value
+	for _, callback := range callbacks {
+		if callback != nil {
+			value = callback()
+			if value != zero {
+				return value
+			}
+		}
+	}
+	return zero
 }
 
 // Ptr returns a pointer to the value.
