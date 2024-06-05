@@ -52,6 +52,18 @@ func AppendAllowedMethods(methods ...string) Option {
 	}
 }
 
+func AllowedHeaders(headers ...string) Option {
+	return func(o *options) {
+		o.allowedHeaders = headers 
+	}
+}
+
+func AppendAllowedHeaders(headers ...string) Option {
+	return func(o *options) {
+		o.allowedHeaders = append(o.allowedHeaders, headers...)
+	}
+}
+
 func AllowedOrigins(origins ...string) Option {
 	return func(o *options) {
 		o.allowedOrigins = origins
