@@ -54,7 +54,7 @@ func AppendAllowedMethods(methods ...string) Option {
 
 func AllowedHeaders(headers ...string) Option {
 	return func(o *options) {
-		o.allowedHeaders = headers 
+		o.allowedHeaders = headers
 	}
 }
 
