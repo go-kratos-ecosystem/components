@@ -9,6 +9,8 @@ import (
 	"github.com/go-kratos-ecosystem/components/v2/cache"
 	"github.com/go-kratos-ecosystem/components/v2/codec"
 	"github.com/go-kratos-ecosystem/components/v2/codec/json"
+	"github.com/go-kratos-ecosystem/components/v2/locker"
+	redisLocker "github.com/go-kratos-ecosystem/components/v2/locker/redis"
 )
 
 type Store struct {
@@ -139,4 +141,8 @@ func (s *Store) Flush(ctx context.Context) (bool, error) {
 
 func (s *Store) GetPrefix() string {
 	return s.opts.prefix
+}
+
+func (s *Store) Lock(key string, ttl time.Duration) locker.Locker {
+	return redisLocker.NewLocker(s.redis, s.opts.prefix+key, ttl)
 }
