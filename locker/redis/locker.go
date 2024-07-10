@@ -50,7 +50,6 @@ func WithSleep(sleep time.Duration) Option {
 
 var _ locker.Locker = (*Locker)(nil)
 
-// NewLocker todo: 参数待调整
 func NewLocker(redis redis.Cmdable, name string, seconds time.Duration, opts ...Option) *Locker {
 	l := &Locker{
 		redis:   redis,
