@@ -40,7 +40,10 @@ func Codec(codec codec.Codec) Option {
 	}
 }
 
-var _ cache.Store = (*Store)(nil)
+var (
+	_ cache.Store   = (*Store)(nil)
+	_ cache.Addable = (*Store)(nil)
+)
 
 func New(redis redis.Cmdable, opts ...Option) *Store {
 	opt := &options{
@@ -141,6 +144,15 @@ func (s *Store) Flush(ctx context.Context) (bool, error) {
 
 func (s *Store) GetPrefix() string {
 	return s.opts.prefix
+}
+
+func (s *Store) Add(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
+	r := s.redis.SetNX(ctx, s.opts.prefix+key, value, ttl)
+	if r.Err() != nil {
+		return false, r.Err()
+	}
+
+	return r.Val(), nil
 }
 
 func (s *Store) Lock(key string, ttl time.Duration) locker.Locker {
