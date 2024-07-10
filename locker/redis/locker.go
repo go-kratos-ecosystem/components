@@ -56,7 +56,7 @@ func NewLocker(redis redis.Cmdable, name string, seconds time.Duration, opts ...
 		name:    name,
 		seconds: seconds,
 		owner:   uuid.New().String(),
-		sleep:   time.Millisecond * 100, //nolint:gomnd
+		sleep:   time.Millisecond * 100, //nolint:mnd
 	}
 	for _, opt := range opts {
 		opt(l)
