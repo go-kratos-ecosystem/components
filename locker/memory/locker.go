@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -12,7 +13,8 @@ import (
 
 type Locker struct {
 	locked     atomic.Bool
-	lockedTime time.Time // locked time
+	lockedTime time.Time  // locked time
+	mu         sync.Mutex // guard lockedTime
 
 	seconds time.Duration
 	owner   string
@@ -48,6 +50,9 @@ func NewLocker(seconds time.Duration, opts ...Option) *Locker {
 }
 
 func (m *Locker) acquire() bool {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
 	acquired := m.locked.CompareAndSwap(false, true)
 	if acquired {
 		m.lockedTime = time.Now()
