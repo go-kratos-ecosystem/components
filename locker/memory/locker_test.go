@@ -25,7 +25,7 @@ func TestLocker(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			err := l.Try(ctx, func() error {
-				time.Sleep(500 * time.Millisecond)
+				time.Sleep(1 * time.Second)
 				return nil
 			})
 			if err != nil && errors.Is(err, locker.ErrLocked) {
