@@ -40,7 +40,7 @@ func (o *options) applyDefault() {
 	}
 
 	if o.expiration == 0 {
-		o.expiration = time.Minute * 60 //nolint:gomnd
+		o.expiration = time.Minute * 60 //nolint:mnd
 	}
 }
 

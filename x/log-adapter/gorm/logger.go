@@ -85,24 +85,24 @@ func (l *logger) Trace(_ context.Context, begin time.Time, fc func() (sql string
 	case err != nil && l.LogLevel >= gl.Error && (!errors.Is(err, gl.ErrRecordNotFound) || !l.IgnoreRecordNotFoundError): //nolint:lll
 		sql, rows := fc()
 		if rows == -1 {
-			_ = l.Log(log.LevelFatal, fmt.Sprintf(l.traceErrStr, utils.FileWithLineNum(), err, float64(elapsed.Nanoseconds())/1e6, "-", sql)) //nolint:gomnd,lll
+			_ = l.Log(log.LevelFatal, fmt.Sprintf(l.traceErrStr, utils.FileWithLineNum(), err, float64(elapsed.Nanoseconds())/1e6, "-", sql)) //nolint:mnd,lll
 		} else {
-			_ = l.Log(log.LevelFatal, fmt.Sprintf(l.traceErrStr, utils.FileWithLineNum(), err, float64(elapsed.Nanoseconds())/1e6, rows, sql)) //nolint:gomnd,lll
+			_ = l.Log(log.LevelFatal, fmt.Sprintf(l.traceErrStr, utils.FileWithLineNum(), err, float64(elapsed.Nanoseconds())/1e6, rows, sql)) //nolint:mnd,lll
 		}
 	case elapsed > l.SlowThreshold && l.SlowThreshold != 0 && l.LogLevel >= gl.Warn:
 		sql, rows := fc()
 		slowLog := fmt.Sprintf("SLOW SQL >= %v", l.SlowThreshold)
 		if rows == -1 {
-			_ = l.Log(log.LevelWarn, fmt.Sprintf(l.traceWarnStr, utils.FileWithLineNum(), slowLog, float64(elapsed.Nanoseconds())/1e6, "-", sql)) //nolint:gomnd,lll
+			_ = l.Log(log.LevelWarn, fmt.Sprintf(l.traceWarnStr, utils.FileWithLineNum(), slowLog, float64(elapsed.Nanoseconds())/1e6, "-", sql)) //nolint:mnd,lll
 		} else {
-			_ = l.Log(log.LevelWarn, fmt.Sprintf(l.traceWarnStr, utils.FileWithLineNum(), slowLog, float64(elapsed.Nanoseconds())/1e6, rows, sql)) //nolint:gomnd,lll
+			_ = l.Log(log.LevelWarn, fmt.Sprintf(l.traceWarnStr, utils.FileWithLineNum(), slowLog, float64(elapsed.Nanoseconds())/1e6, rows, sql)) //nolint:mnd,lll
 		}
 	case l.LogLevel == gl.Info:
 		sql, rows := fc()
 		if rows == -1 {
-			_ = l.Log(log.LevelInfo, fmt.Sprintf(l.traceStr, utils.FileWithLineNum(), float64(elapsed.Nanoseconds())/1e6, "-", sql)) //nolint:gomnd,lll
+			_ = l.Log(log.LevelInfo, fmt.Sprintf(l.traceStr, utils.FileWithLineNum(), float64(elapsed.Nanoseconds())/1e6, "-", sql)) //nolint:mnd,lll
 		} else {
-			_ = l.Log(log.LevelInfo, fmt.Sprintf(l.traceStr, utils.FileWithLineNum(), float64(elapsed.Nanoseconds())/1e6, rows, sql)) //nolint:gomnd,lll
+			_ = l.Log(log.LevelInfo, fmt.Sprintf(l.traceStr, utils.FileWithLineNum(), float64(elapsed.Nanoseconds())/1e6, rows, sql)) //nolint:mnd,lll
 		}
 	}
 }
