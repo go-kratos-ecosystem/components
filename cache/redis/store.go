@@ -147,7 +147,12 @@ func (s *Store) GetPrefix() string {
 }
 
 func (s *Store) Add(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
-	r := s.redis.SetNX(ctx, s.opts.prefix+key, value, ttl)
+	valued, err := s.opts.codec.Marshal(value)
+	if err != nil {
+		return false, err
+	}
+
+	r := s.redis.SetNX(ctx, s.opts.prefix+key, valued, ttl)
 	if r.Err() != nil {
 		return false, r.Err()
 	}
