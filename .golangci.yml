@@ -13,7 +13,7 @@ linters:
     - gofumpt
     - goconst
     - goimports
-    - mnd
+    - gomnd
     - gocyclo
     - ineffassign
     - lll

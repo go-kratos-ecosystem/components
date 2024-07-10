@@ -41,7 +41,7 @@ func NewLocker(seconds time.Duration, opts ...Option) *Locker {
 	l := &Locker{
 		seconds: seconds,
 		owner:   uuid.New().String(),
-		sleep:   time.Millisecond * 100, //nolint:mnd
+		sleep:   time.Millisecond * 100, //nolint:gomnd
 	}
 	for _, opt := range opts {
 		opt(l)

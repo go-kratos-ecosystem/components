@@ -56,7 +56,7 @@ func NewLocker(redis redis.Cmdable, name string, seconds time.Duration, opts ...
 		name:    name,
 		seconds: seconds,
 		owner:   uuid.New().String(),
-		sleep:   time.Millisecond * 100, //nolint:mnd
+		sleep:   time.Millisecond * 100, //nolint:gomnd
 	}
 	for _, opt := range opts {
 		opt(l)
@@ -64,12 +64,14 @@ func NewLocker(redis redis.Cmdable, name string, seconds time.Duration, opts ...
 	return l
 }
 
-func (l *Locker) acquire(ctx context.Context) bool {
-	return l.redis.SetNX(ctx, l.name, l.owner, l.seconds).Val()
+func (l *Locker) acquire(ctx context.Context) (bool, error) {
+	return l.redis.SetNX(ctx, l.name, l.owner, l.seconds).Result()
 }
 
 func (l *Locker) Try(ctx context.Context, fn func() error) error {
-	if !l.acquire(ctx) {
+	if ok, err := l.acquire(ctx); err != nil {
+		return err
+	} else if !ok {
 		return locker.ErrLocked
 	}
 
@@ -80,7 +82,13 @@ func (l *Locker) Try(ctx context.Context, fn func() error) error {
 func (l *Locker) Until(ctx context.Context, timeout time.Duration, fn func() error) error {
 	starting := time.Now()
 
-	for l.acquire(ctx) {
+	for {
+		if ok, err := l.acquire(ctx); err != nil {
+			return err
+		} else if ok {
+			break
+		}
+
 		if time.Since(starting) > timeout {
 			return locker.ErrTimeout
 		}

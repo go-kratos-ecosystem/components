@@ -8,7 +8,7 @@ import (
 type Bytes int64
 
 const (
-	KB Bytes = 1 << (10 * (iota + 1)) //nolint:mnd
+	KB Bytes = 1 << (10 * (iota + 1)) //nolint:gomnd
 	MB
 	GB
 	TB

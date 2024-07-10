@@ -22,7 +22,7 @@ type Worker struct {
 //	w.Wait()
 func NewWorker(max int) *Worker {
 	s := &Worker{
-		fns: make(chan func(), max*2), //nolint:mnd
+		fns: make(chan func(), max*2), //nolint:gomnd
 	}
 
 	go s.work(max)
