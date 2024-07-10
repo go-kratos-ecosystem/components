@@ -15,5 +15,5 @@
 vendor/
 .idea
 _backup
-_example
+example
 .todo
