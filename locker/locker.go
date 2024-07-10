@@ -33,7 +33,7 @@ type Locker interface {
 	ForceRelease(ctx context.Context) error
 
 	// Owner return the owner of the lock.
-	Owner(ctx context.Context) string
+	Owner() string
 
 	// LockedOwner returns the current owner of the lock.
 	// If the lock is not acquired, it will return an empty string and ErrNotLocked.

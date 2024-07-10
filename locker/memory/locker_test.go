@@ -37,5 +37,5 @@ func TestLocker(t *testing.T) {
 	wg.Wait()
 	assert.Truef(t, len(errs) > 0, "expect error, got nil")
 
-	assert.NotEmpty(t, l.Owner(ctx))
+	assert.NotEmpty(t, l.Owner())
 }

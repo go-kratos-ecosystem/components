@@ -56,7 +56,7 @@ func NewLocker(redis redis.Cmdable, name string, seconds time.Duration, opts ...
 		name:    name,
 		seconds: seconds,
 		owner:   uuid.New().String(),
-		sleep:   time.Millisecond * 100,
+		sleep:   time.Millisecond * 100, //nolint:gomnd
 	}
 	for _, opt := range opts {
 		opt(l)
@@ -73,7 +73,7 @@ func (l *Locker) Try(ctx context.Context, fn func() error) error {
 		return locker.ErrLocked
 	}
 
-	defer l.Release(ctx)
+	defer l.Release(ctx) //nolint:errcheck
 	return fn()
 }
 
@@ -88,7 +88,7 @@ func (l *Locker) Until(ctx context.Context, timeout time.Duration, fn func() err
 		time.Sleep(l.sleep)
 	}
 
-	defer l.Release(ctx)
+	defer l.Release(ctx) //nolint:errcheck
 	return fn()
 }
 
@@ -106,7 +106,7 @@ func (l *Locker) ForceRelease(ctx context.Context) error {
 	return l.redis.Del(ctx, l.name).Err()
 }
 
-func (l *Locker) Owner(ctx context.Context) string {
+func (l *Locker) Owner() string {
 	return l.owner
 }
 

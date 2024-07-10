@@ -39,7 +39,7 @@ func NewLocker(seconds time.Duration, opts ...Option) *Locker {
 	l := &Locker{
 		seconds: seconds,
 		owner:   uuid.New().String(),
-		sleep:   time.Millisecond * 100,
+		sleep:   time.Millisecond * 100, //nolint:gomnd
 	}
 	for _, opt := range opts {
 		opt(l)
@@ -66,7 +66,7 @@ func (m *Locker) Try(ctx context.Context, fn func() error) error {
 		return locker.ErrLocked
 	}
 
-	defer m.Release(ctx)
+	defer m.Release(ctx) //nolint:errcheck
 	return fn()
 }
 
@@ -81,7 +81,7 @@ func (m *Locker) Until(ctx context.Context, timeout time.Duration, fn func() err
 		time.Sleep(m.sleep)
 	}
 
-	defer m.Release(ctx)
+	defer m.Release(ctx) //nolint:errcheck
 	return fn()
 }
 
@@ -97,7 +97,7 @@ func (m *Locker) ForceRelease(context.Context) error {
 	return nil
 }
 
-func (m *Locker) Owner(context.Context) string {
+func (m *Locker) Owner() string {
 	return m.owner
 }
 
