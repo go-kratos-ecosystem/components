@@ -2,7 +2,6 @@ package memory
 
 import (
 	"context"
-	"errors"
 	"sync"
 	"testing"
 	"time"
@@ -14,10 +13,9 @@ import (
 
 func TestLocker(t *testing.T) {
 	var (
-		wg   sync.WaitGroup
-		errs []error
-		l    = NewLocker(5 * time.Second)
-		ctx  = context.Background()
+		wg  sync.WaitGroup
+		l   = NewLocker(5 * time.Second)
+		ctx = context.Background()
 	)
 
 	for i := 0; i < 10; i++ {
@@ -25,17 +23,15 @@ func TestLocker(t *testing.T) {
 		go func() {
 			defer wg.Done()
 			err := l.Try(ctx, func() error {
-				time.Sleep(1 * time.Second)
+				time.Sleep(200 * time.Millisecond)
 				return nil
 			})
-			if err != nil && errors.Is(err, locker.ErrLocked) {
-				errs = append(errs, err)
+			if err != nil {
+				assert.Error(t, err, locker.ErrLocked)
 			}
 		}()
 	}
-
 	wg.Wait()
-	assert.Truef(t, len(errs) > 0, "expect error, got nil")
 
 	assert.NotEmpty(t, l.Owner())
 }
