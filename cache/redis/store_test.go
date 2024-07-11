@@ -37,7 +37,7 @@ func TestRedis_Base(t *testing.T) {
 	assert.Nil(t, err)
 	assert.True(t, ok2)
 
-	time.Sleep(time.Second)
+	time.Sleep(time.Second + 500*time.Millisecond)
 
 	ok3, err := store.Has(ctx, "test")
 	assert.Nil(t, err)
@@ -108,7 +108,7 @@ func TestRedis_Add(t *testing.T) {
 	assert.Nil(t, err)
 	assert.False(t, ok2)
 
-	time.Sleep(time.Second)
+	time.Sleep(time.Second + 500*time.Millisecond)
 	ok3, err := store.Add(ctx, "test:add", "test", time.Second)
 	assert.Nil(t, err)
 	assert.True(t, ok3)
