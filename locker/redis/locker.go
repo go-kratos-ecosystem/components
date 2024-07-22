@@ -22,7 +22,7 @@ end`
 type Locker struct {
 	redis   redis.Cmdable
 	name    string        // lock key
-	seconds time.Duration // lock ttl
+	timeout time.Duration // lock ttl
 
 	owner string        // lock value
 	sleep time.Duration // sleep duration
@@ -36,9 +36,16 @@ func WithOwner(owner string) Option {
 	}
 }
 
-func WithSeconds(seconds time.Duration) Option {
+func WithTimeout(timeout time.Duration) Option {
 	return func(l *Locker) {
-		l.seconds = seconds
+		l.timeout = timeout
+	}
+}
+
+// Deprecated: Use WithTimeout instead.
+func WithSeconds(timeout time.Duration) Option {
+	return func(l *Locker) {
+		l.timeout = timeout
 	}
 }
 
@@ -50,11 +57,11 @@ func WithSleep(sleep time.Duration) Option {
 
 var _ locker.Locker = (*Locker)(nil)
 
-func NewLocker(redis redis.Cmdable, name string, seconds time.Duration, opts ...Option) *Locker {
+func NewLocker(redis redis.Cmdable, name string, timeout time.Duration, opts ...Option) *Locker {
 	l := &Locker{
 		redis:   redis,
 		name:    name,
-		seconds: seconds,
+		timeout: timeout,
 		owner:   uuid.New().String(),
 		sleep:   time.Millisecond * 100, //nolint:mnd
 	}
@@ -65,7 +72,7 @@ func NewLocker(redis redis.Cmdable, name string, seconds time.Duration, opts ...
 }
 
 func (l *Locker) acquire(ctx context.Context) (bool, error) {
-	return l.redis.SetNX(ctx, l.name, l.owner, l.seconds).Result()
+	return l.redis.SetNX(ctx, l.name, l.owner, l.timeout).Result()
 }
 
 func (l *Locker) Try(ctx context.Context, fn func() error) error {

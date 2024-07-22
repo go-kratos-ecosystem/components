@@ -15,7 +15,9 @@ import (
 )
 
 func main() {
-	client := redis.NewClient(&redis.Options{})
+	client := redis.NewClient(&redis.Options{
+		Addr: "localhost:6379",
+    })
 
 	locker := redisLocker.NewLocker(client, "lock", 5*time.Minute)
 	_ = locker.Try(context.Background(), func() error {
