@@ -28,7 +28,7 @@ func TestLocker(t *testing.T) {
 	var (
 		wg         sync.WaitGroup
 		i          int64
-		try, until bool
+		try, until atomic.Bool
 		owner      = uuid.New().String()
 	)
 
@@ -53,12 +53,12 @@ func TestLocker(t *testing.T) {
 				return nil
 			})
 			if err != nil && errors.Is(err, locker.ErrLocked) {
-				try = true
+				try.Store(true)
 			}
 		}()
 	}
 	wg.Wait()
-	assert.True(t, try)
+	assert.True(t, try.Load())
 	assert.Equal(t, int64(1), i)
 
 	// Until
@@ -73,12 +73,12 @@ func TestLocker(t *testing.T) {
 				return nil
 			})
 			if err != nil && errors.Is(err, locker.ErrTimeout) {
-				until = true
+				until.Store(true)
 			}
 		}()
 	}
 	wg.Wait()
-	assert.False(t, until)
+	assert.False(t, until.Load())
 	assert.Equal(t, int64(11), i)
 	assert.True(t, time.Since(start) > time.Second*5)
 }
