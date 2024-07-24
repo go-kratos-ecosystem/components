@@ -23,8 +23,6 @@ type Event[T any] struct {
 	mu        sync.RWMutex
 }
 
-type Option[T any] func(*Event[T])
-
 func NewEvent[T any]() *Event[T] {
 	return &Event[T]{
 		listeners: make([]*Listener[T], 0),
