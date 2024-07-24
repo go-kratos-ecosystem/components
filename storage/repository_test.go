@@ -23,4 +23,8 @@ func TestNoopRepository(t *testing.T) {
 	assert.False(t, missing)
 
 	assert.NoError(t, repo.Rename(ctx, "noop", "noop2"))
+
+	assert.NoError(t, repo.Prepend(ctx, "noop", []byte("noop")))
+	assert.NoError(t, repo.Append(ctx, "noop", []byte("noop")))
+	assert.NoError(t, repo.Copy(ctx, "noop", "noop2"))
 }

@@ -87,9 +87,9 @@ func (s *Storage) Has(ctx context.Context, path string) (bool, error) {
 		Key:    helpers.Ptr(s.prefixer.Prefix(path)),
 	})
 	if err != nil {
-		if _, ok := err.(*s3.HeadObjectNotFound); ok {
-			return false, nil
-		}
+		// if _, ok := err.(*s3.HeadObjectNotFound); ok {
+		// 	return false, nil
+		// }
 		return false, err
 	}
 
@@ -97,8 +97,10 @@ func (s *Storage) Has(ctx context.Context, path string) (bool, error) {
 }
 
 func (s *Storage) Move(ctx context.Context, oldPath, newPath string) error {
-	// TODO implement me
-	panic("implement me")
+	if err := s.Copy(ctx, oldPath, newPath); err != nil {
+		return err
+	}
+	return s.Delete(ctx, oldPath)
 }
 
 func (s *Storage) Copy(ctx context.Context, oldPath, newPath string) error {
