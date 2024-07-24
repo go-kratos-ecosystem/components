@@ -12,72 +12,57 @@ import (
 	"github.com/go-kratos-ecosystem/components/v2/eventbus"
 )
 
-type IntListener[T int] struct{}
-
-var _ eventbus.Handler[int] = (*IntListener[int])(nil)
-
-func NewIntListener() *IntListener[int] {
-	return &IntListener[int]{}
-}
-
-func (s *IntListener[T]) Handle(ctx context.Context, msg int) error {
-	fmt.Println("IntListener", msg)
-	return nil
-}
-
 type Event struct {
 	ID int
 }
 
-type EventListener[T Event] struct{}
+type Listener []struct{}
 
-var _ eventbus.Handler[Event] = (*EventListener[Event])(nil)
+var _ eventbus.Handler[*Event] = (*Listener)(nil)
 
-func NewEventListener() *EventListener[Event] {
-	return &EventListener[Event]{}
+func NewListener() *Listener {
+	return &Listener{}
 }
 
-func (s *EventListener[T]) Handle(ctx context.Context, msg Event) error {
-	fmt.Println("EventListener", msg.ID)
+func (l Listener) Handle(ctx context.Context, msg *Event) error {
+	fmt.Println("Listener", msg.ID)
 	return nil
 }
 
 func main() {
-	// basic type
-	event1 := eventbus.NewEvent[int]()
-	listener1 := event1.On(eventbus.HandlerFunc[int](func(_ context.Context, msg int) error {
-		fmt.Println("HandlerFunc", msg)
-		return nil
-	}))
-	event1.On(NewIntListener())
+	event := eventbus.NewEvent[*Event]()
 
-	_ = event1.Emit(context.Background(), 1)
-	// Output:
-	// HandlerFunc 1
-	// IntListener 1
-
-	// struct type
-	event2 := eventbus.NewEvent[Event]()
-	event2.On(eventbus.HandlerFunc[Event](func(_ context.Context, msg Event) error {
+	// on with HandlerFunc
+	listener := event.On(eventbus.HandlerFunc[*Event](func(_ context.Context, msg *Event) error {
 		fmt.Println("HandlerFunc", msg.ID)
 		return nil
 	}))
-	event2.On(NewEventListener())
+	// on with Listener
+	event.On(NewListener())
 
-	_ = event2.Emit(context.Background(), Event{ID: 2})
+	// emit
+	_ = event.Emit(context.Background(), &Event{2})
 	// Output:
 	// HandlerFunc 2
-	// EventListener 2
+	// Listener 2
 
-	// off
-	_ = listener1.Off()
+	// emit with async
+	_ = event.EmitAsync(context.Background(), &Event{2})
+	_ = event.Emit(context.Background(), &Event{2}, eventbus.WithEmitAsync())
 
-	// async
-	_ = event1.Emit(context.Background(), 3, eventbus.WithEmitAsync())
-	_ = event1.EmitAsync(context.Background(), 4)
+	// emit with skip errors
+	_ = event.Emit(context.Background(), &Event{2}, eventbus.WithEmitSkipErrors())
 
-	// skip errors(only sync)
-	_ = event1.Emit(context.Background(), 5, eventbus.WithEmitSkipErrors())
+	// off listener
+	_ = listener.Off()
+
+	// off all listeners
+	event.OffAll()
+
+	// listeners
+	event.Listeners()
+
+	// listeners count
+	event.ListenersCount()
 }
-
 ```
