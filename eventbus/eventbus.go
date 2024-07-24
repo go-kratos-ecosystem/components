@@ -32,21 +32,21 @@ func NewEvent[T any]() *Event[T] {
 }
 
 func (t *Event[T]) On(handler Handler[T]) *Listener[T] {
-	sub := newListener(t, handler)
+	listener := newListener(t, handler)
 
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
-	t.listeners = append(t.listeners, sub)
-	return sub
+	t.listeners = append(t.listeners, listener)
+	return listener
 }
 
-func (t *Event[T]) Off(sub *Listener[T]) error {
+func (t *Event[T]) Off(listener *Listener[T]) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
 	for i, s := range t.listeners {
-		if s == sub {
+		if s == listener {
 			t.listeners = append(t.listeners[:i], t.listeners[i+1:]...)
 			return nil
 		}

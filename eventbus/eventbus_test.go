@@ -16,7 +16,7 @@ func TestEventBus_Func(t *testing.T) {
 	ch := make(chan int, 1)
 
 	assert.Equal(t, topic.ListenersCount(), 0)
-	sub := topic.On(HandlerFunc[int](func(_ context.Context, msg int) error {
+	listener := topic.On(HandlerFunc[int](func(_ context.Context, msg int) error {
 		ch <- msg
 		return nil
 	}))
@@ -25,7 +25,7 @@ func TestEventBus_Func(t *testing.T) {
 	assert.NoError(t, topic.Emit(ctx, 1))
 	assert.Equal(t, 1, <-ch)
 
-	assert.NoError(t, sub.Off())
+	assert.NoError(t, listener.Off())
 	assert.Len(t, topic.Listeners(), 0)
 	assert.Equal(t, 0, topic.ListenersCount())
 	assert.NoError(t, topic.Emit(ctx, 2))
@@ -44,18 +44,18 @@ func TestEventBus_Struct(t *testing.T) {
 	topic := NewEvent[MyEvent]()
 	ch := make(chan int, 1)
 
-	sub := topic.On(HandlerFunc[MyEvent](func(_ context.Context, msg MyEvent) error {
+	listener := topic.On(HandlerFunc[MyEvent](func(_ context.Context, msg MyEvent) error {
 		ch <- msg.ID
 		return nil
 	}))
 	assert.NoError(t, topic.Emit(ctx, MyEvent{ID: 1}))
 	assert.Equal(t, 1, <-ch)
 
-	assert.NoError(t, sub.Off())
+	assert.NoError(t, listener.Off())
 	assert.NoError(t, topic.Emit(ctx, MyEvent{ID: 2}))
 	assert.Len(t, ch, 0)
 
-	assert.ErrorIs(t, sub.Off(), ErrListenerNotFound)
+	assert.ErrorIs(t, listener.Off(), ErrListenerNotFound)
 }
 
 func TestEventBus_SkipErrors(t *testing.T) {
