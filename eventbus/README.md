@@ -16,7 +16,7 @@ type Event struct {
 	ID int
 }
 
-type Listener []struct{}
+type Listener struct{}
 
 var _ eventbus.Handler[*Event] = (*Listener)(nil)
 
