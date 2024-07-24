@@ -16,7 +16,7 @@ type IntListener[T int] struct{}
 
 var _ eventbus.Handler[int] = (*IntListener[int])(nil)
 
-func NewIntSubscriber() *IntListener[int] {
+func NewIntListener() *IntListener[int] {
 	return &IntListener[int]{}
 }
 
@@ -33,7 +33,7 @@ type EventListener[T Event] struct{}
 
 var _ eventbus.Handler[Event] = (*EventListener[Event])(nil)
 
-func NewEventSubscriber() *EventListener[Event] {
+func NewEventListener() *EventListener[Event] {
 	return &EventListener[Event]{}
 }
 
@@ -49,7 +49,7 @@ func main() {
 		fmt.Println("HandlerFunc", msg)
 		return nil
 	}))
-	event1.On(NewIntSubscriber())
+	event1.On(NewIntListener())
 
 	_ = event1.Emit(context.Background(), 1)
 	// Output:
@@ -62,7 +62,7 @@ func main() {
 		fmt.Println("HandlerFunc", msg.ID)
 		return nil
 	}))
-	event2.On(NewEventSubscriber())
+	event2.On(NewEventListener())
 
 	_ = event2.Emit(context.Background(), Event{ID: 2})
 	// Output:
