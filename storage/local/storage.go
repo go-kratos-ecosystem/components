@@ -26,7 +26,7 @@ func (s *Storage) Get(_ context.Context, path string) ([]byte, error) {
 }
 
 func (s *Storage) Set(_ context.Context, path string, value []byte) error {
-	return os.WriteFile(s.prefixer.Prefix(path), value, 0o644)
+	return os.WriteFile(s.prefixer.Prefix(path), value, 0o644) //nolint:mnd
 }
 
 func (s *Storage) Delete(_ context.Context, path string) error {
@@ -45,32 +45,8 @@ func (s *Storage) Has(_ context.Context, path string) (bool, error) {
 	return true, nil
 }
 
-func (s *Storage) Prepend(ctx context.Context, path string, value []byte) error {
-	old, err := s.Get(ctx, path)
-	if err != nil {
-		return err
-	}
-	return s.Set(ctx, path, append(value, old...))
-}
-
-func (s *Storage) Append(ctx context.Context, path string, value []byte) error {
-	old, err := s.Get(ctx, path)
-	if err != nil {
-		return err
-	}
-	return s.Set(ctx, path, append(old, value...))
-}
-
 func (s *Storage) Move(_ context.Context, oldPath, newPath string) error {
 	return os.Rename(s.prefixer.Prefix(oldPath), s.prefixer.Prefix(newPath))
-}
-
-func (s *Storage) Copy(ctx context.Context, oldPath, newPath string) error {
-	old, err := s.Get(ctx, oldPath)
-	if err != nil {
-		return err
-	}
-	return s.Set(ctx, newPath, old)
 }
 
 func (s *Storage) Link(_ context.Context, oldPath, newPath string) error {
@@ -87,12 +63,11 @@ func (s *Storage) Files(_ context.Context, path string) ([]string, error) {
 		return nil, err
 	}
 
-	var files []string
+	var files []string //nolint:prealloc
 	for _, file := range f {
-		if file.IsDir() {
-			continue
+		if !file.IsDir() {
+			files = append(files, file.Name())
 		}
-		files = append(files, file.Name())
 	}
 	return files, nil
 }
@@ -103,17 +78,17 @@ func (s *Storage) AllFiles(ctx context.Context, path string) ([]string, error) {
 		return nil, err
 	}
 
-	var files []string
+	var files []string //molint:prealloc
 	for _, file := range f {
-		if file.IsDir() {
+		if !file.IsDir() {
+			files = append(files, file.Name())
+		} else {
 			subFiles, err := s.AllFiles(ctx, file.Name())
 			if err != nil {
 				return nil, err
 			}
 			files = append(files, subFiles...)
-			continue
 		}
-		files = append(files, file.Name())
 	}
 
 	return files, nil
@@ -125,7 +100,7 @@ func (s *Storage) Directories(_ context.Context, path string) ([]string, error) 
 		return nil, err
 	}
 
-	var dirs []string
+	var dirs []string //nolint:prealloc
 	for _, file := range f {
 		if !file.IsDir() {
 			continue

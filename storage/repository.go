@@ -4,6 +4,7 @@ import "context"
 
 type Repository interface {
 	Storage
+	Copyable
 
 	// Put sets the value for the given path.
 	Put(ctx context.Context, path string, value []byte) error
@@ -19,6 +20,12 @@ type Repository interface {
 
 	// Rename renames the value from the old path to the new path.
 	Rename(ctx context.Context, oldPath, newPath string) error
+
+	// Prepend prepends the value to the existing value for the given path.
+	Prepend(ctx context.Context, path string, value []byte) error
+
+	// Append appends the value to the existing value for the given path.
+	Append(ctx context.Context, path string, value []byte) error
 }
 
 type repository struct {
@@ -54,4 +61,32 @@ func (r *repository) Missing(ctx context.Context, path string) (bool, error) {
 
 func (r *repository) Rename(ctx context.Context, oldPath, newPath string) error {
 	return r.Move(ctx, oldPath, newPath)
+}
+
+func (r *repository) Prepend(ctx context.Context, path string, value []byte) error {
+	old, err := r.Get(ctx, path)
+	if err != nil {
+		return err
+	}
+	return r.Set(ctx, path, append(value, old...))
+}
+
+func (r *repository) Append(ctx context.Context, path string, value []byte) error {
+	old, err := r.Get(ctx, path)
+	if err != nil {
+		return err
+	}
+	return r.Set(ctx, path, append(old, value...))
+}
+
+func (r *repository) Copy(ctx context.Context, oldPath, newPath string) error {
+	if copier, ok := r.Storage.(Copyable); ok {
+		return copier.Copy(ctx, oldPath, newPath)
+	}
+
+	old, err := r.Get(ctx, oldPath)
+	if err != nil {
+		return err
+	}
+	return r.Set(ctx, newPath, old)
 }

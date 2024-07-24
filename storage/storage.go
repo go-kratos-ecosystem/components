@@ -1,6 +1,11 @@
 package storage
 
-import "context"
+import (
+	"context"
+	"errors"
+)
+
+var ErrNotSupported = errors.New("[storage] not supported")
 
 type Storage interface {
 	// Get retrieves the value for the given path.
@@ -15,17 +20,8 @@ type Storage interface {
 	// Has checks if the path exists.
 	Has(ctx context.Context, path string) (bool, error)
 
-	// Prepend prepends the value to the existing value for the given path.
-	Prepend(ctx context.Context, path string, value []byte) error
-
-	// Append appends the value to the existing value for the given path.
-	Append(ctx context.Context, path string, value []byte) error
-
 	// Move moves the value from the old path to the new path.
 	Move(ctx context.Context, oldPath, newPath string) error
-
-	// Copy copies the value from the old path to the new path.
-	Copy(ctx context.Context, oldPath, newPath string) error
 
 	// Link creates a hard link from the old path to the new path.
 	Link(ctx context.Context, oldPath, newPath string) error
@@ -55,3 +51,25 @@ type Storage interface {
 	//
 	// Basename(ctx context.Context, path string) (string, error)
 }
+
+type Copyable interface {
+	Copy(ctx context.Context, oldPath, newPath string) error
+}
+
+type noopStorage struct{}
+
+var NoopStorage Storage = noopStorage{}
+
+func (noopStorage) Get(context.Context, string) ([]byte, error)              { return nil, nil }
+func (noopStorage) Set(context.Context, string, []byte) error                { return nil }
+func (noopStorage) Delete(context.Context, string) error                     { return nil }
+func (noopStorage) Has(context.Context, string) (bool, error)                { return true, nil }
+func (noopStorage) Move(context.Context, string, string) error               { return nil }
+func (noopStorage) Link(context.Context, string, string) error               { return nil }
+func (noopStorage) Symlink(context.Context, string, string) error            { return nil }
+func (noopStorage) Files(context.Context, string) ([]string, error)          { return nil, nil }
+func (noopStorage) AllFiles(context.Context, string) ([]string, error)       { return nil, nil }
+func (noopStorage) Directories(context.Context, string) ([]string, error)    { return nil, nil }
+func (noopStorage) AllDirectories(context.Context, string) ([]string, error) { return nil, nil }
+func (noopStorage) IsFile(context.Context, string) (bool, error)             { return false, nil }
+func (noopStorage) IsDir(context.Context, string) (bool, error)              { return false, nil }

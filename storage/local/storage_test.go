@@ -33,33 +33,12 @@ func TestStorage(t *testing.T) {
 	assert.NoError(t, err)
 	assert.False(t, missing)
 
-	// prepend
-	assert.NoError(t, local.Prepend(ctx, "test", []byte("pre")))
-	data, err = local.Get(ctx, "test")
-	assert.NoError(t, err)
-	assert.Equal(t, []byte("pretest"), data)
-
-	// append
-	assert.NoError(t, local.Append(ctx, "test", []byte("append")))
-	data, err = local.Get(ctx, "test")
-	assert.NoError(t, err)
-	assert.Equal(t, []byte("pretestappend"), data)
-
 	// move
 	assert.NoError(t, local.Move(ctx, "test", "test2"))
 	has, err = local.Has(ctx, "test")
 	assert.NoError(t, err)
 	assert.False(t, has)
 	has, err = local.Has(ctx, "test2")
-	assert.NoError(t, err)
-	assert.True(t, has)
-
-	// copy
-	assert.NoError(t, local.Copy(ctx, "test2", "test3"))
-	has, err = local.Has(ctx, "test2")
-	assert.NoError(t, err)
-	assert.True(t, has)
-	has, err = local.Has(ctx, "test3")
 	assert.NoError(t, err)
 	assert.True(t, has)
 
