@@ -12,16 +12,16 @@ import (
 	"github.com/go-kratos-ecosystem/components/v2/eventbus"
 )
 
-type IntSubscriber[T int] struct{}
+type IntListener[T int] struct{}
 
-var _ eventbus.Handler[int] = (*IntSubscriber[int])(nil)
+var _ eventbus.Handler[int] = (*IntListener[int])(nil)
 
-func NewIntSubscriber() *IntSubscriber[int] {
-	return &IntSubscriber[int]{}
+func NewIntSubscriber() *IntListener[int] {
+	return &IntListener[int]{}
 }
 
-func (s *IntSubscriber[T]) Handle(ctx context.Context, msg int) error {
-	fmt.Println("IntSubscriber", msg)
+func (s *IntListener[T]) Handle(ctx context.Context, msg int) error {
+	fmt.Println("IntListener", msg)
 	return nil
 }
 
@@ -29,54 +29,55 @@ type Event struct {
 	ID int
 }
 
-type EventSubscriber[T Event] struct{}
+type EventListener[T Event] struct{}
 
-var _ eventbus.Handler[Event] = (*EventSubscriber[Event])(nil)
+var _ eventbus.Handler[Event] = (*EventListener[Event])(nil)
 
-func NewEventSubscriber() *EventSubscriber[Event] {
-	return &EventSubscriber[Event]{}
+func NewEventSubscriber() *EventListener[Event] {
+	return &EventListener[Event]{}
 }
 
-func (s *EventSubscriber[T]) Handle(ctx context.Context, msg Event) error {
-	fmt.Println("EventSubscriber", msg.ID)
+func (s *EventListener[T]) Handle(ctx context.Context, msg Event) error {
+	fmt.Println("EventListener", msg.ID)
 	return nil
 }
 
 func main() {
 	// basic type
-	topic1 := eventbus.NewTopic[int]()
-	sub1 := topic1.Subscribe(eventbus.HandlerFunc[int](func(_ context.Context, msg int) error {
+	event1 := eventbus.NewEvent[int]()
+	listener1 := event1.On(eventbus.HandlerFunc[int](func(_ context.Context, msg int) error {
 		fmt.Println("HandlerFunc", msg)
 		return nil
 	}))
-	topic1.Subscribe(NewIntSubscriber())
+	event1.On(NewIntSubscriber())
 
-	_ = topic1.Publish(context.Background(), 1)
+	_ = event1.Emit(context.Background(), 1)
 	// Output:
 	// HandlerFunc 1
-	// IntSubscriber 1
+	// IntListener 1
 
 	// struct type
-	topic2 := eventbus.NewTopic[Event]()
-	topic2.Subscribe(eventbus.HandlerFunc[Event](func(_ context.Context, msg Event) error {
+	event2 := eventbus.NewEvent[Event]()
+	event2.On(eventbus.HandlerFunc[Event](func(_ context.Context, msg Event) error {
 		fmt.Println("HandlerFunc", msg.ID)
 		return nil
 	}))
-	topic2.Subscribe(NewEventSubscriber())
+	event2.On(NewEventSubscriber())
 
-	_ = topic2.Publish(context.Background(), Event{ID: 2})
+	_ = event2.Emit(context.Background(), Event{ID: 2})
 	// Output:
 	// HandlerFunc 2
-	// EventSubscriber 2
+	// EventListener 2
 
-	// unsubscribe
-	_ = sub1.Unsubscribe()
+	// off
+	_ = listener1.Off()
 
 	// async
-	_ = topic1.Publish(context.Background(), 3, eventbus.WithPublishAsync())
-	_ = topic1.PublishAsync(context.Background(), 4)
+	_ = event1.Emit(context.Background(), 3, eventbus.WithEmitAsync())
+	_ = event1.EmitAsync(context.Background(), 4)
 
 	// skip errors(only sync)
-	_ = topic1.Publish(context.Background(), 5, eventbus.WithPublishSkipErrors())
+	_ = event1.Emit(context.Background(), 5, eventbus.WithEmitSkipErrors())
 }
+
 ```
