@@ -62,13 +62,13 @@ type publishOptions struct {
 
 type PublishOption func(*publishOptions)
 
-func WithAsync() PublishOption {
+func WithPublishAsync() PublishOption {
 	return func(p *publishOptions) {
 		p.async = true
 	}
 }
 
-func WithSkipErrors() PublishOption {
+func WithPublishSkipErrors() PublishOption {
 	return func(p *publishOptions) {
 		p.skipErrors = true
 	}
@@ -105,7 +105,7 @@ func (t *Topic[T]) Publish(ctx context.Context, msg T, opts ...PublishOption) er
 }
 
 func (t *Topic[T]) PublishAsync(ctx context.Context, msg T, opts ...PublishOption) error {
-	return t.Publish(ctx, msg, append(opts, WithAsync())...)
+	return t.Publish(ctx, msg, append(opts, WithPublishAsync())...)
 }
 
 func (t *Topic[T]) UnsubscribeAll() {

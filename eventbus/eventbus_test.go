@@ -75,7 +75,7 @@ func TestEventBus_SkipErrors(t *testing.T) {
 	assert.Len(t, ch, 0)
 
 	// skip errors
-	assert.NoError(t, topic.Publish(ctx, 2, WithSkipErrors()))
+	assert.NoError(t, topic.Publish(ctx, 2, WithPublishSkipErrors()))
 	assert.Equal(t, 2, <-ch)
 }
 
@@ -110,7 +110,7 @@ func TestEventBus_Async(t *testing.T) {
 	// async
 	wg.Add(2)
 	start = time.Now()
-	assert.NoError(t, topic.Publish(ctx, 2, WithAsync()))
+	assert.NoError(t, topic.Publish(ctx, 2, WithPublishAsync()))
 	wg.Wait()
 	assert.Len(t, ch, 2)
 	assert.Contains(t, []int{20, 200}, <-ch)

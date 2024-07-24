@@ -45,7 +45,7 @@ func (s *EventSubscriber[T]) Handle(ctx context.Context, msg Event) error {
 func main() {
 	// basic type
 	topic1 := eventbus.NewTopic[int]()
-	topic1.Subscribe(eventbus.HandlerFunc[int](func(_ context.Context, msg int) error {
+	sub1 := topic1.Subscribe(eventbus.HandlerFunc[int](func(_ context.Context, msg int) error {
 		fmt.Println("HandlerFunc", msg)
 		return nil
 	}))
@@ -68,5 +68,15 @@ func main() {
 	// Output:
 	// HandlerFunc 2
 	// EventSubscriber 2
+
+	// unsubscribe
+	_ = sub1.Unsubscribe()
+
+	// async
+	_ = topic1.Publish(context.Background(), 3, eventbus.WithPublishAsync())
+	_ = topic1.PublishAsync(context.Background(), 4)
+
+	// skip errors(only sync)
+	_ = topic1.Publish(context.Background(), 5, eventbus.WithPublishSkipErrors())
 }
 ```
