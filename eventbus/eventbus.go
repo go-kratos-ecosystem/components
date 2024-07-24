@@ -45,8 +45,8 @@ func (t *Event[T]) Off(listener *Listener[T]) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
-	for i, s := range t.listeners {
-		if s == listener {
+	for i, l := range t.listeners {
+		if l == listener {
 			t.listeners = append(t.listeners[:i], t.listeners[i+1:]...)
 			return nil
 		}
@@ -141,6 +141,6 @@ func newListener[T any](topic *Event[T], handler Handler[T]) *Listener[T] {
 	}
 }
 
-func (s *Listener[T]) Off() error {
-	return s.topic.Off(s)
+func (l *Listener[T]) Off() error {
+	return l.topic.Off(l)
 }
