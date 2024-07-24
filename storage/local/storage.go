@@ -25,15 +25,15 @@ func (s *Storage) Get(path string) ([]byte, error) {
 }
 
 func (s *Storage) Set(path string, value []byte) error {
-	return os.WriteFile(path, value, 0o644)
+	return os.WriteFile(s.prefixer.Prefix(path), value, 0o644)
 }
 
 func (s *Storage) Delete(path string) error {
-	return os.Remove(path)
+	return os.Remove(s.prefixer.Prefix(path))
 }
 
 func (s *Storage) Has(path string) (bool, error) {
-	_, err := os.Stat(path)
+	_, err := os.Stat(s.prefixer.Prefix(path))
 	if err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
@@ -61,7 +61,7 @@ func (s *Storage) Append(path string, value []byte) error {
 }
 
 func (s *Storage) Move(oldPath, newPath string) error {
-	return os.Rename(oldPath, newPath)
+	return os.Rename(s.prefixer.Prefix(oldPath), s.prefixer.Prefix(newPath))
 }
 
 func (s *Storage) Copy(oldPath, newPath string) error {
@@ -73,15 +73,15 @@ func (s *Storage) Copy(oldPath, newPath string) error {
 }
 
 func (s *Storage) Link(oldPath, newPath string) error {
-	return os.Link(oldPath, newPath)
+	return os.Link(s.prefixer.Prefix(oldPath), s.prefixer.Prefix(newPath))
 }
 
 func (s *Storage) Symlink(oldPath, newPath string) error {
-	return os.Symlink(oldPath, newPath)
+	return os.Symlink(s.prefixer.Prefix(oldPath), s.prefixer.Prefix(newPath))
 }
 
 func (s *Storage) Files(path string) ([]string, error) {
-	f, err := os.ReadDir(path)
+	f, err := os.ReadDir(s.prefixer.Prefix(path))
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +97,7 @@ func (s *Storage) Files(path string) ([]string, error) {
 }
 
 func (s *Storage) AllFiles(path string) ([]string, error) {
-	f, err := os.ReadDir(path)
+	f, err := os.ReadDir(s.prefixer.Prefix(path))
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func (s *Storage) AllFiles(path string) ([]string, error) {
 }
 
 func (s *Storage) Directories(path string) ([]string, error) {
-	f, err := os.ReadDir(path)
+	f, err := os.ReadDir(s.prefixer.Prefix(path))
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +135,7 @@ func (s *Storage) Directories(path string) ([]string, error) {
 }
 
 func (s *Storage) AllDirectories(path string) ([]string, error) {
-	f, err := os.ReadDir(path)
+	f, err := os.ReadDir(s.prefixer.Prefix(path))
 	if err != nil {
 		return nil, err
 	}
@@ -155,7 +155,7 @@ func (s *Storage) AllDirectories(path string) ([]string, error) {
 }
 
 func (s *Storage) IsFile(path string) (bool, error) {
-	info, err := os.Stat(path)
+	info, err := os.Stat(s.prefixer.Prefix(path))
 	if err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
@@ -167,7 +167,7 @@ func (s *Storage) IsFile(path string) (bool, error) {
 }
 
 func (s *Storage) IsDir(path string) (bool, error) {
-	info, err := os.Stat(path)
+	info, err := os.Stat(s.prefixer.Prefix(path))
 	if err != nil {
 		if os.IsNotExist(err) {
 			return false, nil
