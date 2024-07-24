@@ -1,6 +1,7 @@
 package local
 
 import (
+	"context"
 	"os"
 
 	"github.com/go-kratos-ecosystem/components/v2/storage"
@@ -13,26 +14,26 @@ type Storage struct {
 
 var _ storage.Storage = (*Storage)(nil)
 
-func NewStorage(root string) *Storage {
+func New(root string) *Storage {
 	return &Storage{
 		root:     root,
 		prefixer: storage.NewPathPrefixer(root),
 	}
 }
 
-func (s *Storage) Get(path string) ([]byte, error) {
+func (s *Storage) Get(_ context.Context, path string) ([]byte, error) {
 	return os.ReadFile(s.prefixer.Prefix(path))
 }
 
-func (s *Storage) Set(path string, value []byte) error {
+func (s *Storage) Set(_ context.Context, path string, value []byte) error {
 	return os.WriteFile(s.prefixer.Prefix(path), value, 0o644)
 }
 
-func (s *Storage) Delete(path string) error {
+func (s *Storage) Delete(_ context.Context, path string) error {
 	return os.Remove(s.prefixer.Prefix(path))
 }
 
-func (s *Storage) Has(path string) (bool, error) {
+func (s *Storage) Has(_ context.Context, path string) (bool, error) {
 	_, err := os.Stat(s.prefixer.Prefix(path))
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -44,43 +45,43 @@ func (s *Storage) Has(path string) (bool, error) {
 	return true, nil
 }
 
-func (s *Storage) Prepend(path string, value []byte) error {
-	old, err := s.Get(path)
+func (s *Storage) Prepend(ctx context.Context, path string, value []byte) error {
+	old, err := s.Get(ctx, path)
 	if err != nil {
 		return err
 	}
-	return s.Set(path, append(value, old...))
+	return s.Set(ctx, path, append(value, old...))
 }
 
-func (s *Storage) Append(path string, value []byte) error {
-	old, err := s.Get(path)
+func (s *Storage) Append(ctx context.Context, path string, value []byte) error {
+	old, err := s.Get(ctx, path)
 	if err != nil {
 		return err
 	}
-	return s.Set(path, append(old, value...))
+	return s.Set(ctx, path, append(old, value...))
 }
 
-func (s *Storage) Move(oldPath, newPath string) error {
+func (s *Storage) Move(_ context.Context, oldPath, newPath string) error {
 	return os.Rename(s.prefixer.Prefix(oldPath), s.prefixer.Prefix(newPath))
 }
 
-func (s *Storage) Copy(oldPath, newPath string) error {
-	old, err := s.Get(oldPath)
+func (s *Storage) Copy(ctx context.Context, oldPath, newPath string) error {
+	old, err := s.Get(ctx, oldPath)
 	if err != nil {
 		return err
 	}
-	return s.Set(newPath, old)
+	return s.Set(ctx, newPath, old)
 }
 
-func (s *Storage) Link(oldPath, newPath string) error {
+func (s *Storage) Link(_ context.Context, oldPath, newPath string) error {
 	return os.Link(s.prefixer.Prefix(oldPath), s.prefixer.Prefix(newPath))
 }
 
-func (s *Storage) Symlink(oldPath, newPath string) error {
+func (s *Storage) Symlink(_ context.Context, oldPath, newPath string) error {
 	return os.Symlink(s.prefixer.Prefix(oldPath), s.prefixer.Prefix(newPath))
 }
 
-func (s *Storage) Files(path string) ([]string, error) {
+func (s *Storage) Files(_ context.Context, path string) ([]string, error) {
 	f, err := os.ReadDir(s.prefixer.Prefix(path))
 	if err != nil {
 		return nil, err
@@ -96,7 +97,7 @@ func (s *Storage) Files(path string) ([]string, error) {
 	return files, nil
 }
 
-func (s *Storage) AllFiles(path string) ([]string, error) {
+func (s *Storage) AllFiles(ctx context.Context, path string) ([]string, error) {
 	f, err := os.ReadDir(s.prefixer.Prefix(path))
 	if err != nil {
 		return nil, err
@@ -105,7 +106,7 @@ func (s *Storage) AllFiles(path string) ([]string, error) {
 	var files []string
 	for _, file := range f {
 		if file.IsDir() {
-			subFiles, err := s.AllFiles(file.Name())
+			subFiles, err := s.AllFiles(ctx, file.Name())
 			if err != nil {
 				return nil, err
 			}
@@ -118,7 +119,7 @@ func (s *Storage) AllFiles(path string) ([]string, error) {
 	return files, nil
 }
 
-func (s *Storage) Directories(path string) ([]string, error) {
+func (s *Storage) Directories(_ context.Context, path string) ([]string, error) {
 	f, err := os.ReadDir(s.prefixer.Prefix(path))
 	if err != nil {
 		return nil, err
@@ -134,7 +135,7 @@ func (s *Storage) Directories(path string) ([]string, error) {
 	return dirs, nil
 }
 
-func (s *Storage) AllDirectories(path string) ([]string, error) {
+func (s *Storage) AllDirectories(ctx context.Context, path string) ([]string, error) {
 	f, err := os.ReadDir(s.prefixer.Prefix(path))
 	if err != nil {
 		return nil, err
@@ -145,7 +146,7 @@ func (s *Storage) AllDirectories(path string) ([]string, error) {
 		if !file.IsDir() {
 			continue
 		}
-		subDirs, err := s.AllDirectories(file.Name())
+		subDirs, err := s.AllDirectories(ctx, file.Name())
 		if err != nil {
 			return nil, err
 		}
@@ -154,7 +155,7 @@ func (s *Storage) AllDirectories(path string) ([]string, error) {
 	return dirs, nil
 }
 
-func (s *Storage) IsFile(path string) (bool, error) {
+func (s *Storage) IsFile(_ context.Context, path string) (bool, error) {
 	info, err := os.Stat(s.prefixer.Prefix(path))
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -166,7 +167,7 @@ func (s *Storage) IsFile(path string) (bool, error) {
 	return !info.IsDir(), nil
 }
 
-func (s *Storage) IsDir(path string) (bool, error) {
+func (s *Storage) IsDir(_ context.Context, path string) (bool, error) {
 	info, err := os.Stat(s.prefixer.Prefix(path))
 	if err != nil {
 		if os.IsNotExist(err) {

@@ -1,74 +1,77 @@
 package local
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
+var ctx = context.Background()
+
 func TestStorage(t *testing.T) {
-	local := NewStorage("./testfile/dir1")
+	local := New("./testfile/dir1")
 
 	// set
-	assert.NoError(t, local.Set("test", []byte("test")))
+	assert.NoError(t, local.Set(ctx, "test", []byte("test")))
 
 	// get
-	data, err := local.Get("test")
+	data, err := local.Get(ctx, "test")
 	assert.NoError(t, err)
 	assert.Equal(t, []byte("test"), data)
 
-	data, err = local.Get("missing")
+	data, err = local.Get(ctx, "missing")
 	assert.Error(t, err)
 	assert.Nil(t, data)
 
 	// has
-	has, err := local.Has("test")
+	has, err := local.Has(ctx, "test")
 	assert.NoError(t, err)
 	assert.True(t, has)
 
-	missing, err := local.Has("missing")
+	missing, err := local.Has(ctx, "missing")
 	assert.NoError(t, err)
 	assert.False(t, missing)
 
 	// prepend
-	assert.NoError(t, local.Prepend("test", []byte("pre")))
-	data, err = local.Get("test")
+	assert.NoError(t, local.Prepend(ctx, "test", []byte("pre")))
+	data, err = local.Get(ctx, "test")
 	assert.NoError(t, err)
 	assert.Equal(t, []byte("pretest"), data)
 
 	// append
-	assert.NoError(t, local.Append("test", []byte("append")))
-	data, err = local.Get("test")
+	assert.NoError(t, local.Append(ctx, "test", []byte("append")))
+	data, err = local.Get(ctx, "test")
 	assert.NoError(t, err)
 	assert.Equal(t, []byte("pretestappend"), data)
 
 	// move
-	assert.NoError(t, local.Move("test", "test2"))
-	has, err = local.Has("test")
+	assert.NoError(t, local.Move(ctx, "test", "test2"))
+	has, err = local.Has(ctx, "test")
 	assert.NoError(t, err)
 	assert.False(t, has)
-	has, err = local.Has("test2")
+	has, err = local.Has(ctx, "test2")
 	assert.NoError(t, err)
 	assert.True(t, has)
 
 	// copy
-	assert.NoError(t, local.Copy("test2", "test3"))
-	has, err = local.Has("test2")
+	assert.NoError(t, local.Copy(ctx, "test2", "test3"))
+	has, err = local.Has(ctx, "test2")
 	assert.NoError(t, err)
 	assert.True(t, has)
-	has, err = local.Has("test3")
+	has, err = local.Has(ctx, "test3")
 	assert.NoError(t, err)
 	assert.True(t, has)
 
 	// link
-	assert.NoError(t, local.Link("test3", "test4"))
-	has, err = local.Has("test4")
+	assert.NoError(t, local.Link(ctx, "test3", "test4"))
+	has, err = local.Has(ctx, "test4")
 	assert.NoError(t, err)
 	assert.True(t, has)
 
 	// symlink
-	assert.NoError(t, local.Symlink("test3", "test5"))
-	has, err = local.Has("test5")
+	assert.NoError(t, local.Symlink(ctx, "test3", "test5"))
+	has, err = local.Has(ctx, "test5")
 	assert.NoError(t, err)
 	assert.True(t, has)
 

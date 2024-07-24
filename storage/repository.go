@@ -1,22 +1,24 @@
 package storage
 
+import "context"
+
 type Repository interface {
 	Storage
 
 	// Put sets the value for the given path.
-	Put(path string, value []byte) error
+	Put(ctx context.Context, path string, value []byte) error
 
 	// Destroy deletes the value for the given path.
-	Destroy(path string) error
+	Destroy(ctx context.Context, path string) error
 
 	// Exists checks if the path exists.
-	Exists(path string) (bool, error)
+	Exists(ctx context.Context, path string) (bool, error)
 
 	// Missing checks if the path does not exist.
-	Missing(path string) (bool, error)
+	Missing(ctx context.Context, path string) (bool, error)
 
 	// Rename renames the value from the old path to the new path.
-	Rename(oldPath, newPath string) error
+	Rename(ctx context.Context, oldPath, newPath string) error
 }
 
 type repository struct {
@@ -29,20 +31,20 @@ func NewRepository(store Storage) Repository {
 	}
 }
 
-func (r *repository) Put(path string, value []byte) error {
-	return r.Set(path, value)
+func (r *repository) Put(ctx context.Context, path string, value []byte) error {
+	return r.Set(ctx, path, value)
 }
 
-func (r *repository) Destroy(path string) error {
-	return r.Delete(path)
+func (r *repository) Destroy(ctx context.Context, path string) error {
+	return r.Delete(ctx, path)
 }
 
-func (r *repository) Exists(path string) (bool, error) {
-	return r.Has(path)
+func (r *repository) Exists(ctx context.Context, path string) (bool, error) {
+	return r.Has(ctx, path)
 }
 
-func (r *repository) Missing(path string) (bool, error) {
-	had, err := r.Has(path)
+func (r *repository) Missing(ctx context.Context, path string) (bool, error) {
+	had, err := r.Has(ctx, path)
 	if err != nil {
 		return false, err
 	}
@@ -50,6 +52,6 @@ func (r *repository) Missing(path string) (bool, error) {
 	return !had, nil
 }
 
-func (r *repository) Rename(oldPath, newPath string) error {
-	return r.Move(oldPath, newPath)
+func (r *repository) Rename(ctx context.Context, oldPath, newPath string) error {
+	return r.Move(ctx, oldPath, newPath)
 }
