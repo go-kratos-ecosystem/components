@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"errors"
+	"time"
 )
 
 var ErrNotSupported = errors.New("[storage] not supported")
@@ -41,15 +42,38 @@ type Storage interface {
 	// AllDirectories lists all the directories in the given path.(including subdirectories)
 	AllDirectories(ctx context.Context, path string) ([]string, error)
 
+	// MakeDirectory creates a directory at the given path.
+	MakeDirectory(ctx context.Context, path string) error
+
+	// DeleteDirectory deletes the directory at the given path.
+	DeleteDirectory(ctx context.Context, path string) error
+
 	// IsFile checks if the path is a file.
 	IsFile(ctx context.Context, path string) (bool, error)
 
 	// IsDir checks if the path is a directory.
 	IsDir(ctx context.Context, path string) (bool, error)
 
-	// Name(ctx context.Context, path string) (string, error)
-	//
-	// Basename(ctx context.Context, path string) (string, error)
+	// Size returns the size of the file in bytes.
+	Size(ctx context.Context, path string) (int64, error)
+
+	// LastModified returns the last modified time of the file.
+	LastModified(ctx context.Context, path string) (*time.Time, error)
+
+	// Path returns the full path for the given path.
+	Path(ctx context.Context, path string) string
+
+	// Name returns the name of the file, without the extension.
+	Name(ctx context.Context, path string) string
+
+	// Basename returns the base name of the file, with the extension.
+	Basename(ctx context.Context, path string) string
+
+	// Dirname returns the directory name of the file.
+	Dirname(ctx context.Context, path string) string
+
+	// Extension returns the extension of the file.
+	Extension(ctx context.Context, path string) string
 }
 
 type Copyable interface {
@@ -71,5 +95,14 @@ func (noopStorage) Files(context.Context, string) ([]string, error)          { r
 func (noopStorage) AllFiles(context.Context, string) ([]string, error)       { return nil, nil }
 func (noopStorage) Directories(context.Context, string) ([]string, error)    { return nil, nil }
 func (noopStorage) AllDirectories(context.Context, string) ([]string, error) { return nil, nil }
+func (noopStorage) MakeDirectory(context.Context, string) error              { return nil }
+func (noopStorage) DeleteDirectory(context.Context, string) error            { return nil }
 func (noopStorage) IsFile(context.Context, string) (bool, error)             { return false, nil }
 func (noopStorage) IsDir(context.Context, string) (bool, error)              { return false, nil }
+func (noopStorage) Size(context.Context, string) (int64, error)              { return 0, nil }
+func (noopStorage) LastModified(context.Context, string) (*time.Time, error) { return nil, nil }
+func (noopStorage) Path(context.Context, string) string                      { return "" }
+func (noopStorage) Name(context.Context, string) string                      { return "" }
+func (noopStorage) Basename(context.Context, string) string                  { return "" }
+func (noopStorage) Dirname(context.Context, string) string                   { return "" }
+func (noopStorage) Extension(context.Context, string) string                 { return "" }

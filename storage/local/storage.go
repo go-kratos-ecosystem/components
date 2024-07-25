@@ -3,7 +3,10 @@ package local
 import (
 	"context"
 	"os"
+	"path/filepath"
+	"time"
 
+	"github.com/go-kratos-ecosystem/components/v2/helpers"
 	"github.com/go-kratos-ecosystem/components/v2/storage"
 )
 
@@ -130,6 +133,14 @@ func (s *Storage) AllDirectories(ctx context.Context, path string) ([]string, er
 	return dirs, nil
 }
 
+func (s *Storage) MakeDirectory(_ context.Context, path string) error {
+	return os.MkdirAll(s.prefixer.Prefix(path), 0o755) //nolint:mnd
+}
+
+func (s *Storage) DeleteDirectory(_ context.Context, path string) error {
+	return os.RemoveAll(s.prefixer.Prefix(path))
+}
+
 func (s *Storage) IsFile(_ context.Context, path string) (bool, error) {
 	info, err := os.Stat(s.prefixer.Prefix(path))
 	if err != nil {
@@ -152,4 +163,44 @@ func (s *Storage) IsDir(_ context.Context, path string) (bool, error) {
 	}
 
 	return info.IsDir(), nil
+}
+
+func (s *Storage) Size(_ context.Context, path string) (int64, error) {
+	info, err := os.Stat(s.prefixer.Prefix(path))
+	if err != nil {
+		return 0, err
+	}
+
+	return info.Size(), nil
+}
+
+func (s *Storage) LastModified(_ context.Context, path string) (*time.Time, error) {
+	info, err := os.Stat(s.prefixer.Prefix(path))
+	if err != nil {
+		return nil, err
+	}
+
+	return helpers.Ptr(info.ModTime()), nil
+}
+
+func (s *Storage) Path(_ context.Context, path string) string {
+	return s.prefixer.Prefix(path)
+}
+
+func (s *Storage) Name(_ context.Context, path string) string {
+	path = s.prefixer.Prefix(path)
+	base := filepath.Base(path)
+	return base[:len(base)-len(filepath.Ext(path))]
+}
+
+func (s *Storage) Basename(_ context.Context, path string) string {
+	return filepath.Base(s.prefixer.Prefix(path))
+}
+
+func (s *Storage) Dirname(ctx context.Context, path string) string {
+	return filepath.Dir(s.prefixer.Prefix(path))
+}
+
+func (s *Storage) Extension(ctx context.Context, path string) string {
+	return filepath.Ext(s.prefixer.Prefix(path))
 }

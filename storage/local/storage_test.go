@@ -54,9 +54,126 @@ func TestStorage(t *testing.T) {
 	assert.NoError(t, err)
 	assert.True(t, has)
 
+	// path
+	path := local.Path(ctx, "1.jpg")
+	assert.Equal(t, "./testfile/dir1/1.jpg", path)
+
 	// delete
 	// assert.NoError(t, local.Delete("test"))
 	// has, err = local.Has("test")
 	// assert.NoError(t, err)
 	// assert.False(t, has)
+}
+
+func TestStorage_Path(t *testing.T) {
+	local := New("./testfile/path")
+
+	tests := []struct {
+		path string
+		want string
+	}{
+		{"1.jpg", "./testfile/path/1.jpg"},
+		{"2.jpg", "./testfile/path/2.jpg"},
+		{"2", "./testfile/path/2"},
+		{"2/3", "./testfile/path/2/3"},
+		{"/4/3.jpg", "./testfile/path/4/3.jpg"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			assert.Equal(t, tt.want, local.Path(ctx, tt.path))
+		})
+	}
+}
+
+func TestStorage_Name(t *testing.T) {
+	local := New("./testfile/path")
+
+	tests := []struct {
+		path string
+		want string
+	}{
+		{".jpg", ""},
+		{"", "."},
+		{"1.jpg", "1"},
+		{"2.jpg", "2"},
+		{"2", "2"},
+		{"2/3", "3"},
+		{"/4/3.jpg", "3"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			assert.Equal(t, tt.want, local.Name(ctx, tt.path))
+		})
+	}
+}
+
+func TestStorage_Basename(t *testing.T) {
+	local := New("./testfile/path")
+
+	tests := []struct {
+		path string
+		want string
+	}{
+		{".jpg", ".jpg"},
+		{"", "."},
+		{"1.jpg", "1.jpg"},
+		{"2.jpg", "2.jpg"},
+		{"2", "2"},
+		{"2/3", "3"},
+		{"/4/3.jpg", "3.jpg"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			assert.Equal(t, tt.want, local.Basename(ctx, tt.path))
+		})
+	}
+}
+
+func TestStorage_Dirname(t *testing.T) {
+	local := New("./testfile/path")
+
+	tests := []struct {
+		path string
+		want string
+	}{
+		{".jpg", "testfile/path"},
+		{"", "testfile/path"},
+		{"1.jpg", "testfile/path"},
+		{"2.jpg", "testfile/path"},
+		{"2", "testfile/path"},
+		{"2/3", "testfile/path/2"},
+		{"/4/3.jpg", "testfile/path/4"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			assert.Equal(t, tt.want, local.Dirname(ctx, tt.path))
+		})
+	}
+}
+
+func TestStorage_Extension(t *testing.T) {
+	local := New("./testfile/path")
+
+	tests := []struct {
+		path string
+		want string
+	}{
+		{".jpg", ".jpg"},
+		{"", ""},
+		{"1.jpg", ".jpg"},
+		{"2.jpg", ".jpg"},
+		{"2", ""},
+		{"2/3", ""},
+		{"/4/3.jpg", ".jpg"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			assert.Equal(t, tt.want, local.Extension(ctx, tt.path))
+		})
+	}
 }
