@@ -1,6 +1,6 @@
 # Snap
 
-The snap package in Go provides a thread-safe mechanism to manage and periodically refresh cached values using a custom refresh function. 
+The `snap` is a thread-safe mechanism to manage and periodically refresh cached values using a custom refresh function. 
 
 It supports configurable refresh intervals and ensures that the value is always up-to-date without manual intervention. 
 
