@@ -37,13 +37,13 @@ func main() {
 		}, nil
 	}, snap.Interval[*Config](1000*time.Second))
 
-	fmt.Print(s.Get()) // &{test}
-	fmt.Print(s.Get()) // &{test}
+	fmt.Print(s.Get()) // &{test} <nil>&
+	fmt.Print(s.Get()) // &{test} <nil>&
 	// after 1000 seconds
-	fmt.Print(s.Get()) // &{test} after refresh
+	fmt.Print(s.Get()) // &{test} <nil>& after refresh
 
 	// refresh immediately
-	if err := s.Refresh(); err != nil {
+	if _, err := s.Refresh(); err != nil {
 		fmt.Print(err)
 	}
 }

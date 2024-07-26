@@ -8,6 +8,7 @@ import (
 type Snap[T any] struct {
 	value T
 	mu    sync.RWMutex
+	err   error
 
 	refresh  func() (T, error)
 	expired  time.Time     // expiration time
@@ -33,27 +34,22 @@ func New[T any](refresh func() (T, error), opts ...Option[T]) *Snap[T] {
 	return s
 }
 
-func (s *Snap[T]) Get() T {
+func (s *Snap[T]) Get() (T, error) {
 	if s.expired.IsZero() || time.Now().After(s.expired) {
-		_ = s.Refresh()
+		return s.Refresh()
 	}
 
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	return s.value
+	return s.value, s.err
 }
 
-func (s *Snap[T]) Refresh() error {
+func (s *Snap[T]) Refresh() (T, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	value, err := s.refresh()
-	if err != nil {
-		return err
-	}
-
-	s.value = value
+	s.value, s.err = s.refresh()
 	s.expired = time.Now().Add(s.interval)
 
-	return nil
+	return s.value, s.err
 }
