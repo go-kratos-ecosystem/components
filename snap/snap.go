@@ -8,9 +8,8 @@ import (
 type Snap[T any] struct {
 	value T
 	mu    sync.RWMutex
-	err   error
 
-	refresh  func() (T, error)
+	refresh  func() T
 	expired  time.Time     // expiration time
 	interval time.Duration // refresh interval
 }
@@ -23,7 +22,7 @@ func Interval[T any](interval time.Duration) Option[T] {
 	}
 }
 
-func New[T any](refresh func() (T, error), opts ...Option[T]) *Snap[T] {
+func New[T any](refresh func() T, opts ...Option[T]) *Snap[T] {
 	s := &Snap[T]{
 		refresh:  refresh,
 		interval: time.Minute,
@@ -34,22 +33,20 @@ func New[T any](refresh func() (T, error), opts ...Option[T]) *Snap[T] {
 	return s
 }
 
-func (s *Snap[T]) Get() (T, error) {
+func (s *Snap[T]) Get() T {
 	if s.expired.IsZero() || time.Now().After(s.expired) {
-		return s.Refresh()
+		s.Refresh()
 	}
 
 	s.mu.RLock()
 	defer s.mu.RUnlock()
-	return s.value, s.err
+	return s.value
 }
 
-func (s *Snap[T]) Refresh() (T, error) {
+func (s *Snap[T]) Refresh() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	s.value, s.err = s.refresh()
+	s.value = s.refresh()
 	s.expired = time.Now().Add(s.interval)
-
-	return s.value, s.err
 }

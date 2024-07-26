@@ -13,16 +13,14 @@ func TestSnapshot_Basic(t *testing.T) {
 		now   = time.Now()
 		value int
 	)
-	snap := New(func() (int, error) {
-		return rand.Intn(1000), nil
+	snap := New(func() int {
+		return rand.Intn(1000)
 	}, Interval[int](time.Millisecond*500))
 
 	for {
 		oldValue := value
-		v, err := snap.Get()
-		assert.NoError(t, err)
 
-		value = v
+		value = snap.Get()
 		assert.True(t, value >= 0 && value < 1000)
 
 		if oldValue != value {
@@ -43,34 +41,22 @@ func TestSnapshot_Struct(t *testing.T) {
 		now      = time.Now()
 		age      int
 	)
-	snap := New(func() (*User, error) {
+	snap := New(func() *User {
 		return &User{
 			Name: "test",
 			Age:  rand.Intn(100),
-		}, nil
+		}
 	}, Interval[*User](internal))
 
 	for {
 		oldAge := age
-		user, err := snap.Get()
-		assert.NoError(t, err)
-		assert.Equal(t, "test", user.Name)
+		assert.Equal(t, "test", snap.Get().Name)
 
-		age = user.Age
+		age = snap.Get().Age
 		assert.True(t, age >= 0 && age < 100)
 		if oldAge != age {
 			break
 		}
 	}
 	assert.True(t, time.Since(now) < internal*2)
-}
-
-func TestSnapshot_Error(t *testing.T) {
-	snap := New(func() (int, error) {
-		return 0, assert.AnError
-	})
-
-	value, err := snap.Get()
-	assert.Equal(t, 0, value)
-	assert.EqualError(t, err, assert.AnError.Error())
 }
