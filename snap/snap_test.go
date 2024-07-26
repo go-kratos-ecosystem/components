@@ -26,7 +26,7 @@ func TestSnapshot_Basic(t *testing.T) {
 			break
 		}
 	}
-	assert.True(t, time.Now().Sub(now) < time.Millisecond*1000*2)
+	assert.True(t, time.Since(now) < time.Millisecond*1000*2)
 }
 
 type User struct {
@@ -57,7 +57,7 @@ func TestSnapshot_Struct(t *testing.T) {
 			break
 		}
 	}
-	assert.True(t, time.Now().Sub(now) < internal*2)
+	assert.True(t, time.Since(now) < internal*2)
 }
 
 func TestSnapshot_Error(t *testing.T) {
