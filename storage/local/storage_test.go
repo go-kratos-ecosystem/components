@@ -10,7 +10,7 @@ import (
 var ctx = context.Background()
 
 func TestStorage(t *testing.T) {
-	local := New("./testfile/dir1")
+	local := NewStorage("./testfile/dir1")
 
 	// set
 	assert.NoError(t, local.Set(ctx, "test", []byte("test")))
@@ -66,12 +66,14 @@ func TestStorage(t *testing.T) {
 }
 
 func TestStorage_Path(t *testing.T) {
-	local := New("./testfile/path")
+	local := NewStorage("./testfile/path")
 
 	tests := []struct {
 		path string
 		want string
 	}{
+		{".jpg", "./testfile/path/.jpg"},
+		{"", "./testfile/path/"},
 		{"1.jpg", "./testfile/path/1.jpg"},
 		{"2.jpg", "./testfile/path/2.jpg"},
 		{"2", "./testfile/path/2"},
@@ -87,7 +89,7 @@ func TestStorage_Path(t *testing.T) {
 }
 
 func TestStorage_Name(t *testing.T) {
-	local := New("./testfile/path")
+	local := NewStorage("./testfile/path")
 
 	tests := []struct {
 		path string
@@ -95,6 +97,7 @@ func TestStorage_Name(t *testing.T) {
 	}{
 		{".jpg", ""},
 		{"", "."},
+		{"/1/", ""},
 		{"1.jpg", "1"},
 		{"2.jpg", "2"},
 		{"2", "2"},
@@ -110,14 +113,15 @@ func TestStorage_Name(t *testing.T) {
 }
 
 func TestStorage_Basename(t *testing.T) {
-	local := New("./testfile/path")
+	local := NewStorage("./testfile/path")
 
 	tests := []struct {
 		path string
 		want string
 	}{
 		{".jpg", ".jpg"},
-		{"", "."},
+		{"/1/", ""},
+		{"", ""},
 		{"1.jpg", "1.jpg"},
 		{"2.jpg", "2.jpg"},
 		{"2", "2"},
@@ -133,7 +137,7 @@ func TestStorage_Basename(t *testing.T) {
 }
 
 func TestStorage_Dirname(t *testing.T) {
-	local := New("./testfile/path")
+	local := NewStorage("./testfile/path")
 
 	tests := []struct {
 		path string
@@ -156,7 +160,7 @@ func TestStorage_Dirname(t *testing.T) {
 }
 
 func TestStorage_Extension(t *testing.T) {
-	local := New("./testfile/path")
+	local := NewStorage("./testfile/path")
 
 	tests := []struct {
 		path string

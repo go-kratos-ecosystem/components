@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/go-kratos-ecosystem/components/v2/helpers"
@@ -17,18 +18,18 @@ type Storage struct {
 
 var _ storage.Storage = (*Storage)(nil)
 
-func New(root string) *Storage {
+func NewStorage(root string) *Storage {
 	return &Storage{
 		root:     root,
 		prefixer: storage.NewPathPrefixer(root),
 	}
 }
 
-func (s *Storage) Get(_ context.Context, path string) ([]byte, error) {
+func (s *Storage) Read(_ context.Context, path string) ([]byte, error) {
 	return os.ReadFile(s.prefixer.Prefix(path))
 }
 
-func (s *Storage) Set(_ context.Context, path string, value []byte) error {
+func (s *Storage) Write(_ context.Context, path string, value []byte) error {
 	return os.WriteFile(s.prefixer.Prefix(path), value, 0o644) //nolint:mnd
 }
 
@@ -36,7 +37,7 @@ func (s *Storage) Delete(_ context.Context, path string) error {
 	return os.Remove(s.prefixer.Prefix(path))
 }
 
-func (s *Storage) Has(_ context.Context, path string) (bool, error) {
+func (s *Storage) Exists(_ context.Context, path string) (bool, error) {
 	_, err := os.Stat(s.prefixer.Prefix(path))
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -48,7 +49,7 @@ func (s *Storage) Has(_ context.Context, path string) (bool, error) {
 	return true, nil
 }
 
-func (s *Storage) Move(_ context.Context, oldPath, newPath string) error {
+func (s *Storage) Rename(_ context.Context, oldPath, newPath string) error {
 	return os.Rename(s.prefixer.Prefix(oldPath), s.prefixer.Prefix(newPath))
 }
 
@@ -190,17 +191,17 @@ func (s *Storage) Path(_ context.Context, path string) string {
 func (s *Storage) Name(_ context.Context, path string) string {
 	path = s.prefixer.Prefix(path)
 	base := filepath.Base(path)
-	return base[:len(base)-len(filepath.Ext(path))]
+	return strings.TrimSuffix(base, filepath.Ext(base))
 }
 
 func (s *Storage) Basename(_ context.Context, path string) string {
 	return filepath.Base(s.prefixer.Prefix(path))
 }
 
-func (s *Storage) Dirname(ctx context.Context, path string) string {
+func (s *Storage) Dirname(_ context.Context, path string) string {
 	return filepath.Dir(s.prefixer.Prefix(path))
 }
 
-func (s *Storage) Extension(ctx context.Context, path string) string {
+func (s *Storage) Extension(_ context.Context, path string) string {
 	return filepath.Ext(s.prefixer.Prefix(path))
 }

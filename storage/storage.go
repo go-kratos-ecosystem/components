@@ -9,20 +9,20 @@ import (
 var ErrNotSupported = errors.New("[storage] not supported")
 
 type Storage interface {
-	// Get retrieves the value for the given path.
-	Get(ctx context.Context, path string) ([]byte, error)
+	// Read the value at the given path.
+	Read(ctx context.Context, path string) ([]byte, error)
 
-	// Set sets the value for the given path.
-	Set(ctx context.Context, path string, value []byte) error
+	// Write the value at the given path.
+	Write(ctx context.Context, path string, value []byte) error
 
-	// Delete deletes the value for the given path.
+	// Delete the value at the given path.
 	Delete(ctx context.Context, path string) error
 
-	// Has checks if the path exists.
-	Has(ctx context.Context, path string) (bool, error)
+	// Exists checks if the path exists.
+	Exists(ctx context.Context, path string) (bool, error)
 
-	// Move moves the value from the old path to the new path.
-	Move(ctx context.Context, oldPath, newPath string) error
+	// Rename renames the value from the old path to the new path.
+	Rename(ctx context.Context, oldPath, newPath string) error
 
 	// Link creates a hard link from the old path to the new path.
 	Link(ctx context.Context, oldPath, newPath string) error
@@ -84,11 +84,11 @@ type noopStorage struct{}
 
 var NoopStorage Storage = noopStorage{}
 
-func (noopStorage) Get(context.Context, string) ([]byte, error)              { return nil, nil }
-func (noopStorage) Set(context.Context, string, []byte) error                { return nil }
+func (noopStorage) Read(context.Context, string) ([]byte, error)             { return nil, nil }
+func (noopStorage) Write(context.Context, string, []byte) error              { return nil }
 func (noopStorage) Delete(context.Context, string) error                     { return nil }
-func (noopStorage) Has(context.Context, string) (bool, error)                { return true, nil }
-func (noopStorage) Move(context.Context, string, string) error               { return nil }
+func (noopStorage) Exists(context.Context, string) (bool, error)             { return true, nil }
+func (noopStorage) Rename(context.Context, string, string) error             { return nil }
 func (noopStorage) Link(context.Context, string, string) error               { return nil }
 func (noopStorage) Symlink(context.Context, string, string) error            { return nil }
 func (noopStorage) Files(context.Context, string) ([]string, error)          { return nil, nil }
