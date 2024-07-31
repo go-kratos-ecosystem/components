@@ -30,11 +30,11 @@ type Config struct {
 }
 
 func main() {
-	s := snap.New(func() *Config {
+	s := snap.New(func() (*Config, error) {
 		// get config from remote/datastore/...
 		return &Config{
 			Name: "test",
-		}
+		}, nil
 	}, snap.Interval[*Config](1000*time.Second))
 
 	fmt.Print(s.Get()) // &{test} <nil>&
