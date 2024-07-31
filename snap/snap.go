@@ -44,9 +44,10 @@ func (s *Snap[T]) Get() T {
 }
 
 func (s *Snap[T]) Refresh() {
+	value := s.refresh()
+
 	s.mu.Lock()
 	defer s.mu.Unlock()
-
-	s.value = s.refresh()
+	s.value = value
 	s.expired = time.Now().Add(s.interval)
 }
