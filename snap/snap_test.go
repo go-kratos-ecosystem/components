@@ -13,8 +13,8 @@ func TestSnapshot_Basic(t *testing.T) {
 		now   = time.Now()
 		value int
 	)
-	snap := New(func() int {
-		return rand.Intn(1000)
+	snap := New(func() (int, error) {
+		return rand.Intn(1000), nil
 	}, Interval[int](time.Millisecond*500), Async[int](false))
 
 	for {
@@ -41,11 +41,11 @@ func TestSnapshot_Struct(t *testing.T) {
 		now      = time.Now()
 		age      int
 	)
-	snap := New(func() *User {
+	snap := New(func() (*User, error) {
 		return &User{
 			Name: "test",
 			Age:  rand.Intn(100),
-		}
+		}, nil
 	}, Interval[*User](internal), Async[*User](false))
 
 	for {

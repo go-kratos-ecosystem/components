@@ -9,10 +9,11 @@ type Snap[T any] struct {
 	value T
 	mu    sync.RWMutex
 
-	refresh  func() T
-	expired  time.Time     // expiration time
-	interval time.Duration // refresh interval
-	async    bool
+	refresh     func() (T, error)
+	expired     time.Time     // expiration time
+	interval    time.Duration // refresh interval
+	async       bool
+	isRefreshed bool // is refreshed
 }
 
 type Option[T any] func(*Snap[T])
@@ -29,7 +30,7 @@ func Async[T any](async bool) Option[T] {
 	}
 }
 
-func New[T any](refresh func() T, opts ...Option[T]) *Snap[T] {
+func New[T any](refresh func() (T, error), opts ...Option[T]) *Snap[T] {
 	s := &Snap[T]{
 		refresh:  refresh,
 		interval: time.Minute,
@@ -49,13 +50,18 @@ func (s *Snap[T]) Get() T {
 	return s.value
 }
 
-func (s *Snap[T]) Refresh() {
-	value := s.refresh()
+func (s *Snap[T]) Refresh() error {
+	value, err := s.refresh()
+	if err != nil {
+		return err
+	}
 
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.value = value
 	s.expired = time.Now().Add(s.interval)
+	s.isRefreshed = true
+	return nil
 }
 
 func (s *Snap[T]) attemptRefresh() {
@@ -63,10 +69,10 @@ func (s *Snap[T]) attemptRefresh() {
 		return
 	}
 
-	if s.async {
-		go s.Refresh()
+	if s.async && !s.isRefreshed { // if not refreshed, the first must be synchronous
+		go s.Refresh() // nolint:errcheck
 	} else {
-		s.Refresh()
+		_ = s.Refresh()
 	}
 }
 
