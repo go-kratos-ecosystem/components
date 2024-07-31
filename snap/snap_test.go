@@ -15,7 +15,7 @@ func TestSnapshot_Basic(t *testing.T) {
 	)
 	snap := New(func() int {
 		return rand.Intn(1000)
-	}, Interval[int](time.Millisecond*500), Async[int](true))
+	}, Interval[int](time.Millisecond*500), Async[int](false))
 
 	for {
 		oldValue := value
