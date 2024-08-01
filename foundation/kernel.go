@@ -38,6 +38,12 @@ func WithHandler(handler Handler) Option {
 	}
 }
 
+func WithProviders(providers ...Provider) Option {
+	return func(k *Kernel) {
+		k.providers = append(k.providers, providers...)
+	}
+}
+
 func WithTerminateTimeout(timeout time.Duration) Option {
 	return func(k *Kernel) {
 		k.terminateTimeout = timeout

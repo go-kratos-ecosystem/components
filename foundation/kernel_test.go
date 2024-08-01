@@ -3,6 +3,7 @@ package foundation
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -55,9 +56,12 @@ func TestKernel(t *testing.T) {
 			return nil
 		})),
 		WithContext(context.Background()),
+		WithProviders(
+			newProvider(t, contextKey1{}, "value1"),
+		),
+		WithTerminateTimeout(time.Second*10),
 	)
 	k.Register(
-		newProvider(t, contextKey1{}, "value1"),
 		newProvider(t, contextKey2{}, "value2"),
 	)
 	assert.NoError(t, k.Run())
