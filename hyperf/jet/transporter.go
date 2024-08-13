@@ -6,8 +6,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 type Transporter interface {
@@ -58,8 +56,6 @@ func NewHttpTransporter(opts ...HttpTransporterOption) (*HttpTransporter, error)
 }
 
 func (t *HttpTransporter) Send(ctx context.Context, data []byte) ([]byte, error) {
-	spew.Dump(data)
-
 	request, err := http.NewRequestWithContext(ctx, http.MethodPost, t.addr, bytes.NewReader(data))
 	if err != nil {
 		return nil, err

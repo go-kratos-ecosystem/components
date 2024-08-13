@@ -1,16 +1,20 @@
 package jet
 
 import (
+	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/google/uuid"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // ================================================================================================
 // PathGenerator generates the path of the service method
 // ================================================================================================
 
-var DefaultPathGenerator PathGenerator = NewFullPathGenerator()
+var DefaultPathGenerator PathGenerator = NewGeneralPathGenerator()
 
 type PathGenerator interface {
 	Generate(service string, name string) string
@@ -21,6 +25,61 @@ type PathGeneratorFunc func(service string, name string) string
 
 func (f PathGeneratorFunc) Generate(service string, name string) string {
 	return f(service, name)
+}
+
+// GeneralPathGenerator generates the general path of the service method
+type GeneralPathGenerator struct{}
+
+func NewGeneralPathGenerator() *GeneralPathGenerator {
+	return &GeneralPathGenerator{}
+}
+
+var (
+	generalServiceRegexp = regexp.MustCompile(`Service$`)
+	generalSpaceRegexp   = regexp.MustCompile(`\s+`)
+)
+
+func (g *GeneralPathGenerator) Generate(service string, name string) string {
+	servers := strings.Split(service, "\\")
+	path := generalServiceRegexp.ReplaceAllString(servers[len(servers)-1], "")
+
+	if !g.isLower(path) {
+		path = g.snake(path)
+	}
+	if len(path) > 0 && path[0] != '/' {
+		path = "/" + path
+	}
+	return path + "/" + name
+}
+
+func (g *GeneralPathGenerator) snake(s string) string {
+	s = generalSpaceRegexp.ReplaceAllString(g.ucwords(s), "")
+	s = g.prefixUpperDelimiter(s)
+	return strings.ToLower(s)
+}
+
+func (g *GeneralPathGenerator) isLower(s string) bool {
+	for _, r := range s {
+		if unicode.IsUpper(r) {
+			return false
+		}
+	}
+	return true
+}
+
+func (g *GeneralPathGenerator) ucwords(s string) string {
+	return cases.Title(language.Und, cases.NoLower).String(s)
+}
+
+func (g *GeneralPathGenerator) prefixUpperDelimiter(s string) string {
+	var rs []rune
+	for i, r := range s {
+		if i > 0 && unicode.IsUpper(r) {
+			rs = append(rs, '_')
+		}
+		rs = append(rs, r)
+	}
+	return string(rs)
 }
 
 // FullPathGenerator generates the full path of the service method
