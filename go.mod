@@ -6,7 +6,6 @@ require (
 	entgo.io/ent v0.14.0
 	github.com/cheggaaa/pb/v3 v3.1.5
 	github.com/davecgh/go-spew v1.1.1
-	github.com/dlclark/regexp2 v1.11.4
 	github.com/fatih/color v1.17.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-chi/chi/v5 v5.1.0
