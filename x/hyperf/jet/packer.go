@@ -1,6 +1,8 @@
 package jet
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 var DefaultPacker Packer = NewJsonPacker()
 

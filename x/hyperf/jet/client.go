@@ -3,16 +3,12 @@ package jet
 import (
 	"context"
 	"errors"
-	"time"
 )
-
-type Handler func(ctx context.Context, name string, request any) (response any, err error)
-
-type ChainHandler func(Handler) Handler
 
 type Client struct {
 	service string
-	chains  []ChainHandler
+
+	middlewares []Middleware
 
 	transporter   Transporter
 	idGenerator   IDGenerator
@@ -22,6 +18,12 @@ type Client struct {
 }
 
 type Option func(*Client)
+
+func WithMiddleware(m ...Middleware) Option {
+	return func(c *Client) {
+		c.middlewares = append(c.middlewares, m...)
+	}
+}
 
 func WithService(service string) Option {
 	return func(c *Client) {
@@ -57,28 +59,17 @@ func NewClient(opts ...Option) (*Client, error) {
 	return client, nil
 }
 
-type requestOptions struct {
-	timeout time.Duration
-	tries   int
-}
-
-type RequestOption func(*requestOptions)
-
-func (c *Client) Invoke(ctx context.Context, name string, request any, response any, opts ...RequestOption) (err error) {
-	handler := func(ctx context.Context, name string, request any) (response any, err error) {
-		err = c.invoke(ctx, name, request, response, opts...)
+func (c *Client) Invoke(ctx context.Context, name string, request any, response any, middlewares ...Middleware) (err error) {
+	handler := Chain(append(c.middlewares, middlewares...)...)(func(ctx context.Context, name string, request any) (any, error) {
+		err = c.invoke(ctx, name, request, response)
 		return response, err
-	}
-
-	for i := len(c.chains) - 1; i >= 0; i-- {
-		handler = c.chains[i](handler)
-	}
+	})
 
 	response, err = handler(ctx, name, request)
 	return
 }
 
-func (c *Client) invoke(ctx context.Context, name string, request any, response any, opts ...RequestOption) error {
+func (c *Client) invoke(ctx context.Context, name string, request any, response any) error {
 	params, err := c.packer.Pack(request)
 	if err != nil {
 		return err
@@ -104,4 +95,8 @@ func (c *Client) invoke(ctx context.Context, name string, request any, response 
 	}
 
 	return c.packer.Unpack(rpcResp.Result, response)
+}
+
+func (c *Client) Use(m ...Middleware) {
+	c.middlewares = append(c.middlewares, m...)
 }

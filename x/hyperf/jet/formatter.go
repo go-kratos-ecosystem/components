@@ -42,11 +42,12 @@ type Formatter interface {
 	ParseRequest(data []byte) (*RpcRequest, error)
 
 	// ParseResponse parses a response
-	ParseResponse(data []byte) (*RpcResponse, *RpcResponseError)
+	ParseResponse(data []byte) (*RpcResponse, error)
 }
 
-// ------------------------------
+// ============================================================
 
+// JsonRpcFormatter is a json rpc formatter
 type JsonRpcFormatter struct{}
 
 type JsonRpcFormatterRequest struct {
@@ -113,10 +114,10 @@ func (j *JsonRpcFormatter) ParseRequest(data []byte) (*RpcRequest, error) {
 	}, nil
 }
 
-func (j *JsonRpcFormatter) ParseResponse(data []byte) (*RpcResponse, *RpcResponseError) {
+func (j *JsonRpcFormatter) ParseResponse(data []byte) (*RpcResponse, error) {
 	var resp JsonRpcFormatterResponse
 	if err := json.Unmarshal(data, &resp); err != nil {
-		return nil, nil
+		return nil, err
 	}
 	if resp.Error != nil {
 		return nil, &RpcResponseError{

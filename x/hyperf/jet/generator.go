@@ -6,44 +6,34 @@ import (
 	"github.com/google/uuid"
 )
 
-var DefaultPathGenerator PathGenerator = NewPathGenerator()
+// ================================================================================================
+// PathGenerator generates the path of the service method
+// ================================================================================================
+
+var DefaultPathGenerator PathGenerator = NewFullPathGenerator()
 
 type PathGenerator interface {
 	Generate(service string, name string) string
 }
 
-type pathGenerator struct{}
-
-func NewPathGenerator() PathGenerator {
-	return &pathGenerator{}
-}
-
-func (s *pathGenerator) Generate(service string, name string) string {
-	services := strings.Split(service, "\\")
-	service = strings.ReplaceAll(services[len(services)-1], "Service", "")
-	service = strings.ToLower(service)
-	if service[0] != '/' {
-		service = "/" + service
-	}
-
-	return service + "/" + name
-}
-
-type DotPathGenerator struct{}
-
-func (d *DotPathGenerator) Generate(service string, name string) string {
-	return service + "." + name
-}
-
+// FullPathGenerator generates the full path of the service method
 type FullPathGenerator struct{}
 
-func (f *FullPathGenerator) Generate(service string, name string) string {
-	return service + "/" + name
+func NewFullPathGenerator() *FullPathGenerator {
+	return &FullPathGenerator{}
 }
 
-// --------------------------------------------------------------------------------
-// IDGenerator
-// --------------------------------------------------------------------------------
+func (f *FullPathGenerator) Generate(service string, name string) string {
+	path := strings.ReplaceAll(service, "\\", "/")
+	if len(path) > 0 && path[0] != '/' {
+		path = "/" + path
+	}
+	return path + "/" + name
+}
+
+// ================================================================================================
+// IDGenerator generates the id of the request
+// ================================================================================================
 
 var DefaultIDGenerator IDGenerator = NewUUIDGenerator()
 
