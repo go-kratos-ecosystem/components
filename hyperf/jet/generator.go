@@ -16,6 +16,13 @@ type PathGenerator interface {
 	Generate(service string, name string) string
 }
 
+// PathGeneratorFunc generates the path of the service method
+type PathGeneratorFunc func(service string, name string) string
+
+func (f PathGeneratorFunc) Generate(service string, name string) string {
+	return f(service, name)
+}
+
 // FullPathGenerator generates the full path of the service method
 type FullPathGenerator struct{}
 
@@ -39,6 +46,12 @@ var DefaultIDGenerator IDGenerator = NewUUIDGenerator()
 
 type IDGenerator interface {
 	Generate() string
+}
+
+type IDGeneratorFunc func() string
+
+func (f IDGeneratorFunc) Generate() string {
+	return f()
 }
 
 type UUIDGenerator struct{}

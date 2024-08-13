@@ -37,6 +37,30 @@ func WithTransporter(transporter Transporter) Option {
 	}
 }
 
+func WithIDGenerator(generator IDGenerator) Option {
+	return func(c *Client) {
+		c.idGenerator = generator
+	}
+}
+
+func WithPathGenerator(generator PathGenerator) Option {
+	return func(c *Client) {
+		c.pathGenerator = generator
+	}
+}
+
+func WithFormatter(formatter Formatter) Option {
+	return func(c *Client) {
+		c.formatter = formatter
+	}
+}
+
+func WithPacker(packer Packer) Option {
+	return func(c *Client) {
+		c.packer = packer
+	}
+}
+
 func NewClient(opts ...Option) (*Client, error) {
 	client := &Client{
 		idGenerator:   DefaultIDGenerator,
