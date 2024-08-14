@@ -19,8 +19,8 @@ import (
 
 func main() {
 	// create transporter
-	transport, err := jet.NewHttpTransporter(
-		jet.WithHttpTransporterAddr("http://localhost:8080/"), // http server address
+	transport, err := jet.NewHTTPTransporter(
+		jet.WithHTTPTransporterAddr("http://localhost:8080/"), // http server address
 	)
 	if err != nil {
 		panic(err)
