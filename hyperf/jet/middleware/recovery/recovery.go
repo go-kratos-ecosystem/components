@@ -7,7 +7,7 @@ import (
 	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
 )
 
-var DefaultHandler = func(ctx context.Context, name string, request any, err any) error {
+var DefaultHandler = func(_ context.Context, name string, request any, err any) error {
 	return fmt.Errorf("name: %s, request: %v, error: %v", name, request, err)
 }
 
