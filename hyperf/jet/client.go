@@ -5,16 +5,32 @@ import (
 	"errors"
 )
 
+var (
+	ErrClientServiceIsRequired     = errors.New("jet/client: service is required")
+	ErrClientTransporterIsRequired = errors.New("jet/client: transporter is required")
+)
+
 type Client struct {
+	// Service name
 	service string
 
+	// Middlewares
 	middlewares []Middleware
 
-	transporter   Transporter
-	idGenerator   IDGenerator
+	// Transporter
+	transporter Transporter
+
+	// IDGenerator
+	idGenerator IDGenerator
+
+	// PathGenerator
 	pathGenerator PathGenerator
-	formatter     Formatter
-	packer        Packer
+
+	// Formatter
+	formatter Formatter
+
+	// Packer
+	packer Packer
 }
 
 type Option func(*Client)
@@ -74,20 +90,22 @@ func NewClient(opts ...Option) (*Client, error) {
 
 	// validate
 	if client.service == "" {
-		return nil, errors.New("jet/client: service is required")
+		return nil, ErrClientServiceIsRequired
 	}
 	if client.transporter == nil {
-		return nil, errors.New("jet/client: transporter is required")
+		return nil, ErrClientTransporterIsRequired
 	}
 
 	return client, nil
 }
 
-func (c *Client) Invoke(ctx context.Context, name string, request any, response any, middlewares ...Middleware) (err error) {
-	handler := Chain(append(c.middlewares, middlewares...)...)(func(ctx context.Context, name string, request any) (any, error) {
+func (c *Client) Invoke(ctx context.Context, name string, request any, response any, middlewares ...Middleware) (err error) { // nolint:lll
+	handler := func(ctx context.Context, name string, request any) (any, error) {
 		err = c.invoke(ctx, name, request, response)
 		return response, err
-	})
+	}
+
+	handler = Chain(append(c.middlewares, middlewares...)...)(handler)
 
 	response, err = handler(ctx, name, request)
 	return
@@ -99,7 +117,7 @@ func (c *Client) invoke(ctx context.Context, name string, request any, response 
 		return err
 	}
 
-	req, err := c.formatter.FormatRequest(&RpcRequest{
+	req, err := c.formatter.FormatRequest(&RPCRequest{
 		ID:     c.idGenerator.Generate(),
 		Path:   c.pathGenerator.Generate(c.service, name),
 		Params: params,

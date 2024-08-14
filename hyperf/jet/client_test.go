@@ -1,30 +1,70 @@
 package jet
 
 import (
+	"bytes"
 	"context"
-	"log"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestClient(t *testing.T) {
-	// transport
+func createServer(t *testing.T, formatter Formatter, packer Packer) *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var buf bytes.Buffer
+		_, _ = buf.ReadFrom(r.Body)
+
+		// A. parse and check request
+		request, err := formatter.ParseRequest(buf.Bytes())
+		assert.NoError(t, err)
+		assert.Equal(t, "/example/_user/_money/balance", request.Path)
+
+		var params []string
+		err = packer.Unpack(request.Params, &params)
+		assert.NoError(t, err)
+		assert.Equal(t, []string{"flc"}, params)
+
+		// B. response
+		var balance float64 = 100.0
+		result, err := packer.Pack(balance)
+		assert.NoError(t, err)
+
+		response, err := formatter.FormatResponse(&RPCResponse{
+			ID:     request.ID,
+			Result: result,
+		}, nil)
+		assert.NoError(t, err)
+
+		_, _ = w.Write(response)
+	}))
+}
+
+func TestClient_Invoke(t *testing.T) {
+	// init
+	formatter := DefaultFormatter
+	packer := DefaultPacker
+
+	// create srv
+	srv := createServer(t, formatter, packer)
+	defer srv.Close()
+
+	// create transport
 	transport, err := NewHTTPTransporter(
-		WithHTTPTransporterAddr("http://localhost:8080/"),
+		WithHTTPTransporterAddr(srv.URL),
 	)
 	assert.NoError(t, err)
 
-	// client
+	// create client
 	client, err := NewClient(
-		WithService("Example/Money/MoneyService"),
+		WithService("Example/User/MoneyService"),
 		WithTransporter(transport),
+		WithFormatter(formatter),
+		WithPacker(packer),
 		WithMiddleware(func(next Handler) Handler {
 			return func(ctx context.Context, name string, request any) (response any, err error) {
-				defer func() {
-					log.Printf("name: %s, request: %v, response: %v, error: %v", name, request, response, err)
-				}()
+				assert.Equal(t, "balance", name)
+				assert.Equal(t, []any{"flc"}, request)
 				return next(ctx, name, request)
 			}
 		}),
@@ -33,63 +73,25 @@ func TestClient(t *testing.T) {
 
 	client.Use(func(next Handler) Handler {
 		return func(ctx context.Context, name string, request any) (response any, err error) {
-			if name == "getBalance" {
-				log.Printf("getBalance: %v", request)
-			}
+			assert.Equal(t, "balance", name)
+			assert.Equal(t, []any{"flc"}, request)
 			return next(ctx, name, request)
 		}
 	})
 
-	// money service
-	money := NewMoneyService(client)
-	balance, err := money.GetBalance(context.Background(), 1006)
+	// call service
+	var balance float64
+	err = client.Invoke(context.Background(), "balance", []any{"flc"}, &balance)
 	assert.NoError(t, err)
-	spew.Dump(balance)
+	assert.Equal(t, 100.0, balance)
 }
 
-type MoneyService struct {
-	client *Client
-}
+func TestClient_InvalidErrs(t *testing.T) {
+	_, err := NewClient()
+	assert.Error(t, err)
+	assert.Equal(t, ErrClientServiceIsRequired, err)
 
-func NewMoneyService(client *Client) *MoneyService {
-	return &MoneyService{client: client}
-}
-
-type MoneyServiceGetBalanceRequest struct {
-	UserID     int
-	Rsync      int
-	AccountTag int
-}
-
-type MoneyServiceGetBalanceOption func(*MoneyServiceGetBalanceRequest)
-
-func newMoneyServiceGetBalanceRequest(userID int, opts ...MoneyServiceGetBalanceOption) *MoneyServiceGetBalanceRequest {
-	req := &MoneyServiceGetBalanceRequest{
-		UserID:     userID,
-		Rsync:      0,
-		AccountTag: 0,
-	}
-	for _, opt := range opts {
-		opt(req)
-	}
-	return req
-}
-
-func (req *MoneyServiceGetBalanceRequest) request() []any {
-	return []any{
-		req.UserID,
-		req.Rsync,
-		req.AccountTag,
-	}
-}
-
-func (s *MoneyService) GetBalance(ctx context.Context, userID int, opts ...MoneyServiceGetBalanceOption) (balance float64, err error) {
-	err = s.client.Invoke(ctx, "getBalance",
-		newMoneyServiceGetBalanceRequest(userID, opts...).request(), &balance, func(next Handler) Handler {
-			return func(ctx context.Context, name string, request any) (response any, err error) {
-				log.Printf("getBalance - V2: %v", request)
-				return next(ctx, name, request)
-			}
-		})
-	return
+	_, err = NewClient(WithService("test"), WithTransporter(nil))
+	assert.Error(t, err)
+	assert.Equal(t, ErrClientTransporterIsRequired, err)
 }

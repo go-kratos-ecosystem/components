@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGeneralPathGenerator_Generate(t *testing.T) {
+func TestPathGenerator_GeneralPathGenerator(t *testing.T) {
 	generator := NewGeneralPathGenerator()
 
 	tests := []struct {
@@ -22,6 +22,7 @@ func TestGeneralPathGenerator_Generate(t *testing.T) {
 		{`/Usa888/Money/LinkService`, "Create", "/_usa888/_money/_link/Create"},
 		{`Foo\UserService`, "create", "/user/create"},
 		{`\Foo\UserService`, "Create", "/user/Create"},
+		{`\foo\userService`, "Create", "/user/Create"},
 	}
 
 	for _, tt := range tests {
@@ -31,7 +32,7 @@ func TestGeneralPathGenerator_Generate(t *testing.T) {
 	}
 }
 
-func TestFullPathGenerator_Generate(t *testing.T) {
+func TestPathGenerator_FullPathGenerator(t *testing.T) {
 	generator := NewFullPathGenerator()
 
 	tests := []struct {
@@ -49,4 +50,18 @@ func TestFullPathGenerator_Generate(t *testing.T) {
 			assert.Equal(t, tt.want, generator.Generate(tt.service, tt.name))
 		})
 	}
+}
+
+func TestIDGenerator_UUIDGenerator(t *testing.T) {
+	generator := NewUUIDGenerator()
+	assert.Implements(t, (*IDGenerator)(nil), generator)
+	assert.Equal(t, 36, len(generator.Generate()))
+}
+
+func TestIDGenerator_IDGeneratorFunc(t *testing.T) {
+	generator := IDGeneratorFunc(func() string {
+		return "1234567890"
+	})
+	assert.Implements(t, (*IDGenerator)(nil), generator)
+	assert.Equal(t, "1234567890", generator.Generate())
 }

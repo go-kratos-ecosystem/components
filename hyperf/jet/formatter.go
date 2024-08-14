@@ -5,77 +5,77 @@ import (
 	"fmt"
 )
 
-var DefaultFormatter Formatter = NewJsonRpcFormatter()
+var DefaultFormatter Formatter = NewJSONRPCFormatter()
 
-type RpcRequest struct {
+type RPCRequest struct {
 	ID     string `json:"id"`
 	Path   string `json:"path"`
 	Params []byte `json:"params"`
 }
 
-type RpcResponse struct {
+type RPCResponse struct {
 	ID     string `json:"id"`
 	Result []byte `json:"result"`
 }
 
-type RpcResponseError struct {
+type RPCResponseError struct {
 	ID      string `json:"id"`
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Err     error  `json:"error"`
 }
 
-var _ error = (*RpcResponseError)(nil)
+var _ error = (*RPCResponseError)(nil)
 
-func (r *RpcResponseError) Error() string {
+func (r *RPCResponseError) Error() string {
 	return fmt.Sprintf("code: %d, message: %s, error: %v", r.Code, r.Message, r.Err)
 }
 
 type Formatter interface {
 	// FormatRequest formats a request
-	FormatRequest(req *RpcRequest) ([]byte, error)
+	FormatRequest(req *RPCRequest) ([]byte, error)
 
 	// FormatResponse formats a response
-	FormatResponse(resp *RpcResponse, err *RpcResponseError) ([]byte, error)
+	FormatResponse(resp *RPCResponse, err *RPCResponseError) ([]byte, error)
 
 	// ParseRequest parses a request
-	ParseRequest(data []byte) (*RpcRequest, error)
+	ParseRequest(data []byte) (*RPCRequest, error)
 
 	// ParseResponse parses a response
-	ParseResponse(data []byte) (*RpcResponse, error)
+	ParseResponse(data []byte) (*RPCResponse, error)
 }
 
 // ============================================================
 
-// JsonRpcFormatter is a json rpc formatter
-type JsonRpcFormatter struct{}
+// JSONRPCFormatter is a json rpc formatter
+type JSONRPCFormatter struct{}
 
-type JsonRpcFormatterRequest struct {
+type JSONRPCFormatterRequest struct {
 	Jsonrpc string          `json:"jsonrpc"`
 	Method  string          `json:"method"`
 	Params  json.RawMessage `json:"params"`
 	ID      string          `json:"id"`
 }
 
-type JsonRpcFormatterResponseError struct {
+type JSONRPCFormatterResponseError struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    error
 }
 
-type JsonRpcFormatterResponse struct {
+type JSONRPCFormatterResponse struct {
 	Jsonrpc string                         `json:"jsonrpc"`
 	Result  json.RawMessage                `json:"result"`
 	ID      string                         `json:"id"`
-	Error   *JsonRpcFormatterResponseError `json:"error"`
+	Error   *JSONRPCFormatterResponseError `json:"error"`
 }
 
-func NewJsonRpcFormatter() *JsonRpcFormatter {
-	return &JsonRpcFormatter{}
+func NewJSONRPCFormatter() *JSONRPCFormatter {
+	return &JSONRPCFormatter{}
 }
 
-func (j *JsonRpcFormatter) FormatRequest(req *RpcRequest) ([]byte, error) {
-	return json.Marshal(&JsonRpcFormatterRequest{
+func (j *JSONRPCFormatter) FormatRequest(req *RPCRequest) ([]byte, error) {
+	return json.Marshal(&JSONRPCFormatterRequest{
 		Jsonrpc: "2.0",
 		Method:  req.Path,
 		Params:  req.Params,
@@ -83,51 +83,51 @@ func (j *JsonRpcFormatter) FormatRequest(req *RpcRequest) ([]byte, error) {
 	})
 }
 
-func (j *JsonRpcFormatter) FormatResponse(resp *RpcResponse, err *RpcResponseError) ([]byte, error) {
+func (j *JSONRPCFormatter) FormatResponse(resp *RPCResponse, err *RPCResponseError) ([]byte, error) {
 	if err != nil {
-		return json.Marshal(&JsonRpcFormatterResponse{
+		return json.Marshal(&JSONRPCFormatterResponse{
 			Jsonrpc: "2.0",
 			ID:      err.ID,
-			Error: &JsonRpcFormatterResponseError{
+			Error: &JSONRPCFormatterResponseError{
 				Code:    err.Code,
 				Message: err.Message,
 				Data:    err.Err,
 			},
 		})
 	}
-	return json.Marshal(&JsonRpcFormatterResponse{
+	return json.Marshal(&JSONRPCFormatterResponse{
 		Jsonrpc: "2.0",
 		ID:      resp.ID,
 		Result:  resp.Result,
 	})
 }
 
-func (j *JsonRpcFormatter) ParseRequest(data []byte) (*RpcRequest, error) {
-	var req JsonRpcFormatterRequest
+func (j *JSONRPCFormatter) ParseRequest(data []byte) (*RPCRequest, error) {
+	var req JSONRPCFormatterRequest
 	if err := json.Unmarshal(data, &req); err != nil {
 		return nil, err
 	}
-	return &RpcRequest{
+	return &RPCRequest{
 		ID:     req.ID,
 		Path:   req.Method,
 		Params: req.Params,
 	}, nil
 }
 
-func (j *JsonRpcFormatter) ParseResponse(data []byte) (*RpcResponse, error) {
-	var resp JsonRpcFormatterResponse
+func (j *JSONRPCFormatter) ParseResponse(data []byte) (*RPCResponse, error) {
+	var resp JSONRPCFormatterResponse
 	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, err
 	}
 	if resp.Error != nil {
-		return nil, &RpcResponseError{
+		return nil, &RPCResponseError{
 			ID:      resp.ID,
 			Code:    resp.Error.Code,
 			Message: resp.Error.Message,
 			Err:     resp.Error.Data,
 		}
 	}
-	return &RpcResponse{
+	return &RPCResponse{
 		ID:     resp.ID,
 		Result: resp.Result,
 	}, nil
