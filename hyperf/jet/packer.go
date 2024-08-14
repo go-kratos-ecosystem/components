@@ -4,24 +4,24 @@ import (
 	"encoding/json"
 )
 
-var DefaultPacker Packer = NewJsonPacker()
+var DefaultPacker Packer = NewJSONPacker()
 
 type Packer interface {
 	Pack(interface{}) ([]byte, error)
 	Unpack([]byte, interface{}) error
 }
 
-// JsonPacker is a json packer
-type JsonPacker struct{}
+// JSONPacker is a json packer
+type JSONPacker struct{}
 
-func NewJsonPacker() *JsonPacker {
-	return &JsonPacker{}
+func NewJSONPacker() *JSONPacker {
+	return &JSONPacker{}
 }
 
-func (p *JsonPacker) Pack(v interface{}) ([]byte, error) {
+func (p *JSONPacker) Pack(v interface{}) ([]byte, error) {
 	return json.Marshal(v)
 }
 
-func (p *JsonPacker) Unpack(data []byte, v interface{}) error {
+func (p *JSONPacker) Unpack(data []byte, v interface{}) error {
 	return json.Unmarshal(data, v)
 }

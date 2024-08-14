@@ -8,36 +8,41 @@ import (
 	"net/http"
 )
 
+var (
+	ErrHTTPTransporterAddrIsRequired     = errors.New("jet/transporter: addr is required")
+	ErrorHTTPTransporterClientIsRequired = errors.New("jet/transporter: client is required")
+)
+
 type Transporter interface {
 	Send(ctx context.Context, data []byte) ([]byte, error)
 }
 
 // --------------------------------------------------------
-// HttpTransporter implementation
+// HTTPTransporter implementation
 // --------------------------------------------------------
 
-// HttpTransporter is a http transporter
-type HttpTransporter struct {
+// HTTPTransporter is a http transporter
+type HTTPTransporter struct {
 	addr string
 	*http.Client
 }
 
-type HttpTransporterOption func(*HttpTransporter)
+type HTTPTransporterOption func(*HTTPTransporter)
 
-func WithHttpTransporterAddr(addr string) HttpTransporterOption {
-	return func(t *HttpTransporter) {
+func WithHTTPTransporterAddr(addr string) HTTPTransporterOption {
+	return func(t *HTTPTransporter) {
 		t.addr = addr
 	}
 }
 
-func WithHttpTransporterClient(client *http.Client) HttpTransporterOption {
-	return func(t *HttpTransporter) {
+func WithHTTPTransporterClient(client *http.Client) HTTPTransporterOption {
+	return func(t *HTTPTransporter) {
 		t.Client = client
 	}
 }
 
-func NewHttpTransporter(opts ...HttpTransporterOption) (*HttpTransporter, error) {
-	transport := &HttpTransporter{
+func NewHTTPTransporter(opts ...HTTPTransporterOption) (*HTTPTransporter, error) {
+	transport := &HTTPTransporter{
 		Client: http.DefaultClient,
 	}
 	for _, opt := range opts {
@@ -46,16 +51,16 @@ func NewHttpTransporter(opts ...HttpTransporterOption) (*HttpTransporter, error)
 
 	// validate
 	if transport.addr == "" {
-		return nil, errors.New("jet/transporter: addr is required")
+		return nil, ErrHTTPTransporterAddrIsRequired
 	}
 	if transport.Client == nil {
-		return nil, errors.New("jet/transporter: client is required")
+		return nil, ErrorHTTPTransporterClientIsRequired
 	}
 
 	return transport, nil
 }
 
-func (t *HttpTransporter) Send(ctx context.Context, data []byte) ([]byte, error) {
+func (t *HTTPTransporter) Send(ctx context.Context, data []byte) ([]byte, error) {
 	request, err := http.NewRequestWithContext(ctx, http.MethodPost, t.addr, bytes.NewReader(data))
 	if err != nil {
 		return nil, err

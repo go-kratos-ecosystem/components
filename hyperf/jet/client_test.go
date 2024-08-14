@@ -11,8 +11,8 @@ import (
 
 func TestClient(t *testing.T) {
 	// transport
-	transport, err := NewHttpTransporter(
-		WithHttpTransporterAddr("http://localhost:8080/"),
+	transport, err := NewHTTPTransporter(
+		WithHTTPTransporterAddr("http://localhost:8080/"),
 	)
 	assert.NoError(t, err)
 
