@@ -28,11 +28,15 @@ func TestMiddleware_Chain(t *testing.T) {
 	chain := Chain(
 		createTestMiddleware(t, &result, 1),
 		createTestMiddleware(t, &result, 2),
-	)(func(ctx context.Context, name string, request any) (any, error) {
+	)(func(_ context.Context, name string, request any) (any, error) {
 		result = append(result, "Before: 3")
 		defer func() {
 			result = append(result, "After: 3")
 		}()
+
+		assert.Equal(t, "name", name)
+		assert.Equal(t, "request", request)
+
 		return "response", nil
 	})
 	response, err := chain(context.Background(), "name", "request")

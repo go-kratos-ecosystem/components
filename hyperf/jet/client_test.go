@@ -10,6 +10,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var (
+	testBalance = 100.0
+	testParams  = []string{"flc"}
+)
+
 func createServer(t *testing.T, formatter Formatter, packer Packer) *httptest.Server {
 	return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var buf bytes.Buffer
@@ -23,11 +28,10 @@ func createServer(t *testing.T, formatter Formatter, packer Packer) *httptest.Se
 		var params []string
 		err = packer.Unpack(request.Params, &params)
 		assert.NoError(t, err)
-		assert.Equal(t, []string{"flc"}, params)
+		assert.Equal(t, testParams, params)
 
 		// B. response
-		var balance float64 = 100.0
-		result, err := packer.Pack(balance)
+		result, err := packer.Pack(testBalance)
 		assert.NoError(t, err)
 
 		response, err := formatter.FormatResponse(&RPCResponse{
@@ -64,7 +68,7 @@ func TestClient_Invoke(t *testing.T) {
 		WithMiddleware(func(next Handler) Handler {
 			return func(ctx context.Context, name string, request any) (response any, err error) {
 				assert.Equal(t, "balance", name)
-				assert.Equal(t, []any{"flc"}, request)
+				assert.Equal(t, testParams, request)
 				return next(ctx, name, request)
 			}
 		}),
@@ -74,16 +78,16 @@ func TestClient_Invoke(t *testing.T) {
 	client.Use(func(next Handler) Handler {
 		return func(ctx context.Context, name string, request any) (response any, err error) {
 			assert.Equal(t, "balance", name)
-			assert.Equal(t, []any{"flc"}, request)
+			assert.Equal(t, testParams, request)
 			return next(ctx, name, request)
 		}
 	})
 
 	// call service
 	var balance float64
-	err = client.Invoke(context.Background(), "balance", []any{"flc"}, &balance)
+	err = client.Invoke(context.Background(), "balance", testParams, &balance)
 	assert.NoError(t, err)
-	assert.Equal(t, 100.0, balance)
+	assert.Equal(t, testBalance, balance)
 }
 
 func TestClient_InvalidErrs(t *testing.T) {
