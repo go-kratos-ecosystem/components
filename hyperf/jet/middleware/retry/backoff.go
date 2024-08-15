@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-var DefaultBackoff = LinearBackoff(100 * time.Millisecond)
+var DefaultBackoff = LinearBackoff(100 * time.Millisecond) //nolint:mnd
 
 type BackoffFunc func(attempt int) time.Duration
 

@@ -25,7 +25,7 @@ func TestRetry(t *testing.T) {
 	}{
 		{
 			name: "test",
-			handler: func(ctx context.Context, name string, request any) (response any, err error) {
+			handler: func(context.Context, string, any) (any, error) {
 				return nil, assert.AnError
 			},
 			want: func(t *testing.T, err error) {
@@ -34,7 +34,7 @@ func TestRetry(t *testing.T) {
 		},
 		{
 			name: "test",
-			handler: func(ctx context.Context, name string, request any) (response any, err error) {
+			handler: func(context.Context, string, any) (any, error) {
 				return nil, customError
 			},
 			want: func(t *testing.T, err error) {
@@ -43,7 +43,7 @@ func TestRetry(t *testing.T) {
 		},
 		{
 			name: "test",
-			handler: func(ctx context.Context, name string, request any) (response any, err error) {
+			handler: func(context.Context, string, any) (any, error) {
 				return nil, nil
 			},
 			want: func(t *testing.T, err error) {

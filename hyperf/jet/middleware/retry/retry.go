@@ -11,7 +11,7 @@ import (
 
 func NewRetry(opts ...Option) jet.Middleware {
 	o := options{
-		attempts: 3,
+		attempts: 3, //nolint:mnd
 		backoff:  DefaultBackoff,
 		allow:    DefaultAllow,
 	}
@@ -51,7 +51,7 @@ type Error struct {
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("jet/middleware/retry: retry failed after %d attempts, time: %v, last error: %v", e.Attempts, e.Time, e.Err)
+	return fmt.Sprintf("jet/middleware/retry: retry failed after %d attempts, time: %v, last error: %v", e.Attempts, e.Time, e.Err) //nolint:lll
 }
 
 func (e *Error) Unwrap() error {

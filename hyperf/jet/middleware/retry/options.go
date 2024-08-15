@@ -2,12 +2,7 @@ package retry
 
 import "github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
 
-var DefaultAllow = func(err error) bool {
-	if jet.IsHTTPTransporterServerError(err) {
-		return true
-	}
-	return false
-}
+var DefaultAllow = jet.IsHTTPTransporterServerError
 
 type AllowFunc func(err error) bool
 

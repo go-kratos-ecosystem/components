@@ -101,7 +101,7 @@ type HTTPTransporterServerError struct {
 }
 
 func (e *HTTPTransporterServerError) Error() string {
-	return fmt.Sprintf("jet/transporter: server error, status code: %d, message: %s, error: %v", e.StatusCode, e.Message, e.Err)
+	return fmt.Sprintf("jet/transporter: server error, status code: %d, message: %s, error: %v", e.StatusCode, e.Message, e.Err) //nolint:lll
 }
 
 func (e *HTTPTransporterServerError) Unwrap() error {
