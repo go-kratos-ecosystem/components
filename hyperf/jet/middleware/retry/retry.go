@@ -37,7 +37,8 @@ func NewRetry(opts ...Option) jet.Middleware {
 			}
 			return response, &Error{
 				Attempts: o.attempts,
-				Time:     time.Since(starting),
+				Start:    starting,
+				End:      time.Now(),
 				Err:      err,
 			}
 		}
@@ -46,12 +47,13 @@ func NewRetry(opts ...Option) jet.Middleware {
 
 type Error struct {
 	Attempts int
-	Time     time.Duration
+	Start    time.Time
+	End      time.Time
 	Err      error
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("jet/middleware/retry: retry failed after %d attempts, time: %v, last error: %v", e.Attempts, e.Time, e.Err) //nolint:lll
+	return fmt.Sprintf("jet/middleware/retry: retry failed after %d attempts, time: %v, last error: %v", e.Attempts, e.End.Sub(e.Start), e.Err) //nolint:lll
 }
 
 func (e *Error) Unwrap() error {
