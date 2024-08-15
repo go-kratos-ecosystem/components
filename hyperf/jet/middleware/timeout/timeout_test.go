@@ -39,7 +39,7 @@ func TestTimeout(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			handler := New(
 				Timeout(tt.timeout),
-			)(func(ctx context.Context, _ string, _ any) (any, error) {
+			)(func(context.Context, string, any) (any, error) {
 				time.Sleep(tt.sleep)
 				return "test", nil
 			})
