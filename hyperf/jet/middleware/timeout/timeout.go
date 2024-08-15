@@ -2,6 +2,7 @@ package timeout
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -34,7 +35,7 @@ func New(opts ...Option) jet.Middleware {
 	}
 	return func(next jet.Handler) jet.Handler {
 		return func(ctx context.Context, name string, request interface{}) (response interface{}, err error) {
-			newCtx, cancel := context.WithTimeoutCause(ctx, o.timeout, ErrTimeout)
+			newCtx, cancel := context.WithTimeout(ctx, o.timeout)
 			defer cancel()
 
 			finished := make(chan struct{}, 1)
@@ -46,8 +47,8 @@ func New(opts ...Option) jet.Middleware {
 
 			select {
 			case <-newCtx.Done():
-				if cause := context.Cause(newCtx); cause != nil {
-					return nil, cause
+				if errors.Is(newCtx.Err(), context.DeadlineExceeded) {
+					return nil, ErrTimeout
 				}
 				return nil, newCtx.Err()
 			case <-finished:
