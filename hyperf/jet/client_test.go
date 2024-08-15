@@ -48,6 +48,8 @@ func TestClient_Invoke(t *testing.T) {
 	// init
 	formatter := DefaultFormatter
 	packer := DefaultPacker
+	idGenerator := DefaultIDGenerator
+	pathGenerator := DefaultPathGenerator
 
 	// create srv
 	srv := createServer(t, formatter, packer)
@@ -63,23 +65,30 @@ func TestClient_Invoke(t *testing.T) {
 	client, err := NewClient(
 		WithService("Example/User/MoneyService"),
 		WithTransporter(transport),
+		WithIDGenerator(idGenerator),
 		WithFormatter(formatter),
 		WithPacker(packer),
 		WithMiddleware(func(next Handler) Handler {
-			return func(ctx context.Context, name string, request any) (response any, err error) {
+			return func(ctx context.Context, client *Client, name string, request any) (response any, err error) {
 				assert.Equal(t, "balance", name)
 				assert.Equal(t, testParams, request)
-				return next(ctx, name, request)
+				return next(ctx, client, name, request)
 			}
 		}),
 	)
 	assert.NoError(t, err)
+	assert.Equal(t, "Example/User/MoneyService", client.GetService())
+	assert.Equal(t, transport, client.GetTransporter())
+	assert.Equal(t, idGenerator, client.GetIDGenerator())
+	assert.Equal(t, pathGenerator, client.GetPathGenerator())
+	assert.Equal(t, formatter, client.GetFormatter())
+	assert.Equal(t, packer, client.GetPacker())
 
 	client.Use(func(next Handler) Handler {
-		return func(ctx context.Context, name string, request any) (response any, err error) {
+		return func(ctx context.Context, client *Client, name string, request any) (response any, err error) {
 			assert.Equal(t, "balance", name)
 			assert.Equal(t, testParams, request)
-			return next(ctx, name, request)
+			return next(ctx, client, name, request)
 		}
 	})
 

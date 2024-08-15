@@ -2,7 +2,7 @@ package jet
 
 import "context"
 
-type Handler func(ctx context.Context, name string, request any) (response any, err error)
+type Handler func(ctx context.Context, client *Client, name string, request any) (response any, err error)
 
 type Middleware func(Handler) Handler
 

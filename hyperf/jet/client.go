@@ -100,14 +100,14 @@ func NewClient(opts ...Option) (*Client, error) {
 }
 
 func (c *Client) Invoke(ctx context.Context, name string, request any, response any, middlewares ...Middleware) (err error) { // nolint:lll
-	handler := func(ctx context.Context, name string, request any) (any, error) {
+	handler := func(ctx context.Context, _ *Client, name string, request any) (any, error) {
 		err = c.invoke(ctx, name, request, response)
 		return response, err
 	}
 
 	handler = Chain(append(c.middlewares, middlewares...)...)(handler)
 
-	response, err = handler(ctx, name, request)
+	response, err = handler(ctx, c, name, request)
 	return
 }
 
@@ -141,4 +141,28 @@ func (c *Client) invoke(ctx context.Context, name string, request any, response 
 
 func (c *Client) Use(m ...Middleware) {
 	c.middlewares = append(c.middlewares, m...)
+}
+
+func (c *Client) GetService() string {
+	return c.service
+}
+
+func (c *Client) GetTransporter() Transporter {
+	return c.transporter
+}
+
+func (c *Client) GetIDGenerator() IDGenerator {
+	return c.idGenerator
+}
+
+func (c *Client) GetPathGenerator() PathGenerator {
+	return c.pathGenerator
+}
+
+func (c *Client) GetFormatter() Formatter {
+	return c.formatter
+}
+
+func (c *Client) GetPacker() Packer {
+	return c.packer
 }

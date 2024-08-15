@@ -9,7 +9,7 @@ import (
 	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
 )
 
-func NewRetry(opts ...Option) jet.Middleware {
+func New(opts ...Option) jet.Middleware {
 	o := options{
 		attempts: 3, //nolint:mnd
 		backoff:  DefaultBackoff,
@@ -19,10 +19,10 @@ func NewRetry(opts ...Option) jet.Middleware {
 		opt(&o)
 	}
 	return func(next jet.Handler) jet.Handler {
-		return func(ctx context.Context, name string, request any) (response any, err error) {
+		return func(ctx context.Context, client *jet.Client, name string, request any) (response any, err error) {
 			starting := time.Now()
 			for i := 1; i <= o.attempts; i++ {
-				response, err = next(ctx, name, request)
+				response, err = next(ctx, client, name, request)
 				if err == nil {
 					return
 				}

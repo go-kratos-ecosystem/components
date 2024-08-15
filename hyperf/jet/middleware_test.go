@@ -10,7 +10,7 @@ import (
 
 func createTestMiddleware(t *testing.T, result *[]string, no int) Middleware {
 	return func(next Handler) Handler {
-		return func(ctx context.Context, name string, request any) (any, error) {
+		return func(ctx context.Context, client *Client, name string, request any) (any, error) {
 			*result = append(*result, fmt.Sprintf("Before: %d", no))
 			defer func() {
 				*result = append(*result, fmt.Sprintf("After: %d", no))
@@ -18,7 +18,7 @@ func createTestMiddleware(t *testing.T, result *[]string, no int) Middleware {
 
 			assert.Equal(t, "name", name)
 			assert.Equal(t, "request", request)
-			return next(ctx, name, request)
+			return next(ctx, client, name, request)
 		}
 	}
 }
@@ -28,7 +28,7 @@ func TestMiddleware_Chain(t *testing.T) {
 	chain := Chain(
 		createTestMiddleware(t, &result, 1),
 		createTestMiddleware(t, &result, 2),
-	)(func(_ context.Context, name string, request any) (any, error) {
+	)(func(_ context.Context, _ *Client, name string, request any) (any, error) {
 		result = append(result, "Before: 3")
 		defer func() {
 			result = append(result, "After: 3")
@@ -39,7 +39,7 @@ func TestMiddleware_Chain(t *testing.T) {
 
 		return "response", nil
 	})
-	response, err := chain(context.Background(), "name", "request")
+	response, err := chain(context.Background(), nil, "name", "request")
 	assert.NoError(t, err)
 	assert.Equal(t, "response", response)
 
