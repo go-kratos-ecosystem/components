@@ -1,8 +1,16 @@
 package retry
 
-import "github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
+import (
+	"errors"
 
-var DefaultAllow AllowFunc = jet.IsHTTPTransporterServerError
+	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
+	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet/middleware/timeout"
+)
+
+var DefaultAllow AllowFunc = func(err error) bool {
+	return jet.IsHTTPTransporterServerError(err) &&
+		errors.Is(err, timeout.ErrTimeout)
+}
 
 type AllowFunc func(err error) bool
 
