@@ -15,7 +15,7 @@ func TestRetry(t *testing.T) {
 	retry := New(
 		Attempts(3),
 		Backoff(LinearBackoff(1)),
-		Allow(AllowChain(DefaultAllow, func(err error) bool {
+		Allow(OrAllowFuncs(DefaultAllow, func(err error) bool {
 			return errors.Is(err, assert.AnError)
 		})),
 	)
