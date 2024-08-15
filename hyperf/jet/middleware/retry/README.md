@@ -38,8 +38,8 @@ func main() {
 			return errors.Is(err, customErr)
 		}),
 
-		// or: allow retry with Chain
-		retry.Allow(retry.AllowChain(
+		// or: allow retry with OrAllowFuncs
+		retry.Allow(retry.OrAllowFuncs(
 			retry.DefaultAllow,
 			func(err error) bool {
 				return errors.Is(err, customErr)

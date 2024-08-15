@@ -14,7 +14,7 @@ var DefaultAllow AllowFunc = func(err error) bool {
 
 type AllowFunc func(err error) bool
 
-func AllowChain(fs ...AllowFunc) AllowFunc {
+func OrAllowFuncs(fs ...AllowFunc) AllowFunc {
 	return func(err error) bool {
 		for _, f := range fs {
 			if f(err) {
