@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
@@ -39,9 +40,12 @@ func New(opts ...Option) jet.Middleware {
 			defer cancel()
 
 			finished := make(chan struct{}, 1)
+			mu := sync.Mutex{}
 
 			go func() {
 				defer close(finished)
+				mu.Lock()
+				defer mu.Unlock()
 				response, err = next(newCtx, name, request)
 			}()
 
@@ -52,6 +56,8 @@ func New(opts ...Option) jet.Middleware {
 				}
 				return nil, newCtx.Err()
 			case <-finished:
+				mu.Lock()
+				defer mu.Unlock()
 				return response, err
 			}
 		}
