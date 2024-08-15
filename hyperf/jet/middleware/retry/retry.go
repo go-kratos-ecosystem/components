@@ -2,6 +2,7 @@ package retry
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -55,4 +56,10 @@ func (e *Error) Error() string {
 
 func (e *Error) Unwrap() error {
 	return e.Err
+}
+
+func IsError(err error) bool {
+	var e *Error
+	ok := errors.As(err, &e)
+	return ok
 }

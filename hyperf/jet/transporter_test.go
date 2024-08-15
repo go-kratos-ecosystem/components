@@ -3,6 +3,7 @@ package jet
 import (
 	"bytes"
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -42,4 +43,13 @@ func TestTransporter_HTTPTransporter_InvalidErrs(t *testing.T) {
 	_, err = NewHTTPTransporter(WithHTTPTransporterAddr("test"), WithHTTPTransporterClient(nil))
 	assert.Error(t, err)
 	assert.Equal(t, ErrorHTTPTransporterClientIsRequired, err)
+}
+
+func TestTransporter_HTTPTransporter_HTTPTransporterServerError(t *testing.T) {
+	err := &HTTPTransporterServerError{
+		StatusCode: 500,
+		Err:        errors.New("custom error"),
+	}
+	assert.True(t, IsHTTPTransporterServerError(err))
+	assert.Equal(t, "custom error", err.Unwrap())
 }
