@@ -13,7 +13,7 @@ func TestRecovery(t *testing.T) {
 	testRequest := "request"
 	testError := "error"
 
-	recovery := NewRecovery(
+	recovery := New(
 		Handler(func(_ context.Context, name string, request any, err any) error {
 			assert.Equal(t, testName, name)
 			assert.Equal(t, testRequest, request)
@@ -30,7 +30,7 @@ func TestRecovery(t *testing.T) {
 }
 
 func TestRecovery_DefaultHandler(t *testing.T) {
-	recovery := NewRecovery()
+	recovery := New()
 
 	response, err := recovery(func(context.Context, string, any) (response any, err error) {
 		panic("error")

@@ -25,7 +25,7 @@ func Handler(h HandlerFunc) Option {
 	}
 }
 
-func NewRecovery(opts ...Option) jet.Middleware {
+func New(opts ...Option) jet.Middleware {
 	return func(next jet.Handler) jet.Handler {
 		o := options{
 			handler: DefaultHandler,
