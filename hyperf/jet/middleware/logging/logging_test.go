@@ -7,6 +7,8 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
 )
 
 type mockLogger struct {
@@ -25,7 +27,7 @@ func (m *mockLogger) Log(level log.Level, keyvals ...interface{}) error {
 	assert.Equal(m.t, "kind", keyvals[0])
 	assert.Equal(m.t, "jet", keyvals[1])
 	assert.Equal(m.t, "service", keyvals[2])
-	assert.Equal(m.t, "{XXX}", keyvals[3])
+	assert.Equal(m.t, "unknown", keyvals[3])
 	assert.Equal(m.t, "name", keyvals[4])
 
 	if keyvals[5] == "no-error" {
@@ -57,12 +59,14 @@ func TestLogging(t *testing.T) {
 	)
 
 	// no error
-	_, _ = logging(func(ctx context.Context, name string, request any) (response any, err error) {
+	_, _ = logging(func(_ context.Context, _ *jet.Client, name string, _ any) (response any, err error) {
+		assert.Equal(t, "no-error", name)
 		return "response", nil
-	})(context.Background(), "no-error", nil)
+	})(context.Background(), nil, "no-error", nil)
 
 	// with error
-	_, _ = logging(func(ctx context.Context, name string, request any) (response any, err error) {
+	_, _ = logging(func(_ context.Context, _ *jet.Client, name string, _ any) (response any, err error) {
+		assert.Equal(t, "with-error", name)
 		return nil, assert.AnError
-	})(context.Background(), "with-error", nil)
+	})(context.Background(), nil, "with-error", nil)
 }

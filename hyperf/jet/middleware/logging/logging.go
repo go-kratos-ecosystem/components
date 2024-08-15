@@ -29,16 +29,21 @@ func New(opts ...Option) jet.Middleware {
 		opt(&o)
 	}
 	return func(next jet.Handler) jet.Handler {
-		return func(ctx context.Context, name string, request any) (response any, err error) {
+		return func(ctx context.Context, client *jet.Client, name string, request any) (response any, err error) {
 			defer func(starting time.Time) {
 				level := log.LevelInfo
 				if err != nil {
 					level = log.LevelError
 				}
 
-				log.WithContext(ctx, o.logger).Log(level,
+				service := "unknown"
+				if client != nil {
+					service = client.GetService()
+				}
+
+				_ = log.WithContext(ctx, o.logger).Log(level,
 					"kind", "jet",
-					"service", "{XXX}",
+					"service", service,
 					"name", name,
 					"request", request,
 					"response", response,
@@ -46,7 +51,7 @@ func New(opts ...Option) jet.Middleware {
 					"latency", time.Since(starting),
 				)
 			}(time.Now())
-			return next(ctx, name, request)
+			return next(ctx, client, name, request)
 		}
 	}
 }
