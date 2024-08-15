@@ -9,7 +9,7 @@ import (
 	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
 )
 
-func NewRetry(opts ...Option) jet.Middleware {
+func New(opts ...Option) jet.Middleware {
 	o := options{
 		attempts: 3, //nolint:mnd
 		backoff:  DefaultBackoff,

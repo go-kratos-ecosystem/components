@@ -10,7 +10,7 @@ import (
 
 func TestRetry(t *testing.T) {
 	customError := errors.New("custom error")
-	retry := NewRetry(
+	retry := New(
 		Attempts(3),
 		Backoff(LinearBackoff(1)),
 		Allow(AllowChain(DefaultAllow, func(err error) bool {

@@ -29,10 +29,10 @@ func main() {
 	}
 
 	// base usage
-	client.Use(retry.NewRetry())
+	client.Use(retry.New())
 
 	// with options
-	client.Use(retry.NewRetry(
+	client.Use(retry.New(
 		// allow retry when custom error
 		retry.Allow(func(err error) bool {
 			return errors.Is(err, customErr)
