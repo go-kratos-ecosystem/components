@@ -53,7 +53,7 @@ type Error struct {
 }
 
 func (e *Error) Error() string {
-	return fmt.Sprintf("jet/middleware/retry: retry failed after %d attempts, time: %v, last error: %v", e.Attempts, e.End.Sub(e.Start), e.Err)
+	return fmt.Sprintf("jet/middleware/retry: retry failed after %d attempts, time: %v, last error: %v", e.Attempts, e.End.Sub(e.Start), e.Err) //nolint:lll
 }
 
 func (e *Error) Unwrap() error {
