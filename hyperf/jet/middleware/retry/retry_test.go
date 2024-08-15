@@ -9,9 +9,7 @@ func TestRetry(t *testing.T) {
 	handler := NewRetry(
 		Attempts(3),
 		Backoff(LinearBackoff(1)),
-		CanRetry(func(err error) bool {
-			return true
-		}),
+		Allow(AllowChain(DefaultAllow)),
 	)(func(ctx context.Context, name string, request any) (response any, err error) {
 		return nil, nil
 	})

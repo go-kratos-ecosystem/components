@@ -8,44 +8,11 @@ import (
 	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
 )
 
-var defaultCanRetry = func(err error) bool {
-	if jet.IsHTTPTransporterServerError(err) {
-		return true
-	}
-	return false
-}
-
-type options struct {
-	attempts int
-	backoff  BackoffFunc
-	canRetry func(err error) bool
-}
-
-type Option func(o *options)
-
-func Attempts(attempts int) Option {
-	return func(o *options) {
-		o.attempts = attempts
-	}
-}
-
-func CanRetry(f func(err error) bool) Option {
-	return func(o *options) {
-		o.canRetry = f
-	}
-}
-
-func Backoff(f BackoffFunc) Option {
-	return func(o *options) {
-		o.backoff = f
-	}
-}
-
 func NewRetry(opts ...Option) jet.Middleware {
 	o := options{
 		attempts: 3,
-		backoff:  LinearBackoff(100 * time.Millisecond),
-		canRetry: defaultCanRetry,
+		backoff:  DefaultBackoff,
+		allow:    DefaultAllow,
 	}
 	for _, opt := range opts {
 		opt(&o)
@@ -59,7 +26,7 @@ func NewRetry(opts ...Option) jet.Middleware {
 					return
 				}
 
-				if !o.canRetry(err) {
+				if !o.allow(err) {
 					return
 				}
 

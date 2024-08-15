@@ -77,7 +77,7 @@ func (t *HTTPTransporter) Send(ctx context.Context, data []byte) ([]byte, error)
 		return nil, &HTTPTransporterServerError{
 			StatusCode: response.StatusCode,
 			Message:    response.Status,
-			Err:        fmt.Errorf("jet/transporter: failed to send request, status code: %d", response.StatusCode),
+			Err:        fmt.Errorf("failed to send request"),
 		}
 	}
 
@@ -88,6 +88,7 @@ func isHTTPTransporterServerFailed(resp *http.Response) bool {
 	return resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusBadRequest
 }
 
+// IsHTTPTransporterServerError reports whether err was created by HTTPTransporterServerError.
 func IsHTTPTransporterServerError(err error) bool {
 	var target *HTTPTransporterServerError
 	return errors.As(err, &target)
@@ -100,7 +101,7 @@ type HTTPTransporterServerError struct {
 }
 
 func (e *HTTPTransporterServerError) Error() string {
-	return e.Err.Error()
+	return fmt.Sprintf("jet/transporter: server error, status code: %d, message: %s, error: %v", e.StatusCode, e.Message, e.Err)
 }
 
 func (e *HTTPTransporterServerError) Unwrap() error {
