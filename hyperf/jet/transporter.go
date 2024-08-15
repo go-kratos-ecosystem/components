@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 )
@@ -70,5 +71,39 @@ func (t *HTTPTransporter) Send(ctx context.Context, data []byte) ([]byte, error)
 		return nil, err
 	}
 	defer response.Body.Close() // nolint:errcheck
+
+	// check response status code
+	if isHTTPTransporterServerFailed(response) {
+		return nil, &HTTPTransporterServerError{
+			StatusCode: response.StatusCode,
+			Message:    response.Status,
+			Err:        fmt.Errorf("failed to send request"),
+		}
+	}
+
 	return io.ReadAll(response.Body)
+}
+
+func isHTTPTransporterServerFailed(resp *http.Response) bool {
+	return resp.StatusCode < http.StatusOK || resp.StatusCode >= http.StatusBadRequest
+}
+
+// IsHTTPTransporterServerError reports whether err was created by HTTPTransporterServerError.
+func IsHTTPTransporterServerError(err error) bool {
+	var target *HTTPTransporterServerError
+	return errors.As(err, &target)
+}
+
+type HTTPTransporterServerError struct {
+	StatusCode int
+	Message    string
+	Err        error
+}
+
+func (e *HTTPTransporterServerError) Error() string {
+	return fmt.Sprintf("jet/transporter: server error, status code: %d, message: %s, error: %v", e.StatusCode, e.Message, e.Err) //nolint:lll
+}
+
+func (e *HTTPTransporterServerError) Unwrap() error {
+	return e.Err
 }
