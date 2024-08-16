@@ -32,7 +32,9 @@ func New(opts ...Option) jet.Middleware {
 				}
 
 				if i < o.attempts {
-					time.Sleep(o.backoff(i))
+					if sleep := o.backoff(i); sleep > 0 {
+						time.Sleep(sleep)
+					}
 				}
 			}
 			return response, &Error{
