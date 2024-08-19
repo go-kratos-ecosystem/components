@@ -19,13 +19,15 @@ import (
 	"net/http"
 
 	"github.com/xanzy/go-gitlab"
+
+	"github.com/go-kratos-ecosystem/components/v2/gitlab/webhook"
 )
 
 var (
-	_ gitlab.BuildListener         = (*testBuildListener)(nil)
-	_ gitlab.CommitCommentListener = (*testCommitCommentListener)(nil)
-	_ gitlab.BuildListener         = (*testBuildAndCommitCommentListener)(nil)
-	_ gitlab.CommitCommentListener = (*testBuildAndCommitCommentListener)(nil)
+	_ webhook.BuildListener         = (*testBuildListener)(nil)
+	_ webhook.CommitCommentListener = (*testCommitCommentListener)(nil)
+	_ webhook.BuildListener         = (*testBuildAndCommitCommentListener)(nil)
+	_ webhook.CommitCommentListener = (*testBuildAndCommitCommentListener)(nil)
 )
 
 type testBuildListener struct{}
@@ -42,8 +44,7 @@ func (l *testCommitCommentListener) OnCommitComment(ctx context.Context, event *
 	return nil
 }
 
-type testBuildAndCommitCommentListener struct {
-}
+type testBuildAndCommitCommentListener struct{}
 
 func (l *testBuildAndCommitCommentListener) OnBuild(ctx context.Context, event *gitlab.BuildEvent) error {
 	// do something
@@ -56,7 +57,13 @@ func (l *testBuildAndCommitCommentListener) OnCommitComment(ctx context.Context,
 }
 
 func main() {
-	dispatcher := gitlab.NewDispatcher()
+	dispatcher := webhook.NewDispatcher(
+		webhook.RegisterListeners(
+			&testBuildListener{},
+			&testCommitCommentListener{},
+			&testBuildAndCommitCommentListener{},
+		),
+	)
 
 	dispatcher.RegisterListeners(
 		&testBuildListener{},
@@ -66,7 +73,7 @@ func main() {
 
 	http.Handle("/webhook", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if err := dispatcher.DispatchRequest(r,
-			gitlab.DispatchRequestWithContext(context.Background()),
+			webhook.DispatchRequestWithContext(context.Background()), // custom context
 		); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -79,4 +86,5 @@ func main() {
 		panic(err)
 	}
 }
+
 ```

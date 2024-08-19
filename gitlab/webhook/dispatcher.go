@@ -1,4 +1,4 @@
-package gitlab
+package webhook
 
 import (
 	"context"
@@ -10,7 +10,7 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-var ErrUnsupportedEvent = errors.New("gitlab: unsupported event type")
+var ErrUnsupportedEvent = errors.New("gitlab/webhook: unsupported event type")
 
 type Dispatcher struct {
 	buildListeners                      []BuildListener

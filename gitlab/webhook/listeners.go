@@ -1,4 +1,4 @@
-package gitlab
+package webhook
 
 import (
 	"context"
