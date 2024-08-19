@@ -49,24 +49,24 @@ func TestDispatcher_Dispatch(t *testing.T) {
 		eventType gitlab.EventType
 		body      []byte
 	}{
-		{"build", gitlab.EventTypeBuild, loadFixture("testdata/webhooks/build.json")},
-		{"commit comment", gitlab.EventTypeNote, loadFixture("testdata/webhooks/note_commit.json")},
-		{"deployment", gitlab.EventTypeDeployment, loadFixture("testdata/webhooks/deployment.json")},
-		{"feature flag", gitlab.EventTypeFeatureFlag, loadFixture("testdata/webhooks/feature_flag.json")},
-		{"group resource access token", gitlab.EventTypeResourceAccessToken, loadFixture("testdata/webhooks/resource_access_token_group.json")},
-		{"issue comment", gitlab.EventTypeNote, loadFixture("testdata/webhooks/note_issue.json")},
-		{"issue", gitlab.EventTypeIssue, loadFixture("testdata/webhooks/issue.json")},
+		{"build", gitlab.EventTypeBuild, loadFixture("testdata/webhooks/build.json")},                                                           //nolint:lll
+		{"commit comment", gitlab.EventTypeNote, loadFixture("testdata/webhooks/note_commit.json")},                                             //nolint:lll
+		{"deployment", gitlab.EventTypeDeployment, loadFixture("testdata/webhooks/deployment.json")},                                            //nolint:lll
+		{"feature flag", gitlab.EventTypeFeatureFlag, loadFixture("testdata/webhooks/feature_flag.json")},                                       //nolint:lll
+		{"group resource access token", gitlab.EventTypeResourceAccessToken, loadFixture("testdata/webhooks/resource_access_token_group.json")}, //nolint:lll
+		{"issue comment", gitlab.EventTypeNote, loadFixture("testdata/webhooks/note_issue.json")},                                               //nolint:lll
+		{"issue", gitlab.EventTypeIssue, loadFixture("testdata/webhooks/issue.json")},                                                           //nolint:lll
 		{"job", gitlab.EventTypeJob, loadFixture("testdata/webhooks/job.json")},
 		{"member", gitlab.EventTypeMember, loadFixture("testdata/webhooks/member.json")},
-		{"merge comment", gitlab.EventTypeNote, loadFixture("testdata/webhooks/note_merge_request.json")},
-		{"merge", gitlab.EventTypeMergeRequest, loadFixture("testdata/webhooks/merge_request.json")},
-		{"pipeline", gitlab.EventTypePipeline, loadFixture("testdata/webhooks/pipeline.json")},
+		{"merge comment", gitlab.EventTypeNote, loadFixture("testdata/webhooks/note_merge_request.json")}, //nolint:lll
+		{"merge", gitlab.EventTypeMergeRequest, loadFixture("testdata/webhooks/merge_request.json")},      //nolint:lll
+		{"pipeline", gitlab.EventTypePipeline, loadFixture("testdata/webhooks/pipeline.json")},            //nolint:lll
 		{"push", gitlab.EventTypePush, loadFixture("testdata/webhooks/push.json")},
-		{"release", gitlab.EventTypeRelease, loadFixture("testdata/webhooks/release.json")},
-		{"snippet comment", gitlab.EventTypeNote, loadFixture("testdata/webhooks/note_snippet.json")},
-		{"subgroup", gitlab.EventTypeSubGroup, loadFixture("testdata/webhooks/subgroup.json")},
+		{"release", gitlab.EventTypeRelease, loadFixture("testdata/webhooks/release.json")},           //nolint:lll
+		{"snippet comment", gitlab.EventTypeNote, loadFixture("testdata/webhooks/note_snippet.json")}, //nolint:lll
+		{"subgroup", gitlab.EventTypeSubGroup, loadFixture("testdata/webhooks/subgroup.json")},        //nolint:lll
 		{"tag", gitlab.EventTypeTagPush, loadFixture("testdata/webhooks/tag_push.json")},
-		{"wiki page", gitlab.EventTypeWikiPage, loadFixture("testdata/webhooks/wiki_page.json")},
+		{"wiki page", gitlab.EventTypeWikiPage, loadFixture("testdata/webhooks/wiki_page.json")}, //nolint:lll
 	}
 
 	for _, tt := range tests {
@@ -139,7 +139,7 @@ func (t *testListener) OnFeatureFlag(ctx context.Context, event *gitlab.FeatureF
 	return nil
 }
 
-func (t *testListener) OnGroupResourceAccessToken(ctx context.Context, event *gitlab.GroupResourceAccessTokenEvent) error {
+func (t *testListener) OnGroupResourceAccessToken(ctx context.Context, event *gitlab.GroupResourceAccessTokenEvent) error { //nolint:lll
 	testDispatcherContext(ctx, t.t)
 	assert.Equal(t.t, "expiring_access_token", event.EventName)
 	return nil
@@ -187,7 +187,7 @@ func (t *testListener) OnPipeline(ctx context.Context, event *gitlab.PipelineEve
 	return nil
 }
 
-func (t *testListener) OnProjectResourceAccessToken(ctx context.Context, event *gitlab.ProjectResourceAccessTokenEvent) error {
+func (t *testListener) OnProjectResourceAccessToken(ctx context.Context, event *gitlab.ProjectResourceAccessTokenEvent) error { //nolint:lll
 	testDispatcherContext(ctx, t.t)
 	assert.Equal(t.t, "expiring_access_token", event.EventName)
 	return nil

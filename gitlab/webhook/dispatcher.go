@@ -325,7 +325,7 @@ func (d *Dispatcher) processFeatureFlagEvent(ctx context.Context, event *gitlab.
 	return eg.Wait()
 }
 
-func (d *Dispatcher) processGroupResourceAccessTokenEvent(ctx context.Context, event *gitlab.GroupResourceAccessTokenEvent) error {
+func (d *Dispatcher) processGroupResourceAccessTokenEvent(ctx context.Context, event *gitlab.GroupResourceAccessTokenEvent) error { //nolint:lll
 	eg, ctx := errgroup.WithContext(ctx)
 	for _, listener := range d.groupResourceAccessTokenListeners {
 		eg.Go(func() error {
@@ -405,7 +405,7 @@ func (d *Dispatcher) processPipelineEvent(ctx context.Context, event *gitlab.Pip
 	return eg.Wait()
 }
 
-func (d *Dispatcher) processProjectResourceAccessTokenEvent(ctx context.Context, event *gitlab.ProjectResourceAccessTokenEvent) error {
+func (d *Dispatcher) processProjectResourceAccessTokenEvent(ctx context.Context, event *gitlab.ProjectResourceAccessTokenEvent) error { //nolint:lll
 	eg, ctx := errgroup.WithContext(ctx)
 	for _, listener := range d.projectResourceAccessTokenListeners {
 		eg.Go(func() error {
