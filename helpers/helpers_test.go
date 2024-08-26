@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/go-kratos-ecosystem/components/v2/errors"
 )
 
 type foo struct {
@@ -68,7 +70,7 @@ func TestUntilTimeout(t *testing.T) {
 		return false
 	}, 200*time.Millisecond)
 	assert.Error(t, err)
-	assert.Equal(t, "helpers: timeout after 200ms", err.Error())
+	assert.True(t, errors.IsTimeoutError(err))
 }
 
 func TestTimeout(t *testing.T) {
@@ -85,7 +87,7 @@ func TestTimeout(t *testing.T) {
 		return assert.AnError
 	}, 200*time.Millisecond)
 	assert.Error(t, err)
-	assert.Equal(t, "helpers: timeout after 200ms", err.Error())
+	assert.True(t, errors.IsTimeoutError(err))
 }
 
 func TestRepeat(t *testing.T) {

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/go-kratos-ecosystem/components/v2/errors"
 )
 
 // Retry retries the given function until it returns nil or the attempts are exhausted.
@@ -68,7 +70,7 @@ func UntilTimeout(fn func() bool, timeout time.Duration, sleeps ...time.Duration
 		defer close(ch)
 		return err
 	case <-time.After(timeout):
-		return fmt.Errorf("helpers: timeout after %s", timeout.String())
+		return errors.NewTimeoutError(timeout, fmt.Errorf("helpers.UntilTimeout: timeout"))
 	}
 }
 
@@ -87,7 +89,7 @@ func Timeout(fn func() error, timeout time.Duration) error {
 		defer close(ch)
 		return err
 	case <-time.After(timeout):
-		return fmt.Errorf("helpers: timeout after %s", timeout.String())
+		return errors.NewTimeoutError(timeout, fmt.Errorf("helpers.Timeout: timeout"))
 	}
 }
 
