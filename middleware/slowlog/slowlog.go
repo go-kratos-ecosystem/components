@@ -28,14 +28,6 @@ type Redacter interface {
 func Server(logger log.Logger, opts ...SlowOption) middleware.Middleware {
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
-
-			o := &slow{
-				Threshold: DefaultThreshold,
-			}
-			for _, opt := range opts {
-				opt(o)
-			}
-
 			var (
 				code      int32
 				reason    string
@@ -44,10 +36,15 @@ func Server(logger log.Logger, opts ...SlowOption) middleware.Middleware {
 			)
 			startTime := time.Now()
 			duration := time.Since(startTime)
+			o := &slow{
+				Threshold: DefaultThreshold,
+			}
+			for _, opt := range opts {
+				opt(o)
+			}
 			if duration <= o.Threshold {
 				return
 			}
-
 			if info, ok := transport.FromServerContext(ctx); ok {
 				kind = info.Kind().String()
 				operation = info.Operation()
@@ -85,16 +82,14 @@ func Client(logger log.Logger, opts ...SlowOption) middleware.Middleware {
 				kind      string
 				operation string
 			)
-
+			startTime := time.Now()
+			duration := time.Since(startTime)
 			o := &slow{
 				Threshold: DefaultThreshold,
 			}
 			for _, opt := range opts {
 				opt(o)
 			}
-
-			startTime := time.Now()
-			duration := time.Since(startTime)
 			if duration <= o.Threshold {
 				return
 			}
