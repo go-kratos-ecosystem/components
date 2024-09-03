@@ -19,7 +19,7 @@ func TestManager(t *testing.T) {
 
 	m.Register("rdb2", rdb)
 
-	assert.Equal(t, rdb, m.Cmdable)
+	assert.Equal(t, rdb, m.UniversalClient)
 	assert.Equal(t, rdb, m.Conn())
 	assert.Equal(t, rdb, m.Conn("rdb2"))
 

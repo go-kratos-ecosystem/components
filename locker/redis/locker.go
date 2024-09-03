@@ -20,7 +20,7 @@ else
 end`
 
 type Locker struct {
-	redis   redis.Cmdable
+	redis   redis.UniversalClient
 	name    string        // lock key
 	timeout time.Duration // lock ttl
 
@@ -57,7 +57,7 @@ func WithSleep(sleep time.Duration) Option {
 
 var _ locker.Locker = (*Locker)(nil)
 
-func NewLocker(redis redis.Cmdable, name string, timeout time.Duration, opts ...Option) *Locker {
+func NewLocker(redis redis.UniversalClient, name string, timeout time.Duration, opts ...Option) *Locker {
 	l := &Locker{
 		redis:   redis,
 		name:    name,

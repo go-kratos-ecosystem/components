@@ -15,7 +15,7 @@ fix:
 
 .PHONY: test
 test:
-	go test ./...
+	go test ./... -race -cover
 	@echo "✅ Testing completed"
 
 .PHONY: fmt

@@ -14,7 +14,7 @@ import (
 )
 
 type Store struct {
-	redis redis.Cmdable
+	redis redis.UniversalClient
 
 	opts *options
 }
@@ -45,7 +45,7 @@ var (
 	_ cache.Addable = (*Store)(nil)
 )
 
-func New(redis redis.Cmdable, opts ...Option) *Store {
+func New(redis redis.UniversalClient, opts ...Option) *Store {
 	opt := &options{
 		codec: json.Codec,
 	}

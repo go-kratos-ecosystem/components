@@ -3,30 +3,30 @@ package redis
 import "github.com/redis/go-redis/v9"
 
 type Manager struct {
-	redis.Cmdable
+	redis.UniversalClient
 
-	connections map[string]redis.Cmdable
+	connections map[string]redis.UniversalClient
 }
 
-func New(db redis.Cmdable) *Manager {
+func New(db redis.UniversalClient) *Manager {
 	return &Manager{
-		Cmdable:     db,
-		connections: make(map[string]redis.Cmdable),
+		UniversalClient: db,
+		connections:     make(map[string]redis.UniversalClient),
 	}
 }
 
-func (m *Manager) Register(name string, db redis.Cmdable) {
+func (m *Manager) Register(name string, db redis.UniversalClient) {
 	m.connections[name] = db
 }
 
-func (m *Manager) Conn(names ...string) redis.Cmdable {
+func (m *Manager) Conn(names ...string) redis.UniversalClient {
 	var name string
 	if len(names) > 0 {
 		name = names[0]
 	}
 
 	if name == "" {
-		return m.Cmdable
+		return m.UniversalClient
 	}
 
 	if c, ok := m.connections[name]; ok {
