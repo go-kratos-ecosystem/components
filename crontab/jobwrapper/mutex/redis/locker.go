@@ -10,12 +10,12 @@ import (
 )
 
 type Locker struct {
-	redis.Cmdable
+	redis.UniversalClient
 }
 
-func NewLocker(client redis.Cmdable) *Locker {
+func NewLocker(client redis.UniversalClient) *Locker {
 	return &Locker{
-		Cmdable: client,
+		UniversalClient: client,
 	}
 }
 
