@@ -22,7 +22,7 @@ type Server struct {
 
 	handler func(message *Message)
 
-	recoveryHandler func(message *Message, err interface{})
+	recoveryHandler func(message *Message, err any)
 
 	readChan     chan *Message
 	readChanSize int // readChan size
@@ -49,7 +49,7 @@ func WithHandler(handler func(message *Message)) Option {
 	}
 }
 
-func WithRecoveryHandler(handler func(message *Message, err interface{})) Option {
+func WithRecoveryHandler(handler func(message *Message, err any)) Option {
 	return func(s *Server) {
 		if handler != nil {
 			s.recoveryHandler = handler

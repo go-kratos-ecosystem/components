@@ -7,8 +7,8 @@ import (
 var DefaultPacker Packer = NewJSONPacker()
 
 type Packer interface {
-	Pack(interface{}) ([]byte, error)
-	Unpack([]byte, interface{}) error
+	Pack(any) ([]byte, error)
+	Unpack([]byte, any) error
 }
 
 // JSONPacker is a json packer
@@ -18,10 +18,10 @@ func NewJSONPacker() *JSONPacker {
 	return &JSONPacker{}
 }
 
-func (p *JSONPacker) Pack(v interface{}) ([]byte, error) {
+func (p *JSONPacker) Pack(v any) ([]byte, error) {
 	return json.Marshal(v)
 }
 
-func (p *JSONPacker) Unpack(data []byte, v interface{}) error {
+func (p *JSONPacker) Unpack(data []byte, v any) error {
 	return json.Unmarshal(data, v)
 }

@@ -36,7 +36,7 @@ func init() {
 
 func runMigrations() {
 	var err error
-	models := []interface{}{&User{}}
+	models := []any{&User{}}
 
 	if err = DB.Migrator().DropTable(models...); err != nil {
 		log.Printf("Didn't drop table, got error %v\n", err)

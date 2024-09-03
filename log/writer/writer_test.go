@@ -11,12 +11,12 @@ var result = make(chan data, 1)
 
 type data struct {
 	level   log.Level
-	keyvals []interface{}
+	keyvals []any
 }
 
 type logger struct{}
 
-func (l *logger) Log(level log.Level, keyvals ...interface{}) error {
+func (l *logger) Log(level log.Level, keyvals ...any) error {
 	result <- data{
 		level:   level,
 		keyvals: keyvals,

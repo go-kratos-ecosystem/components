@@ -29,7 +29,7 @@ func New(config *Config) *Logger {
 	}
 }
 
-func (l *Logger) Log(level log.Level, keyvals ...interface{}) error {
+func (l *Logger) Log(level log.Level, keyvals ...any) error {
 	if l.conn == nil {
 		if err := l.connect(); err != nil {
 			return err

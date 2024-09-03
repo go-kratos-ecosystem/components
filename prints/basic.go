@@ -16,11 +16,11 @@ var (
 	success = color.New(color.FgGreen)
 )
 
-func Line(a ...interface{}) (int, error) {
+func Line(a ...any) (int, error) {
 	return line.Println(a...)
 }
 
-func Linef(format string, a ...interface{}) (int, error) {
+func Linef(format string, a ...any) (int, error) {
 	return line.Printf(format, a...)
 }
 
@@ -36,50 +36,50 @@ func NewLine(length ...int) (int, error) {
 	return line.Println(strings.Join(brs, ""), "")
 }
 
-func Info(a ...interface{}) (int, error) {
+func Info(a ...any) (int, error) {
 	return info.Println(a...)
 }
 
-func Infof(format string, a ...interface{}) (int, error) {
+func Infof(format string, a ...any) (int, error) {
 	return info.Printf(format, a...)
 }
 
-func Comment(a ...interface{}) (int, error) {
+func Comment(a ...any) (int, error) {
 	return comment.Println(a...)
 }
 
-func Commentf(format string, a ...interface{}) (int, error) {
+func Commentf(format string, a ...any) (int, error) {
 	return comment.Printf(format, a...)
 }
 
-func Error(a ...interface{}) (int, error) {
+func Error(a ...any) (int, error) {
 	return errs.Println(a...)
 }
 
-func Errorf(format string, a ...interface{}) (int, error) {
+func Errorf(format string, a ...any) (int, error) {
 	return errs.Printf(format, a...)
 }
 
-func Warn(a ...interface{}) (int, error) {
+func Warn(a ...any) (int, error) {
 	return warn.Println(a...)
 }
 
-func Warnf(format string, a ...interface{}) (int, error) {
+func Warnf(format string, a ...any) (int, error) {
 	return warn.Printf(format, a...)
 }
 
-func Alert(a ...interface{}) (int, error) {
+func Alert(a ...any) (int, error) {
 	return alert.Println(a...)
 }
 
-func Alertf(format string, a ...interface{}) (int, error) {
+func Alertf(format string, a ...any) (int, error) {
 	return alert.Printf(format, a...)
 }
 
-func Success(a ...interface{}) (int, error) {
+func Success(a ...any) (int, error) {
 	return success.Println(a...)
 }
 
-func Successf(format string, a ...interface{}) (int, error) {
+func Successf(format string, a ...any) (int, error) {
 	return success.Printf(format, a...)
 }

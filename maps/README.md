@@ -14,7 +14,7 @@ import (
 func main() {
 	m := maps.M{}
 
-	m.Merge(map[string]interface{}{
+	m.Merge(map[string]any{
 		"name":    "Flc",
 		"age":     18, //nolint:gomnd
 		"sex":     "man",

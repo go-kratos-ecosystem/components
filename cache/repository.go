@@ -13,8 +13,8 @@ type Repository interface {
 
 	Missing(ctx context.Context, key string) (bool, error)
 	Delete(ctx context.Context, key string) (bool, error)
-	Set(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error)
-	Remember(ctx context.Context, key string, dest interface{}, value func() interface{}, ttl time.Duration) error
+	Set(ctx context.Context, key string, value any, ttl time.Duration) (bool, error)
+	Remember(ctx context.Context, key string, dest any, value func() any, ttl time.Duration) error
 }
 
 type repository struct {
@@ -36,7 +36,7 @@ func (r *repository) Missing(ctx context.Context, key string) (bool, error) {
 	return !had, nil
 }
 
-func (r *repository) Add(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
+func (r *repository) Add(ctx context.Context, key string, value any, ttl time.Duration) (bool, error) {
 	// if the store is addable, use it
 	if store, ok := r.Store.(Addable); ok {
 		return store.Add(ctx, key, value, ttl)
@@ -60,14 +60,14 @@ func (r *repository) Delete(ctx context.Context, key string) (bool, error) {
 	return r.Forget(ctx, key)
 }
 
-func (r *repository) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
+func (r *repository) Set(ctx context.Context, key string, value any, ttl time.Duration) (bool, error) {
 	return r.Put(ctx, key, value, ttl)
 }
 
 func (r *repository) Remember(
 	ctx context.Context,
-	key string, dest interface{},
-	value func() interface{},
+	key string, dest any,
+	value func() any,
 	ttl time.Duration,
 ) error {
 	if missing, err := r.Missing(ctx, key); err != nil {

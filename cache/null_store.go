@@ -15,11 +15,11 @@ func (n *NullStore) Has(context.Context, string) (bool, error) {
 	return true, nil
 }
 
-func (n *NullStore) Get(context.Context, string, interface{}) error {
+func (n *NullStore) Get(context.Context, string, any) error {
 	return nil
 }
 
-func (n *NullStore) Put(context.Context, string, interface{}, time.Duration) (bool, error) {
+func (n *NullStore) Put(context.Context, string, any, time.Duration) (bool, error) {
 	return true, nil
 }
 
@@ -31,7 +31,7 @@ func (n *NullStore) Decrement(context.Context, string, int) (int, error) {
 	return 0, nil
 }
 
-func (n *NullStore) Forever(context.Context, string, interface{}) (bool, error) {
+func (n *NullStore) Forever(context.Context, string, any) (bool, error) {
 	return true, nil
 }
 

@@ -12,7 +12,7 @@ func TestJSON(t *testing.T) {
 
 	assert.Same(t, j1, j2)
 
-	data := map[string]interface{}{
+	data := map[string]any{
 		"foo": "bar",
 	}
 

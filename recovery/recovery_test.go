@@ -18,7 +18,7 @@ func TestRecovery_Wrap(t *testing.T) {
 	})
 
 	// with handler
-	r = New(WithHandler(func(err interface{}) {
+	r = New(WithHandler(func(err any) {
 		assert.Equal(t, "test", err)
 	}))
 

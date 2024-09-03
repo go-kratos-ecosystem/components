@@ -1,12 +1,12 @@
 package recovery
 
 type Recovery struct {
-	handler func(err interface{})
+	handler func(err any)
 }
 
 type Option func(o *Recovery)
 
-func WithHandler(handler func(err interface{})) Option {
+func WithHandler(handler func(err any)) Option {
 	return func(r *Recovery) {
 		r.handler = handler
 	}
@@ -14,7 +14,7 @@ func WithHandler(handler func(err interface{})) Option {
 
 func New(opts ...Option) *Recovery {
 	r := &Recovery{
-		handler: func(err interface{}) {
+		handler: func(err any) {
 			panic(err)
 		},
 	}

@@ -11,7 +11,7 @@ func TestM(t *testing.T) {
 		return maps.Set("age", 18)
 	}).When(false, func(maps M) M {
 		return maps.Set("age", 20)
-	}).Map(func(key string, value interface{}) (string, interface{}) {
+	}).Map(func(key string, value any) (string, any) {
 		if key == "age" { //nolint:goconst
 			return key, 21
 		}
@@ -47,10 +47,10 @@ func TestM(t *testing.T) {
 	assert.Equal(t, maps, maps.Clone())
 	assert.NotSame(t, maps, maps.Clone())
 
-	assert.Equal(t, map[string]interface{}{"name": "Flc", "age": 21}, maps.Maps())
-	assert.Equal(t, map[string]interface{}{"name": "Flc", "age": 21}, maps.All())
+	assert.Equal(t, map[string]any{"name": "Flc", "age": 21}, maps.Maps())
+	assert.Equal(t, map[string]any{"name": "Flc", "age": 21}, maps.All())
 
-	maps.Each(func(key string, value interface{}) {
+	maps.Each(func(key string, value any) {
 		if key == "name" {
 			maps["first_name"] = value
 		}
