@@ -55,7 +55,7 @@ func main() {
 
 func recovery() jet.Middleware {
 	return func(next jet.Handler) jet.Handler {
-		return func(ctx context.Context, client *jet.Client, name string, request interface{}) (response interface{}, err error) {
+		return func(ctx context.Context, client *jet.Client, name string, request any) (response any, err error) {
 			defer func() {
 				if r := recover(); r != nil {
 					log.Println("recovered:", r)
@@ -69,7 +69,7 @@ func recovery() jet.Middleware {
 
 func logger() jet.Middleware {
 	return func(next jet.Handler) jet.Handler {
-		return func(ctx context.Context, client *jet.Client, name string, request interface{}) (response interface{}, err error) {
+		return func(ctx context.Context, client *jet.Client, name string, request any) (response any, err error) {
 			log.Println("service", client.GetService(), "name:", name, "request:", request, "response:", response, "error:", err)
 			return next(ctx, client, name, request)
 		}

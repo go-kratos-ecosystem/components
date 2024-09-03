@@ -105,8 +105,8 @@ func (p *Paginator) GetNextPage() int {
 	return p.nextPage
 }
 
-func (p *Paginator) ToMap() map[string]interface{} {
-	return map[string]interface{}{
+func (p *Paginator) ToMap() map[string]any {
+	return map[string]any{
 		"page":      p.page,
 		"pre_page":  p.prePage,
 		"total":     p.total,

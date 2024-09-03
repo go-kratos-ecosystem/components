@@ -317,7 +317,7 @@ func TestScan_Basic(t *testing.T) {
 
 	// struct.3
 	var baz3 Baz
-	err = Scan(func() interface{} {
+	err = Scan(func() any {
 		return Baz{
 			Name: "baz",
 		}
@@ -330,7 +330,7 @@ func TestScan_Basic(t *testing.T) {
 		Name string
 	}
 	var tt test
-	err = Scan(func() interface{} {
+	err = Scan(func() any {
 		return test{
 			Name: "test",
 		}

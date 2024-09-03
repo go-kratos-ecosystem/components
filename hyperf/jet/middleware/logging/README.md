@@ -41,7 +41,7 @@ type customLogger struct{}
 
 var _ log.Logger = (*customLogger)(nil)
 
-func (c *customLogger) Log(level log.Level, keyvals ...interface{}) error {
+func (c *customLogger) Log(level log.Level, keyvals ...any) error {
 	// custom log
 	return nil
 }

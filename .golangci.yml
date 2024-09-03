@@ -26,3 +26,9 @@ linters:
     - wastedassign
     - unconvert
     - misspell
+
+linters-settings:
+  gofmt:
+    rewrite-rules:
+      - pattern: 'interface{}'
+        replacement: 'any'

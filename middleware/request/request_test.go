@@ -44,7 +44,7 @@ func (l *listener) Handle(event event.Event) {
 func TestRequest(t *testing.T) {
 	var (
 		d       = event.NewDispatcher()
-		handler = func(_ context.Context, req interface{}) (reply interface{}, err error) {
+		handler = func(_ context.Context, req any) (reply any, err error) {
 			assert.Equal(t, "req", req)
 			return "reply", nil
 		}

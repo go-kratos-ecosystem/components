@@ -29,7 +29,7 @@ func New(loggers []log.Logger, opts ...Option) log.Logger {
 	return logger
 }
 
-func (s *stackLogger) Log(level log.Level, keyvals ...interface{}) error {
+func (s *stackLogger) Log(level log.Level, keyvals ...any) error {
 	for _, logger := range s.loggers {
 		if err := logger.Log(level, keyvals...); err != nil {
 			if !s.ignoreErr {

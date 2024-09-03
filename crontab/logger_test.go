@@ -18,13 +18,13 @@ func newTestLogger() *testLogger {
 	}
 }
 
-func (t *testLogger) Log(level log.Level, keyvals ...interface{}) error {
+func (t *testLogger) Log(level log.Level, keyvals ...any) error {
 	t.ch <- fmt.Sprintf("level: %s, keyvals: %v", level, keyvals)
 	return nil
 }
 
 func TestLogger(t *testing.T) {
-	_, ok := interface{}(NewLogger(nil)).(interface{ Printf(string, ...interface{}) })
+	_, ok := any(NewLogger(nil)).(interface{ Printf(string, ...any) })
 	assert.True(t, ok)
 
 	logger := newTestLogger()

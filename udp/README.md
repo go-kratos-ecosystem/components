@@ -18,7 +18,7 @@ func main() {
 		kratos.Server(
 			udp.NewServer(":12190", udp.WithHandler(func(msg *udp.Message) {
 				log.Printf("receive message: %s", msg.Body)
-			}), udp.WithRecoveryHandler(func(msg *udp.Message, err interface{}) {
+			}), udp.WithRecoveryHandler(func(msg *udp.Message, err any) {
 				log.Println(err)
 			}), udp.WithReadChanSize(10240)),
 		),

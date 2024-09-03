@@ -28,7 +28,7 @@ type testLogger struct {
 	name string
 }
 
-func (t *testLogger) Log(level log.Level, keyvals ...interface{}) error {
+func (t *testLogger) Log(level log.Level, keyvals ...any) error {
 	fmt.Printf("name: %s, level: %v, keyvals: %v\n", t.name, level, keyvals)
 
 	return nil
@@ -36,7 +36,7 @@ func (t *testLogger) Log(level log.Level, keyvals ...interface{}) error {
 
 type errorLogger struct{}
 
-func (t *errorLogger) Log(_ log.Level, _ ...interface{}) error {
+func (t *errorLogger) Log(_ log.Level, _ ...any) error {
 	return fmt.Errorf("error")
 }
 
