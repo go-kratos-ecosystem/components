@@ -53,7 +53,7 @@ jobs:
       - name: Run Buf
         uses: bufbuild/buf-setup-action@v1.41.0
       - run: |
-          buf version
+          buf --version
           buf generate
 
       - name: Run tests
