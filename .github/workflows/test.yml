@@ -50,6 +50,12 @@ jobs:
           go-version: ${{ matrix.go-version }}
       - run: go version
 
+      - name: Run Buf
+        uses: bufbuild/buf-setup-action@v1.41.0
+      - run: |
+          buf version
+          buf generate
+
       - name: Run tests
         run: go test ./... -v -covermode=atomic -race -coverprofile=coverage.txt
 
