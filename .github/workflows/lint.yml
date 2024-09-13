@@ -16,8 +16,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-go@v5
         with:
           go-version: stable
+
+      - uses: bufbuild/buf-setup-action@v1.41.0
+      - run: buf generate
+
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
