@@ -10,7 +10,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-var defaultHandler = func(ctx context.Context, req any, err error) (any, error) {
+var defaultHandler = func(_ context.Context, _ any, err error) (any, error) {
 	return nil, errors.BadRequest("VALIDATE_ERROR", fmt.Sprintf("invalid request: %v", err))
 }
 

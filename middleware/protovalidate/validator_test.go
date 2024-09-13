@@ -11,7 +11,7 @@ import (
 	pb "github.com/go-kratos-ecosystem/components/v2/genproto/tests/middleware/protovalidate/v1"
 )
 
-var next = func(ctx context.Context, req any) (reply any, err error) {
+var next = func(context.Context, any) (reply any, err error) {
 	return "reply", nil
 }
 
