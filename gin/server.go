@@ -11,7 +11,8 @@ import (
 type Server struct {
 	*gin.Engine
 
-	server *http.Server
+	server      *http.Server
+	middlewares []gin.HandlerFunc
 
 	addr string
 }
@@ -29,6 +30,12 @@ func Addr(addr string) Option {
 	}
 }
 
+func Middleware(middlewares ...gin.HandlerFunc) Option {
+	return func(s *Server) {
+		s.middlewares = append(s.middlewares, middlewares...)
+	}
+}
+
 func NewServer(e *gin.Engine, opts ...Option) *Server {
 	srv := &Server{
 		Engine: e,
@@ -37,6 +44,11 @@ func NewServer(e *gin.Engine, opts ...Option) *Server {
 
 	for _, opt := range opts {
 		opt(srv)
+	}
+
+	// apply middlewares
+	if len(srv.middlewares) > 0 {
+		srv.Use(srv.middlewares...)
 	}
 
 	srv.server = &http.Server{
