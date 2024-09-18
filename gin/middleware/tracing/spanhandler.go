@@ -15,7 +15,7 @@ type SpanHandler interface {
 
 type baseHandler struct{}
 
-func (baseHandler) StartSpan(ctx context.Context, span trace.Span, c *gin.Context) {
+func (baseHandler) StartSpan(_ context.Context, span trace.Span, c *gin.Context) {
 	span.SetAttributes(
 		// see https://opentelemetry.io/docs/specs/semconv/http/http-spans/
 		semconv.HTTPRequestMethodKey.String(c.Request.Method),
@@ -31,7 +31,7 @@ func (baseHandler) StartSpan(ctx context.Context, span trace.Span, c *gin.Contex
 	)
 }
 
-func (baseHandler) EndSpan(ctx context.Context, span trace.Span, c *gin.Context) {
+func (baseHandler) EndSpan(_ context.Context, span trace.Span, c *gin.Context) {
 	span.SetAttributes(
 		semconv.HTTPResponseStatusCode(c.Writer.Status()),
 		semconv.HTTPResponseSize(c.Writer.Size()),

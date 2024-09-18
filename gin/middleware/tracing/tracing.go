@@ -68,7 +68,7 @@ func New(opts ...Option) gin.HandlerFunc {
 		defer func() {
 			if r := recover(); r != nil {
 				// stack trace
-				stackTrace := make([]byte, 2048)
+				stackTrace := make([]byte, 2048) // nolint:mnd
 				n := runtime.Stack(stackTrace, false)
 
 				span.SetAttributes(
