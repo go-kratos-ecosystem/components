@@ -3,21 +3,28 @@ package slowlog
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/go-kratos/kratos/v2/errors"
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
-	"time"
 )
 
 // DefaultThreshold Threshold is the slow query threshold, default is 2000ms
-const DefaultThreshold = 2000 * time.Millisecond
+const defaultThreshold = 2 * time.Second
 
-type slow struct {
+type options struct {
 	Threshold time.Duration
 }
 
-type SlowOption func(*slow)
+type Option func(*options)
+
+func WithThreshold(threshold time.Duration) Option {
+	return func(c *options) {
+		c.Threshold = threshold
+	}
+}
 
 // Redacter defines how to log an object
 type Redacter interface {
@@ -25,7 +32,13 @@ type Redacter interface {
 }
 
 // Server returns a middleware that logs slow requests from the server.
-func Server(logger log.Logger, opts ...SlowOption) middleware.Middleware {
+func Server(logger log.Logger, opts ...Option) middleware.Middleware {
+	o := &options{
+		Threshold: defaultThreshold,
+	}
+	for _, opt := range opts {
+		opt(o)
+	}
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
 			var (
@@ -35,26 +48,23 @@ func Server(logger log.Logger, opts ...SlowOption) middleware.Middleware {
 				operation string
 			)
 			startTime := time.Now()
-			duration := time.Since(startTime)
-			o := &slow{
-				Threshold: DefaultThreshold,
-			}
-			for _, opt := range opts {
-				opt(o)
-			}
-			if duration <= o.Threshold {
-				return
-			}
+
 			if info, ok := transport.FromServerContext(ctx); ok {
 				kind = info.Kind().String()
 				operation = info.Operation()
-
 			}
 			reply, err = handler(ctx, req)
 			if se := errors.FromError(err); se != nil {
 				code = se.Code
 				reason = se.Reason
 			}
+
+			duration := time.Since(startTime)
+
+			if duration <= o.Threshold {
+				return
+			}
+
 			level, stack := extractError(err)
 			log.NewHelper(log.WithContext(ctx, logger)).Log(level,
 				"kind", "server",
@@ -73,7 +83,13 @@ func Server(logger log.Logger, opts ...SlowOption) middleware.Middleware {
 }
 
 // Client returns a middleware that logs slow requests from the client.
-func Client(logger log.Logger, opts ...SlowOption) middleware.Middleware {
+func Client(logger log.Logger, opts ...Option) middleware.Middleware {
+	o := &options{
+		Threshold: defaultThreshold,
+	}
+	for _, opt := range opts {
+		opt(o)
+	}
 	return func(handler middleware.Handler) middleware.Handler {
 		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
 			var (
@@ -83,16 +99,6 @@ func Client(logger log.Logger, opts ...SlowOption) middleware.Middleware {
 				operation string
 			)
 			startTime := time.Now()
-			duration := time.Since(startTime)
-			o := &slow{
-				Threshold: DefaultThreshold,
-			}
-			for _, opt := range opts {
-				opt(o)
-			}
-			if duration <= o.Threshold {
-				return
-			}
 			if info, ok := transport.FromClientContext(ctx); ok {
 				kind = info.Kind().String()
 				operation = info.Operation()
@@ -102,6 +108,12 @@ func Client(logger log.Logger, opts ...SlowOption) middleware.Middleware {
 				code = se.Code
 				reason = se.Reason
 			}
+
+			duration := time.Since(startTime)
+			if duration <= o.Threshold {
+				return
+			}
+
 			level, stack := extractError(err)
 			log.NewHelper(log.WithContext(ctx, logger)).Log(level,
 				"kind", "client",
