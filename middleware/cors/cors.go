@@ -84,7 +84,7 @@ func Cors(opts ...Option) middleware.Middleware {
 	}
 
 	return func(handler middleware.Handler) middleware.Handler {
-		return func(ctx context.Context, req interface{}) (reply interface{}, err error) {
+		return func(ctx context.Context, req any) (reply any, err error) {
 			tr, ok := transport.FromServerContext(ctx)
 			if !ok || tr.Kind() != transport.KindHTTP {
 				return handler(ctx, req)

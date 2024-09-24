@@ -14,6 +14,6 @@ func NewLogger(logger log.Logger) *Logger {
 	return &Logger{logger: logger}
 }
 
-func (l *Logger) Printf(format string, v ...interface{}) {
+func (l *Logger) Printf(format string, v ...any) {
 	_ = l.logger.Log(log.LevelInfo, "msg", fmt.Sprintf(format, v...))
 }

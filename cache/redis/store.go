@@ -14,7 +14,7 @@ import (
 )
 
 type Store struct {
-	redis redis.Cmdable
+	redis redis.UniversalClient
 
 	opts *options
 }
@@ -45,7 +45,7 @@ var (
 	_ cache.Addable = (*Store)(nil)
 )
 
-func New(redis redis.Cmdable, opts ...Option) *Store {
+func New(redis redis.UniversalClient, opts ...Option) *Store {
 	opt := &options{
 		codec: json.Codec,
 	}
@@ -69,7 +69,7 @@ func (s *Store) Has(ctx context.Context, key string) (bool, error) {
 	return r.Val() > 0, nil
 }
 
-func (s *Store) Get(ctx context.Context, key string, dest interface{}) error {
+func (s *Store) Get(ctx context.Context, key string, dest any) error {
 	r := s.redis.Get(ctx, s.opts.prefix+key)
 	if r.Err() != nil {
 		return r.Err()
@@ -78,7 +78,7 @@ func (s *Store) Get(ctx context.Context, key string, dest interface{}) error {
 	return s.opts.codec.Unmarshal([]byte(r.Val()), dest)
 }
 
-func (s *Store) Put(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
+func (s *Store) Put(ctx context.Context, key string, value any, ttl time.Duration) (bool, error) {
 	valued, err := s.opts.codec.Marshal(value)
 	if err != nil {
 		return false, err
@@ -110,7 +110,7 @@ func (s *Store) Decrement(ctx context.Context, key string, value int) (int, erro
 	return int(r.Val()), nil
 }
 
-func (s *Store) Forever(ctx context.Context, key string, value interface{}) (bool, error) {
+func (s *Store) Forever(ctx context.Context, key string, value any) (bool, error) {
 	valued, err := s.opts.codec.Marshal(value)
 	if err != nil {
 		return false, err
@@ -146,7 +146,7 @@ func (s *Store) GetPrefix() string {
 	return s.opts.prefix
 }
 
-func (s *Store) Add(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error) {
+func (s *Store) Add(ctx context.Context, key string, value any, ttl time.Duration) (bool, error) {
 	valued, err := s.opts.codec.Marshal(value)
 	if err != nil {
 		return false, err

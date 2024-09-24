@@ -81,7 +81,7 @@ func TestRepository(t *testing.T) {
 	assert.True(t, set)
 
 	// Remember
-	assert.Nil(t, repo.Remember(ctx, "test", nil, func() interface{} {
+	assert.Nil(t, repo.Remember(ctx, "test", nil, func() any {
 		return "test"
 	}, 0))
 }

@@ -19,7 +19,7 @@ func newMockLogger(t *testing.T) log.Logger {
 	return &mockLogger{t: t}
 }
 
-func (m *mockLogger) Log(level log.Level, keyvals ...interface{}) error {
+func (m *mockLogger) Log(level log.Level, keyvals ...any) error {
 	if !assert.Len(m.t, keyvals, 14) {
 		return nil
 	}

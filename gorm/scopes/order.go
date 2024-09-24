@@ -36,7 +36,7 @@ func OrderByAsc(column string) *Scopes {
 //	OrderByRaw("name asc")
 //	OrderByRaw("name desc, age asc")
 //	OrderByRaw("FIELD(id, 3, 1, 2)")
-func OrderByRaw(sql interface{}) *Scopes {
+func OrderByRaw(sql any) *Scopes {
 	return New().OrderByRaw(sql)
 }
 
@@ -71,7 +71,7 @@ func (s *Scopes) OrderByAsc(column string) *Scopes {
 //	OrderByRaw("name asc")
 //	OrderByRaw("name desc, age asc")
 //	OrderByRaw("FIELD(id, 3, 1, 2)")
-func (s *Scopes) OrderByRaw(sql interface{}) *Scopes {
+func (s *Scopes) OrderByRaw(sql any) *Scopes {
 	return s.Add(func(db *gorm.DB) *gorm.DB {
 		return db.Order(sql)
 	})

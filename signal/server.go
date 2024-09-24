@@ -10,14 +10,14 @@ import (
 	"github.com/go-kratos-ecosystem/components/v2/features"
 )
 
-var DefaultRecovery = func(err interface{}, sig os.Signal, _ Handler) {
+var DefaultRecovery = func(err any, sig os.Signal, _ Handler) {
 	log.Errorf("[Signal] handler panic (%s): %v", sig, err)
 }
 
 type Server struct {
 	handlers []Handler
 	stoped   chan struct{}
-	recovery func(interface{}, os.Signal, Handler)
+	recovery func(any, os.Signal, Handler)
 }
 
 type Option func(*Server)
@@ -28,7 +28,7 @@ func AddHandler(handler ...Handler) Option {
 	}
 }
 
-func WithRecovery(handler func(interface{}, os.Signal, Handler)) Option {
+func WithRecovery(handler func(any, os.Signal, Handler)) Option {
 	return func(s *Server) {
 		if handler != nil {
 			s.recovery = handler

@@ -34,10 +34,10 @@ func main() {
 	store := redisStore.New(rdb, redisStore.Prefix("example:cache"))
 
 	// create a cache repository
-	Repository := cache.NewRepository(store)
+	repository := cache.NewRepository(store)
 
 	// set cache
-	ok, err := Repository.Set(ctx, "key", User{
+	ok, err := repository.Set(ctx, "key", User{
 		Name: "example",
 		Age:  18,
 	}, time.Second*10)
@@ -48,7 +48,7 @@ func main() {
 
 	// get cache
 	var user User
-	err = Repository.Get(ctx, "key", &user)
+	err = repository.Get(ctx, "key", &user)
 	if err != nil {
 		log.Fatal(err)
 	}

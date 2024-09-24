@@ -2,6 +2,7 @@
 init:
 	go install mvdan.cc/gofumpt@latest
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	go install github.com/bufbuild/buf/cmd/buf@latest
 
 .PHONY: lint
 lint:
@@ -13,9 +14,13 @@ fix:
 	golangci-lint run --fix
 	@echo "✅ Lint fixing completed"
 
+.PHONY: buf-gen
+	buf generate
+	@echo "✅ Buf generation completed"
+
 .PHONY: test
 test:
-	go test ./...
+	go test ./... -race -cover
 	@echo "✅ Testing completed"
 
 .PHONY: fmt

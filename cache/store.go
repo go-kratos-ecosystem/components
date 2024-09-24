@@ -12,15 +12,15 @@ type Store interface {
 
 	Has(ctx context.Context, key string) (bool, error)
 
-	Get(ctx context.Context, key string, dest interface{}) error
+	Get(ctx context.Context, key string, dest any) error
 
-	Put(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error)
+	Put(ctx context.Context, key string, value any, ttl time.Duration) (bool, error)
 
 	Increment(ctx context.Context, key string, value int) (int, error)
 
 	Decrement(ctx context.Context, key string, value int) (int, error)
 
-	Forever(ctx context.Context, key string, value interface{}) (bool, error)
+	Forever(ctx context.Context, key string, value any) (bool, error)
 
 	Forget(ctx context.Context, key string) (bool, error)
 
@@ -30,7 +30,7 @@ type Store interface {
 }
 
 type Addable interface {
-	Add(ctx context.Context, key string, value interface{}, ttl time.Duration) (bool, error)
+	Add(ctx context.Context, key string, value any, ttl time.Duration) (bool, error)
 }
 
 type Locker interface {

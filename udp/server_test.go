@@ -22,7 +22,7 @@ func TestServer(t *testing.T) {
 
 		server = NewServer(":12190", WithHandler(func(msg *Message) {
 			done <- msg.Body
-		}), WithRecoveryHandler(func(_ *Message, err interface{}) {
+		}), WithRecoveryHandler(func(_ *Message, err any) {
 			t.Log(err)
 		}), WithBufSize(1024))
 

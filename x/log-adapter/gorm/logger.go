@@ -57,21 +57,21 @@ func (l *logger) LogMode(level gl.LogLevel) gl.Interface {
 	return &newLogger
 }
 
-func (l *logger) Info(_ context.Context, s string, i ...interface{}) {
+func (l *logger) Info(_ context.Context, s string, i ...any) {
 	if l.LogLevel >= gl.Info {
-		_ = l.Log(log.LevelInfo, fmt.Sprintf(l.infoStr+s, append([]interface{}{utils.FileWithLineNum()}, i...)...))
+		_ = l.Log(log.LevelInfo, fmt.Sprintf(l.infoStr+s, append([]any{utils.FileWithLineNum()}, i...)...))
 	}
 }
 
-func (l *logger) Warn(_ context.Context, s string, i ...interface{}) {
+func (l *logger) Warn(_ context.Context, s string, i ...any) {
 	if l.LogLevel >= gl.Warn {
-		_ = l.Log(log.LevelWarn, fmt.Sprintf(l.warnStr+s, append([]interface{}{utils.FileWithLineNum()}, i...)...))
+		_ = l.Log(log.LevelWarn, fmt.Sprintf(l.warnStr+s, append([]any{utils.FileWithLineNum()}, i...)...))
 	}
 }
 
-func (l *logger) Error(_ context.Context, s string, i ...interface{}) {
+func (l *logger) Error(_ context.Context, s string, i ...any) {
 	if l.LogLevel >= gl.Error {
-		_ = l.Log(log.LevelError, fmt.Sprintf(l.errStr+s, append([]interface{}{utils.FileWithLineNum()}, i...)...))
+		_ = l.Log(log.LevelError, fmt.Sprintf(l.errStr+s, append([]any{utils.FileWithLineNum()}, i...)...))
 	}
 }
 

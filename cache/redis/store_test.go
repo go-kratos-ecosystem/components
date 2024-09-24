@@ -15,7 +15,7 @@ import (
 	"github.com/go-kratos-ecosystem/components/v2/locker"
 )
 
-func createRedis() redis.Cmdable {
+func createRedis() redis.UniversalClient {
 	return redis.NewClient(&redis.Options{
 		Addr: ":6379",
 	})

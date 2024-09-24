@@ -1,6 +1,7 @@
 package mutex
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/robfig/cron/v3"
@@ -40,7 +41,11 @@ func SkipIfStillMutexRunning(opts ...Option) cron.JobWrapper {
 			}
 
 			if err := o.locker.Lock(slug, expiration); err != nil {
-				o.logger.Info(fmt.Sprintf("crontab/jobwrapper/mutex: skip job [%s], because still mutex lock", j.Slug()))
+				if errors.Is(err, ErrLocked) {
+					o.logger.Info(fmt.Sprintf("crontab/jobwrapper/mutex: skip job [%s], because still mutex lock", j.Slug()))
+					return
+				}
+				o.logger.Error(err, fmt.Sprintf("crontab/jobwrapper/mutex: failed to lock mutex for job [%s]", j.Slug()))
 				return
 			}
 			defer o.locker.Unlock(slug) //nolint:errcheck
