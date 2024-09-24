@@ -3,12 +3,13 @@ package slowlog
 import (
 	"context"
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 type logger struct {
@@ -46,7 +47,6 @@ func (tr *Transport) ReplyHeader() transport.Header {
 }
 
 func TestHTTP(t *testing.T) {
-
 	err := errors.New("reply.error")
 	logger := &logger{t}
 
@@ -61,7 +61,10 @@ func TestHTTP(t *testing.T) {
 			Server(logger, WithThreshold(300*time.Millisecond)),
 			err,
 			func() context.Context {
-				return transport.NewServerContext(context.Background(), &Transport{kind: transport.KindHTTP, endpoint: "endpoint", operation: "/package.service/method"})
+				return transport.NewServerContext(
+					context.Background(),
+					&Transport{kind: transport.KindHTTP, endpoint: "endpoint", operation: "/package.service/method"},
+				)
 			}(),
 		},
 		{
@@ -69,7 +72,10 @@ func TestHTTP(t *testing.T) {
 			Server(logger, WithThreshold(700*time.Millisecond)),
 			nil,
 			func() context.Context {
-				return transport.NewServerContext(context.Background(), &Transport{kind: transport.KindHTTP, endpoint: "endpoint", operation: "/package.service/method"})
+				return transport.NewServerContext(
+					context.Background(),
+					&Transport{kind: transport.KindHTTP, endpoint: "endpoint", operation: "/package.service/method"},
+				)
 			}(),
 		},
 		{
@@ -77,7 +83,10 @@ func TestHTTP(t *testing.T) {
 			Client(logger, WithThreshold(300*time.Millisecond)),
 			nil,
 			func() context.Context {
-				return transport.NewClientContext(context.Background(), &Transport{kind: transport.KindHTTP, endpoint: "endpoint", operation: "/package.service/method"})
+				return transport.NewClientContext(
+					context.Background(),
+					&Transport{kind: transport.KindHTTP, endpoint: "endpoint", operation: "/package.service/method"},
+				)
 			}(),
 		},
 		{
@@ -85,7 +94,10 @@ func TestHTTP(t *testing.T) {
 			Client(logger, WithThreshold(700*time.Millisecond)),
 			err,
 			func() context.Context {
-				return transport.NewClientContext(context.Background(), &Transport{kind: transport.KindHTTP, endpoint: "endpoint", operation: "/package.service/method"})
+				return transport.NewClientContext(
+					context.Background(),
+					&Transport{kind: transport.KindHTTP, endpoint: "endpoint", operation: "/package.service/method"},
+				)
 			}(),
 		},
 	}
@@ -93,7 +105,7 @@ func TestHTTP(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			mw := tt.kind
-			mockHandler := func(ctx context.Context, req interface{}) (interface{}, error) {
+			mockHandler := func(_ context.Context, _ any) (any, error) {
 				time.Sleep(500 * time.Millisecond) // Simulate a slow request
 				return "server response", tt.err
 			}
@@ -107,7 +119,7 @@ func TestHTTP(t *testing.T) {
 	}
 }
 
-func (l *logger) Log(level log.Level, keyvals ...interface{}) error {
+func (l *logger) Log(_ log.Level, keyvals ...any) error {
 	assert.Equal(l.t, "slowlog", keyvals[3])
 	assert.Equal(l.t, "http", keyvals[5])
 	assert.Equal(l.t, "/package.service/method", keyvals[7])
