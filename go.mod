@@ -3,9 +3,8 @@ module github.com/go-kratos-ecosystem/components/v2
 go 1.22
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240717164558-a6c49f84cc0f.2
 	entgo.io/ent v0.14.0
-	github.com/bufbuild/protovalidate-go v0.6.5
+	github.com/bufbuild/protovalidate-go v0.7.0
 	github.com/cheggaaa/pb/v3 v3.1.5
 	github.com/davecgh/go-spew v1.1.1
 	github.com/fatih/color v1.17.0
@@ -27,6 +26,7 @@ require (
 )
 
 require (
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240920164238-5a7b106cbb87.2 // indirect
 	github.com/VividCortex/ewma v1.2.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect
