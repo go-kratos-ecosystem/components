@@ -76,3 +76,18 @@ func TestUUID(t *testing.T) {
 	assert.Equal(t, 36, len(uuid))
 	assert.True(t, IsUUID(uuid))
 }
+
+func TestAfter(t *testing.T) {
+	assert.Equal(t, " World!", After("Hello, World!", ","))
+	assert.Equal(t, "李四", After("张三李四", "三"))
+}
+
+func TestBefore(t *testing.T) {
+	assert.Equal(t, "Hello", Before("Hello, World!", ","))
+	assert.Equal(t, "张", Before("张三李四", "三"))
+}
+
+func TestSubstrCount(t *testing.T) {
+	assert.Equal(t, 5, SubstrCount("babababbaaba", "a", 0, 10))
+	assert.Equal(t, 2, SubstrCount("121212312", "1", 1, 5))
+}
