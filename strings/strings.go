@@ -157,3 +157,65 @@ func IsUUID(str string) bool {
 func UUID() string {
 	return uuid.New().String()
 }
+
+// After Return the remainder of a string after a given value.
+// Support chinese characters.
+//
+// Example:
+//
+//	After("Hello, World!", ",") //  World!
+//	After("张三李四", "三") // 李四
+func After(subject, search string) string {
+	if search == "" {
+		return subject
+	}
+	index := strings.Index(subject, search)
+	if index == -1 {
+		return subject
+	}
+	return subject[index+len(search):]
+}
+
+// Before Get the portion of a string before the first occurrence of a given value.
+// Support chinese characters.
+//
+// Example:
+//
+//	After("Hello, World!", ",") //  Hello
+//	After("张三李四", "李") // 张三
+func Before(subject, search string) string {
+	if search == "" {
+		return subject
+	}
+	index := strings.Index(subject, search)
+	if index == -1 {
+		return subject
+	}
+	return subject[:index]
+}
+
+// SubstrCount Returns the number of substring occurrences.
+//
+// Example:
+//
+//	SubstrCount("babababbaaba", "a", 0, 10) //  5
+//	SubstrCount("121212312", "1", 1, 5) // 2
+func SubstrCount(haystack, needle string, offset int, length ...int) int {
+	if offset < 0 || offset >= len(haystack) {
+		return 0
+	}
+
+	var end int
+	if len(length) > 0 {
+		end = offset + length[0]
+		if end > len(haystack) {
+			end = len(haystack)
+		}
+	} else {
+		end = len(haystack)
+	}
+
+	substr := haystack[offset:end]
+
+	return strings.Count(substr, needle)
+}
