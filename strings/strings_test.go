@@ -79,15 +79,22 @@ func TestUUID(t *testing.T) {
 
 func TestAfter(t *testing.T) {
 	assert.Equal(t, " World!", After("Hello, World!", ","))
+	assert.Equal(t, "Hello, World!", After("Hello, World!", ""))
+	assert.Equal(t, "", After("", "Hello"))
 	assert.Equal(t, "李四", After("张三李四", "三"))
 }
 
 func TestBefore(t *testing.T) {
 	assert.Equal(t, "Hello", Before("Hello, World!", ","))
+	assert.Equal(t, "Hello, World!", Before("Hello, World!", ""))
+	assert.Equal(t, "", Before("", "Hello"))
 	assert.Equal(t, "张", Before("张三李四", "三"))
 }
 
 func TestSubstrCount(t *testing.T) {
 	assert.Equal(t, 5, SubstrCount("babababbaaba", "a", 0, 10))
+	assert.Equal(t, 0, SubstrCount("babababbaaba", "a", -1, 10))
+	assert.Equal(t, 0, SubstrCount("babababbaaba", "a", 15, 10))
+	assert.Equal(t, 6, SubstrCount("babababbaaba", "a", 0, Len("babababbaaba")))
 	assert.Equal(t, 2, SubstrCount("121212312", "1", 1, 5))
 }

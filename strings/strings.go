@@ -198,8 +198,8 @@ func Before(subject, search string) string {
 //
 // Example:
 //
-//		SubstrCount("babababbaaba", "a", 0, 10) //  5
-//	 SubstrCount("121212312", "1", 1, 5) // 2
+//	SubstrCount("babababbaaba", "a", 0, 10) //  5
+//	SubstrCount("121212312", "1", 1, 5) // 2
 func SubstrCount(haystack, needle string, offset int, length ...int) int {
 	if offset < 0 || offset >= len(haystack) {
 		return 0
