@@ -78,17 +78,34 @@ func TestUUID(t *testing.T) {
 }
 
 func TestAfter(t *testing.T) {
-	assert.Equal(t, " World!", After("Hello, World!", ","))
-	assert.Equal(t, "Hello, World!", After("Hello, World!", ""))
-	assert.Equal(t, "", After("", "Hello"))
-	assert.Equal(t, "李四", After("张三李四", "三"))
+	tests := []struct {
+		name, s, sep, want string
+	}{
+		{"", "Hello, World!", ",", " World!"},
+		{"", "Hello, World!", "", "Hello, World!"},
+		{"", "", "Hello", ""},
+		{"", "张三李四", "三", "李四"},
+		{"", "张三张三李四", "三", "张三李四"},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, After(tt.s, tt.sep))
+	}
 }
 
 func TestBefore(t *testing.T) {
-	assert.Equal(t, "Hello", Before("Hello, World!", ","))
-	assert.Equal(t, "Hello, World!", Before("Hello, World!", ""))
-	assert.Equal(t, "", Before("", "Hello"))
-	assert.Equal(t, "张", Before("张三李四", "三"))
+	tests := []struct {
+		name, s, sep, want string
+	}{
+		{"", "Hello, World!", ",", "Hello"},
+		{"", "Hello, World!", "", "Hello, World!"},
+		{"", "", "Hello", ""},
+		{"", "张三李四", "三", "张"},
+		{"", "张三张三李四", "三", "张"},
+	}
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, Before(tt.s, tt.sep))
+	}
 }
 
 func TestSubstrCount(t *testing.T) {
