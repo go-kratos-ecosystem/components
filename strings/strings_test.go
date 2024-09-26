@@ -76,3 +76,42 @@ func TestUUID(t *testing.T) {
 	assert.Equal(t, 36, len(uuid))
 	assert.True(t, IsUUID(uuid))
 }
+
+func TestAfter(t *testing.T) {
+	tests := []struct {
+		name, s, sep, want string
+	}{
+		{"", "Hello, World!", ",", " World!"},
+		{"", "Hello, World!", "", "Hello, World!"},
+		{"", "", "Hello", ""},
+		{"", "张三李四", "三", "李四"},
+		{"", "张三张三李四", "三", "张三李四"},
+	}
+
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, After(tt.s, tt.sep))
+	}
+}
+
+func TestBefore(t *testing.T) {
+	tests := []struct {
+		name, s, sep, want string
+	}{
+		{"", "Hello, World!", ",", "Hello"},
+		{"", "Hello, World!", "", "Hello, World!"},
+		{"", "", "Hello", ""},
+		{"", "张三李四", "三", "张"},
+		{"", "张三张三李四", "三", "张"},
+	}
+	for _, tt := range tests {
+		assert.Equal(t, tt.want, Before(tt.s, tt.sep))
+	}
+}
+
+func TestSubstrCount(t *testing.T) {
+	assert.Equal(t, 5, SubstrCount("babababbaaba", "a", 0, 10))
+	assert.Equal(t, 0, SubstrCount("babababbaaba", "a", -1, 10))
+	assert.Equal(t, 0, SubstrCount("babababbaaba", "a", 15, 10))
+	assert.Equal(t, 6, SubstrCount("babababbaaba", "a", 0, Len("babababbaaba")))
+	assert.Equal(t, 2, SubstrCount("121212312", "1", 1, 5))
+}
