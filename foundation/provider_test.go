@@ -38,3 +38,26 @@ func TestProvider_BootstrapFuncError(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "test", ctx.Value(providerFuncKey{}))
 }
+
+func TestProvider_Chain(t *testing.T) {
+	p1 := BootstrapFunc(func(ctx context.Context) (context.Context, error) {
+		return context.WithValue(ctx, providerFuncKey{}, "test1"), nil
+	})
+	p2 := BootstrapFunc(func(ctx context.Context) (context.Context, error) {
+		return context.WithValue(ctx, providerFuncKey{}, "test2"), nil
+	})
+	p3 := BootstrapFunc(func(ctx context.Context) (context.Context, error) {
+		return context.WithValue(ctx, providerFuncKey{}, "test3"), nil
+	})
+
+	c := NewChain(p1, p2, p3)
+	ctx := context.Background()
+
+	ctx, err := c.Bootstrap(ctx)
+	assert.NoError(t, err)
+	assert.Equal(t, "test3", ctx.Value(providerFuncKey{}))
+
+	ctx, err = c.Terminate(ctx)
+	assert.NoError(t, err)
+	assert.Equal(t, "test3", ctx.Value(providerFuncKey{}))
+}
