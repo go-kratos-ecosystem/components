@@ -106,8 +106,8 @@ func (k *Kernel) Run() (err error) {
 
 func (k *Kernel) terminate(ctx context.Context) (context.Context, error) {
 	var err error
-	for _, provider := range k.providers {
-		if ctx, err = provider.Terminate(ctx); err != nil {
+	for i := len(k.providers) - 1; i >= 0; i-- {
+		if ctx, err = k.providers[i].Terminate(ctx); err != nil {
 			return ctx, err
 		}
 	}

@@ -7,6 +7,38 @@ type Provider interface {
 	Terminate(context.Context) (context.Context, error)
 }
 
+// Chain is a provider that calls multiple providers in sequence.
+type Chain []Provider
+
+func NewChain(providers ...Provider) Chain {
+	return providers
+}
+
+func (c Chain) Bootstrap(ctx context.Context) (context.Context, error) {
+	var err error
+	for _, p := range c {
+		ctx, err = p.Bootstrap(ctx)
+		if err != nil {
+			return ctx, err
+		}
+	}
+
+	return ctx, nil
+}
+
+func (c Chain) Terminate(ctx context.Context) (context.Context, error) {
+	var err error
+	for i := len(c) - 1; i >= 0; i-- {
+		ctx, err = c[i].Terminate(ctx)
+		if err != nil {
+			return ctx, err
+		}
+	}
+
+	return ctx, nil
+}
+
+// BaseProvider is a provider that does nothing.
 type BaseProvider struct{}
 
 func (*BaseProvider) Bootstrap(ctx context.Context) (context.Context, error) {
