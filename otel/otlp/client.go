@@ -9,6 +9,7 @@ import (
 	kratoslog "github.com/go-kratos/kratos/v2/log"
 	runtimemetrics "go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/log"
 	logglobal "go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/metric"
@@ -17,6 +18,7 @@ import (
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -24,13 +26,17 @@ type Client struct {
 	// otlp transport
 	transport Transport
 
-	// otlp resource
-	resource *sdkresource.Resource
-
+	// core components
+	resource       *sdkresource.Resource
 	propagator     propagation.TextMapPropagator
 	tracerProvider trace.TracerProvider
 	meterProvider  metric.MeterProvider
 	loggerProvider log.LoggerProvider
+
+	// resource options
+	serviceName           string
+	deploymentEnvironment string
+	attributes            []attribute.KeyValue
 
 	// metric options
 	enableRuntimeMetrics bool
@@ -77,6 +83,30 @@ func WithLoggerProvider(provider log.LoggerProvider) Option {
 	}
 }
 
+func WithServiceName(serviceName string) Option {
+	return func(c *Client) {
+		c.serviceName = serviceName
+	}
+}
+
+func WithDeploymentEnvironment(deploymentEnvironment string) Option {
+	return func(c *Client) {
+		c.deploymentEnvironment = deploymentEnvironment
+	}
+}
+
+func WithAttributes(attributes ...attribute.KeyValue) Option {
+	return func(c *Client) {
+		c.attributes = append(c.attributes, attributes...)
+	}
+}
+
+func WithEnableRuntimeMetrics(enable bool) Option {
+	return func(c *Client) {
+		c.enableRuntimeMetrics = enable
+	}
+}
+
 func WithTraceSampler(sampler sdktrace.Sampler) Option {
 	return func(c *Client) {
 		c.traceSampler = sampler
@@ -94,6 +124,11 @@ func NewClient(opts ...Option) *Client {
 }
 
 func (c *Client) Configure(ctx context.Context) error {
+	// resource
+	if err := c.configureResource(ctx); err != nil {
+		return err
+	}
+
 	// propagator
 	c.configureTextMapPropagator()
 
@@ -113,6 +148,36 @@ func (c *Client) Configure(ctx context.Context) error {
 	}
 
 	kratoslog.Infof("OTLP client configured")
+
+	return nil
+}
+
+func (c *Client) configureResource(ctx context.Context) error {
+	if c.resource != nil {
+		return nil
+	}
+
+	attrs := c.attributes
+
+	if c.serviceName != "" {
+		attrs = append(attrs, semconv.ServiceName(c.serviceName))
+	}
+
+	if c.deploymentEnvironment != "" {
+		attrs = append(attrs, semconv.DeploymentEnvironment(c.deploymentEnvironment))
+	}
+
+	res, err := sdkresource.New(ctx,
+		sdkresource.WithHost(),
+		sdkresource.WithTelemetrySDK(),
+		sdkresource.WithContainer(),
+		sdkresource.WithAttributes(attrs...),
+	)
+	if err != nil {
+		return err
+	}
+
+	c.resource = res
 
 	return nil
 }

@@ -10,8 +10,7 @@ package main
 import (
 	"context"
 
-	sdkresource "go.opentelemetry.io/otel/sdk/resource"
-	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
+	"go.opentelemetry.io/otel/attribute"
 
 	"github.com/go-kratos-ecosystem/components/v2/otel/otlp"
 )
@@ -19,27 +18,17 @@ import (
 func main() {
 	ctx := context.TODO()
 
-	// resource
-	res, err := sdkresource.New(ctx,
-		sdkresource.WithHost(),
-		sdkresource.WithTelemetrySDK(),
-		sdkresource.WithContainer(),
-
-		sdkresource.WithAttributes(
-			semconv.ServiceName("service-name"),
-			semconv.DeploymentEnvironment("prod"),
-		),
-	)
-	if err != nil {
-		panic(err)
-	}
-
 	// transport
 	transport := otlp.NewGRPCTransport("localhost:4317", otlp.WithGRPCTransportInsecure(true))
 
 	// client
 	client := otlp.NewClient(
-		otlp.WithResource(res),
+		otlp.WithServiceName("service-name"),
+		otlp.WithDeploymentEnvironment("development"),
+		otlp.WithAttributes(
+			attribute.String("key", "value"),
+			// ...
+		),
 		otlp.WithTransport(transport),
 	)
 
@@ -51,4 +40,5 @@ func main() {
 
 	// do something
 }
+
 ```
