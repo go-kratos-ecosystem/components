@@ -11,7 +11,6 @@ import (
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/metric/metricdata"
 	"go.opentelemetry.io/otel/sdk/trace"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
 type Transport interface {
@@ -21,9 +20,8 @@ type Transport interface {
 }
 
 type GRPCTransport struct {
-	endpoint     string
-	insecure     bool
-	traceSampler sdktrace.Sampler // default is always on
+	endpoint string
+	insecure bool
 }
 
 var _ Transport = (*GRPCTransport)(nil)
@@ -33,12 +31,6 @@ type GRPCTransportOption func(*GRPCTransport)
 func WithGRPCTransportInsecure(insecure bool) GRPCTransportOption {
 	return func(t *GRPCTransport) {
 		t.insecure = insecure
-	}
-}
-
-func WithGRPCTransportTraceSampler(sampler sdktrace.Sampler) GRPCTransportOption {
-	return func(t *GRPCTransport) {
-		t.traceSampler = sampler
 	}
 }
 

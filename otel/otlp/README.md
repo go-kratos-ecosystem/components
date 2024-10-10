@@ -1,4 +1,4 @@
-# Otlp Configuration
+# OTLP Configuration
 
 This package provides a configuration for the OpenTelemetry Protocol (OTLP) exporter.
 
