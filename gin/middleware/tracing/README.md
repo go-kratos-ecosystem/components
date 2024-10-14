@@ -1,8 +1,8 @@
 # Tracing
 
-> [!NOTE]  
-> **Deprecated:**  
-> This package is deprecated and will not be maintained.    
+> [!WARNING]
+> **Deprecated:** This package is deprecated and will not be maintained.
+>
 > Please use [`go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin`](https://github.com/open-telemetry/opentelemetry-go-contrib/blob/main/instrumentation/github.com/gin-gonic/gin/otelgin/gintrace.go) instead.
 
 ---
