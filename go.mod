@@ -3,6 +3,7 @@ module github.com/go-kratos-ecosystem/components/v2
 go 1.22
 
 require (
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.35.1-20240920164238-5a7b106cbb87.1
 	entgo.io/ent v0.14.0
 	github.com/bufbuild/protovalidate-go v0.7.2
 	github.com/cheggaaa/pb/v3 v3.1.5
@@ -29,13 +30,13 @@ require (
 	go.opentelemetry.io/otel/trace v1.31.0
 	golang.org/x/term v0.25.0
 	golang.org/x/text v0.19.0
+	google.golang.org/grpc v1.67.1
 	google.golang.org/protobuf v1.35.1
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.12
 )
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.35.1-20240920164238-5a7b106cbb87.1 // indirect
 	github.com/VividCortex/ewma v1.2.0 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/bytedance/sonic v1.11.6 // indirect
@@ -82,9 +83,9 @@ require (
 	golang.org/x/crypto v0.28.0 // indirect
 	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
 	golang.org/x/net v0.30.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20241007155032-5fefd90f89a9 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241007155032-5fefd90f89a9 // indirect
-	google.golang.org/grpc v1.67.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
