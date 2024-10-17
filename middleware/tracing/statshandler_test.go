@@ -24,7 +24,8 @@ func TestClient_TagConn(t *testing.T) {
 	ctx := context.WithValue(context.Background(), testKey, 123)
 
 	if client.TagConn(ctx, nil).Value(testKey) != 123 {
-		t.Errorf(`The context value must be 123 for the "MY_KEY_TEST" key, %v given.`, client.TagConn(ctx, nil).Value(testKey))
+		t.Errorf(`The context value must be 123 for the "MY_KEY_TEST" key, %v given.`,
+			client.TagConn(ctx, nil).Value(testKey))
 	}
 }
 
@@ -33,7 +34,8 @@ func TestClient_TagRPC(t *testing.T) {
 	ctx := context.WithValue(context.Background(), testKey, 123)
 
 	if client.TagRPC(ctx, nil).Value(testKey) != 123 {
-		t.Errorf(`The context value must be 123 for the "MY_KEY_TEST" key, %v given.`, client.TagConn(ctx, nil).Value(testKey))
+		t.Errorf(`The context value must be 123 for the "MY_KEY_TEST" key, %v given.`,
+			client.TagConn(ctx, nil).Value(testKey))
 	}
 }
 

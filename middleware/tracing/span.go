@@ -17,7 +17,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func setClientSpan(ctx context.Context, span trace.Span, m interface{}) {
+func setClientSpan(ctx context.Context, span trace.Span, m any) {
 	var (
 		attrs     []attribute.KeyValue
 		remote    string
@@ -57,7 +57,7 @@ func setClientSpan(ctx context.Context, span trace.Span, m interface{}) {
 	span.SetAttributes(attrs...)
 }
 
-func setServerSpan(ctx context.Context, span trace.Span, m interface{}) {
+func setServerSpan(ctx context.Context, span trace.Span, m any) {
 	var (
 		attrs     []attribute.KeyValue
 		remote    string
@@ -105,8 +105,8 @@ func setServerSpan(ctx context.Context, span trace.Span, m interface{}) {
 // on a gRPC's FullMethod.
 func parseFullMethod(fullMethod string) (string, []attribute.KeyValue) {
 	name := strings.TrimLeft(fullMethod, "/")
-	parts := strings.SplitN(name, "/", 2)
-	if len(parts) != 2 { //nolint:gomnd
+	parts := strings.SplitN(name, "/", 2) //nolint:mnd
+	if len(parts) != 2 {                  //nolint:mnd
 		// Invalid format, does not follow `/package.service/method`.
 		return name, []attribute.KeyValue{attribute.Key("rpc.operation").String(fullMethod)}
 	}

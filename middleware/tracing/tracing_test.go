@@ -86,11 +86,15 @@ func TestTracer(t *testing.T) {
 
 	ts := &mockTransport{kind: transport.KindHTTP, header: carrier}
 
-	ctx, aboveSpan := cliTracer.Start(transport.NewClientContext(context.Background(), ts), ts.Operation(), ts.RequestHeader())
+	ctx, aboveSpan := cliTracer.Start(
+		transport.NewClientContext(context.Background(), ts),
+		ts.Operation(), ts.RequestHeader())
 	defer cliTracer.End(ctx, aboveSpan, nil, nil)
 
 	// server use Extract fetch traceInfo from carrier
-	svrTracer := NewTracer(trace.SpanKindServer, WithPropagator(propagation.NewCompositeTextMapPropagator(propagation.Baggage{}, propagation.TraceContext{})))
+	svrTracer := NewTracer(trace.SpanKindServer,
+		WithPropagator(
+			propagation.NewCompositeTextMapPropagator(propagation.Baggage{}, propagation.TraceContext{})))
 	ts = &mockTransport{kind: transport.KindHTTP, header: carrier}
 
 	ctx, span := svrTracer.Start(transport.NewServerContext(ctx, ts), ts.Operation(), ts.RequestHeader())
@@ -126,7 +130,7 @@ func TestServer(t *testing.T) {
 		childSpanID  string
 		childTraceID string
 	)
-	next := func(ctx context.Context, req interface{}) (interface{}, error) {
+	next := func(ctx context.Context, req any) (any, error) {
 		_ = log.WithContext(ctx, logger).Log(log.LevelInfo,
 			"kind", "server",
 		)
@@ -155,7 +159,8 @@ func TestServer(t *testing.T) {
 		t.Errorf("expected empty, got %v", childSpanID)
 	}
 	if reflect.DeepEqual(span.SpanContext().SpanID().String(), childSpanID) {
-		t.Errorf("span.SpanContext().SpanID().String()(%v)  is not equal to childSpanID(%v)", span.SpanContext().SpanID().String(), childSpanID)
+		t.Errorf("span.SpanContext().SpanID().String()(%v)  is not equal to childSpanID(%v)",
+			span.SpanContext().SpanID().String(), childSpanID)
 	}
 	if !reflect.DeepEqual(span.SpanContext().TraceID().String(), childTraceID) {
 		t.Errorf("expected %v, got %v", childTraceID, span.SpanContext().TraceID().String())
@@ -197,7 +202,7 @@ func TestClient(t *testing.T) {
 		childSpanID  string
 		childTraceID string
 	)
-	next := func(ctx context.Context, req interface{}) (interface{}, error) {
+	next := func(ctx context.Context, req any) (any, error) {
 		_ = log.WithContext(ctx, logger).Log(log.LevelInfo,
 			"kind", "client",
 		)
@@ -226,7 +231,8 @@ func TestClient(t *testing.T) {
 		t.Errorf("expected empty, got %v", childSpanID)
 	}
 	if reflect.DeepEqual(span.SpanContext().SpanID().String(), childSpanID) {
-		t.Errorf("span.SpanContext().SpanID().String()(%v)  is not equal to childSpanID(%v)", span.SpanContext().SpanID().String(), childSpanID)
+		t.Errorf("span.SpanContext().SpanID().String()(%v)  is not equal to childSpanID(%v)",
+			span.SpanContext().SpanID().String(), childSpanID)
 	}
 	if !reflect.DeepEqual(span.SpanContext().TraceID().String(), childTraceID) {
 		t.Errorf("expected %v, got %v", childTraceID, span.SpanContext().TraceID().String())

@@ -44,7 +44,9 @@ func NewTracer(kind trace.SpanKind, opts ...Option) *Tracer {
 }
 
 // Start start tracing span
-func (t *Tracer) Start(ctx context.Context, operation string, carrier propagation.TextMapCarrier) (context.Context, trace.Span) {
+func (t *Tracer) Start(
+	ctx context.Context, operation string, carrier propagation.TextMapCarrier,
+) (context.Context, trace.Span) {
 	if t.kind == trace.SpanKindServer {
 		ctx = t.opt.propagator.Extract(ctx, carrier)
 	}
@@ -59,7 +61,7 @@ func (t *Tracer) Start(ctx context.Context, operation string, carrier propagatio
 }
 
 // End finish tracing span
-func (t *Tracer) End(_ context.Context, span trace.Span, m interface{}, err error) {
+func (t *Tracer) End(_ context.Context, span trace.Span, m any, err error) {
 	if err != nil {
 		span.RecordError(err)
 		if e := errors.FromError(err); e != nil {
