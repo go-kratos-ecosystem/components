@@ -35,6 +35,8 @@ func setClientSpan(ctx context.Context, span trace.Span, m interface{}) {
 					semconv.HTTPRequestMethodKey.String(ht.Request().Method),
 					semconv.HTTPRoute(ht.PathTemplate()),
 					semconv.URLPath(ht.Request().URL.Path),
+					semconv.ClientAddress(ht.Request().RemoteAddr),
+					semconv.UserAgentOriginal(ht.Request().UserAgent()),
 				)
 				remote = ht.Request().Host
 			}
@@ -73,6 +75,8 @@ func setServerSpan(ctx context.Context, span trace.Span, m interface{}) {
 					semconv.HTTPRequestMethodKey.String(ht.Request().Method),
 					semconv.HTTPRoute(ht.PathTemplate()),
 					semconv.URLPath(ht.Request().URL.Path),
+					semconv.ClientAddress(ht.Request().RemoteAddr),
+					semconv.UserAgentOriginal(ht.Request().UserAgent()),
 				)
 				remote = ht.Request().RemoteAddr
 			}
@@ -90,7 +94,7 @@ func setServerSpan(ctx context.Context, span trace.Span, m interface{}) {
 		attrs = append(attrs, attribute.Key("recv_msg.size").Int(proto.Size(p)))
 	}
 	if md, ok := metadata.FromServerContext(ctx); ok {
-		attrs = append(attrs, semconv.PeerServiceKey.String(md.Get(serviceHeader)))
+		attrs = append(attrs, semconv.PeerService(md.Get(serviceHeader)))
 	}
 
 	span.SetAttributes(attrs...)
