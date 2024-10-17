@@ -7,7 +7,30 @@ The package is forked from [tracing](https://github.com/go-kratos/kratos/tree/8b
 ## Usage Example
 
 ```go
-// todo
+package main
+
+import (
+	"github.com/go-kratos/kratos/v2"
+	"github.com/go-kratos/kratos/v2/transport/http"
+
+	"github.com/go-kratos-ecosystem/components/v2/middleware/tracing"
+)
+
+func main() {
+	app := kratos.New(
+		kratos.Name("tracing"),
+		kratos.Server(
+			http.NewServer(
+				http.Address(":8001"),
+				http.Middleware(tracing.Server()),
+			),
+		),
+	)
+
+	if err := app.Run(); err != nil {
+		panic(err)
+	}
+}
 ```
 
 ## License
