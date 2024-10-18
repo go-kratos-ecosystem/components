@@ -15,6 +15,7 @@ fix:
 	@echo "✅ Lint fixing completed"
 
 .PHONY: buf-gen
+buf-gen:
 	buf generate
 	@echo "✅ Buf generation completed"
 
