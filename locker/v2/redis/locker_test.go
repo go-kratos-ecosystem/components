@@ -30,5 +30,5 @@ func TestLocker(t *testing.T) {
 	owner, ok, err := locker.Get(context.Background())
 	assert.NoError(t, err)
 	assert.True(t, ok)
-	defer owner.Release(context.Background())
+	defer owner.Release(context.Background()) //nolint:errcheck
 }

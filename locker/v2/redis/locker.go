@@ -46,7 +46,7 @@ func NewLocker(redis redis.UniversalClient, opts ...Option) *Locker {
 	l := &Locker{
 		redis: redis,
 		name:  uuid.New().String(),
-		ttl:   time.Second * 10,
+		ttl:   time.Second * 10, //nolint:mnd
 	}
 	for _, opt := range opts {
 		opt(l)
@@ -89,7 +89,7 @@ func (l *Locker) Until(ctx context.Context, timeout time.Duration, fn func()) (b
 		case <-ctx.Done():
 			return false, nil
 		default:
-			time.Sleep(time.Millisecond * 100) // todo: configurable
+			time.Sleep(time.Millisecond * 100) //nolint:mnd // todo: configurable
 		}
 	}
 
