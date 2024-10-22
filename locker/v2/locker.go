@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 var ErrNotLocked = errors.New("locker: the locker is not locked")
@@ -34,42 +32,13 @@ type Locker interface {
 	LockedOwner(ctx context.Context) (Owner, error)
 }
 
-type Owner interface {
-	// Name returns the name of the owner.
-	Name() string
+type NoopLocker struct{}
 
-	// Release releases the lock.
-	Release(ctx context.Context) (bool, error)
-}
+var _ Locker = NoopLocker{}
 
-type owner struct {
-	name   string
-	locker Locker
-}
-
-type OwnerOption func(*owner)
-
-func WithName(name string) OwnerOption {
-	return func(o *owner) {
-		o.name = name
-	}
-}
-
-func NewOwner(locker Locker, opts ...OwnerOption) Owner {
-	o := &owner{
-		name:   uuid.New().String(),
-		locker: locker,
-	}
-	for _, opt := range opts {
-		opt(o)
-	}
-	return o
-}
-
-func (o *owner) Name() string {
-	return o.name
-}
-
-func (o *owner) Release(ctx context.Context) (bool, error) {
-	return o.locker.Release(ctx, o)
-}
+func (l NoopLocker) Try(context.Context, func()) (bool, error)                  { return true, nil }
+func (l NoopLocker) Until(context.Context, time.Duration, func()) (bool, error) { return true, nil }
+func (l NoopLocker) Get(context.Context) (Owner, bool, error)                   { return nil, true, nil }
+func (l NoopLocker) Release(context.Context, Owner) (bool, error)               { return true, nil }
+func (l NoopLocker) ForceRelease(context.Context) error                         { return nil }
+func (l NoopLocker) LockedOwner(context.Context) (Owner, error)                 { return nil, nil }
