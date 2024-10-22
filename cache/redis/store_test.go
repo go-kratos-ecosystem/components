@@ -123,9 +123,8 @@ func TestRedis_Lock(t *testing.T) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
-			err := r.Lock("test", 5*time.Second).Try(context.Background(), func() error {
+			err := r.Lock("test", 5*time.Second).Try(context.Background(), func() {
 				time.Sleep(time.Second)
-				return nil
 			})
 			if err != nil {
 				assert.True(t, errors.Is(err, locker.ErrLocked))
