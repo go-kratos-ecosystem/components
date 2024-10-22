@@ -47,7 +47,7 @@ func WithSleep(sleep time.Duration) Option {
 	}
 }
 
-var _ locker.locker = (*Locker)(nil)
+var _ locker.Locker = (*Locker)(nil)
 
 func NewLocker(redis redis.UniversalClient, opts ...Option) *Locker {
 	l := &Locker{
