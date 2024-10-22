@@ -24,6 +24,7 @@ type Locker struct {
 	redis redis.UniversalClient
 	name  string
 	ttl   time.Duration
+	sleep time.Duration // for Until
 }
 
 type Option func(*Locker)
@@ -40,13 +41,20 @@ func WithTTL(ttl time.Duration) Option {
 	}
 }
 
+func WithSleep(sleep time.Duration) Option {
+	return func(l *Locker) {
+		l.sleep = sleep
+	}
+}
+
 var _ locker.Locker = (*Locker)(nil)
 
 func NewLocker(redis redis.UniversalClient, opts ...Option) *Locker {
 	l := &Locker{
 		redis: redis,
 		name:  uuid.New().String(),
-		ttl:   time.Second * 10, //nolint:mnd
+		ttl:   time.Second * 10,       //nolint:mnd
+		sleep: time.Millisecond * 100, //nolint:mnd
 	}
 	for _, opt := range opts {
 		opt(l)
@@ -54,72 +62,66 @@ func NewLocker(redis redis.UniversalClient, opts ...Option) *Locker {
 	return l
 }
 
-func (l *Locker) Try(ctx context.Context, fn func()) (bool, error) {
-	owner, ok, err := l.Get(ctx)
+func (l *Locker) Try(ctx context.Context, fn func()) error {
+	owner, err := l.Get(ctx)
 	if err != nil {
-		return false, err
-	}
-	if !ok {
-		return false, nil
+		return err
 	}
 	defer func() {
-		_, _ = owner.Release(ctx)
+		_ = owner.Release(ctx)
 	}()
 
 	fn()
 
-	return true, nil
+	return nil
 }
 
-func (l *Locker) Until(ctx context.Context, timeout time.Duration, fn func()) (bool, error) {
-	ctx, cancel := context.WithTimeout(ctx, timeout)
-	defer cancel()
-
-	var owner locker.Owner
+func (l *Locker) Until(ctx context.Context, timeout time.Duration, fn func()) error {
+	starting := time.Now()
+	owner := locker.NewOwner(l)
 
 	for {
-		owner = locker.NewOwner(l)
 		if ok, err := l.acquire(ctx, owner); err != nil {
-			return false, err
+			return err
 		} else if ok {
 			break
 		}
 
-		select {
-		case <-ctx.Done():
-			return false, nil
-		default:
-			time.Sleep(time.Millisecond * 100) //nolint:mnd // todo: configurable
+		if time.Since(starting) >= timeout {
+			return locker.ErrTimeout
 		}
+
+		time.Sleep(l.sleep)
 	}
 
 	defer func() {
-		_, _ = owner.Release(ctx)
+		_ = owner.Release(ctx)
 	}()
 
 	fn()
 
-	return true, nil
+	return nil
 }
 
-func (l *Locker) Get(ctx context.Context) (locker.Owner, bool, error) {
+func (l *Locker) Get(ctx context.Context) (locker.Owner, error) {
 	owner := locker.NewOwner(l)
 	ok, err := l.acquire(ctx, owner)
 	if err != nil {
-		return nil, false, err
+		return nil, err
 	}
-
-	return owner, ok, nil
+	if !ok {
+		return nil, locker.ErrLocked
+	}
+	return owner, nil
 }
 
-func (l *Locker) Release(ctx context.Context, owner locker.Owner) (bool, error) {
+func (l *Locker) Release(ctx context.Context, owner locker.Owner) error {
 	if val, err := l.redis.Eval(ctx, releaseScript, []string{l.name}, owner.Name()).Result(); err != nil {
-		return false, err
+		return err
 	} else if val == int64(0) {
-		return false, nil
+		return locker.ErrNotLocked
 	}
-
-	return true, nil
+	return nil
 }
 
 func (l *Locker) ForceRelease(ctx context.Context) error {
@@ -134,7 +136,7 @@ func (l *Locker) LockedOwner(ctx context.Context) (locker.Owner, error) {
 		return nil, locker.ErrNotLocked
 	}
 
-	return locker.NewOwner(l, locker.WithName(val)), nil
+	return locker.NewOwner(l, locker.WithOwnerName(val)), nil
 }
 
 func (l *Locker) acquire(ctx context.Context, owner locker.Owner) (bool, error) {

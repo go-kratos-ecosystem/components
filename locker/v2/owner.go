@@ -11,7 +11,7 @@ type Owner interface {
 	Name() string
 
 	// Release releases the lock.
-	Release(ctx context.Context) (bool, error)
+	Release(ctx context.Context) error
 }
 
 type owner struct {
@@ -21,7 +21,7 @@ type owner struct {
 
 type OwnerOption func(*owner)
 
-func WithName(name string) OwnerOption {
+func WithOwnerName(name string) OwnerOption {
 	return func(o *owner) {
 		o.name = name
 	}
@@ -42,6 +42,6 @@ func (o *owner) Name() string {
 	return o.name
 }
 
-func (o *owner) Release(ctx context.Context) (bool, error) {
+func (o *owner) Release(ctx context.Context) error {
 	return o.locker.Release(ctx, o)
 }

@@ -8,10 +8,7 @@ import (
 )
 
 func TestOwner_owner(t *testing.T) {
-	o := NewOwner(NoopLocker{}, WithName("test"))
+	o := NewOwner(NoopLocker{}, WithOwnerName("test"))
 	assert.Equal(t, "test", o.Name())
-
-	ok, err := o.Release(context.Background())
-	assert.NoError(t, err)
-	assert.True(t, ok)
+	assert.NoError(t, o.Release(context.Background()))
 }

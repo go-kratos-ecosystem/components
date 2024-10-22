@@ -12,23 +12,14 @@ func TestLocker_NoopLocker(t *testing.T) {
 	l := NoopLocker{}
 	ctx := context.Background()
 
-	ok, err := l.Try(ctx, func() {})
-	assert.NoError(t, err)
-	assert.True(t, ok)
+	assert.NoError(t, l.Try(ctx, func() {}))
+	assert.NoError(t, l.Until(ctx, time.Second, func() {}))
 
-	ok, err = l.Until(ctx, time.Second, func() {})
+	o, err := l.Get(ctx)
 	assert.NoError(t, err)
-	assert.True(t, ok)
-
-	o, ok, err := l.Get(ctx)
-	assert.NoError(t, err)
-	assert.True(t, ok)
 	assert.Nil(t, o)
 
-	ok, err = l.Release(ctx, nil)
-	assert.NoError(t, err)
-	assert.True(t, ok)
-
+	assert.NoError(t, l.Release(ctx, nil))
 	assert.NoError(t, l.ForceRelease(ctx))
 
 	o, err = l.LockedOwner(ctx)
