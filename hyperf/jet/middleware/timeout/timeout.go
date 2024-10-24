@@ -35,7 +35,7 @@ func New(opts ...Option) jet.Middleware {
 		opt(&o)
 	}
 	return func(next jet.Handler) jet.Handler {
-		return func(ctx context.Context, client *jet.Client, name string, request any) (response any, err error) { // nolint:lll
+		return func(ctx context.Context, service, method string, request any) (response any, err error) { // nolint:lll
 			newCtx, cancel := context.WithTimeout(ctx, o.timeout)
 			defer cancel()
 
@@ -46,7 +46,7 @@ func New(opts ...Option) jet.Middleware {
 				defer close(finished)
 				mu.Lock()
 				defer mu.Unlock()
-				response, err = next(newCtx, client, name, request)
+				response, err = next(newCtx, service, method, request)
 			}()
 
 			select {

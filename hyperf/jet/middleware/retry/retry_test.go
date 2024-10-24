@@ -6,8 +6,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
 )
 
 func TestRetry(t *testing.T) {
@@ -22,12 +20,12 @@ func TestRetry(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		handler func(ctx context.Context, client *jet.Client, name string, request any) (response any, err error)
+		handler func(ctx context.Context, service, method string, request any) (response any, err error)
 		want    func(t *testing.T, err error)
 	}{
 		{
 			name: "test",
-			handler: func(context.Context, *jet.Client, string, any) (any, error) {
+			handler: func(context.Context, string, string, any) (any, error) {
 				return nil, assert.AnError
 			},
 			want: func(t *testing.T, err error) {
@@ -36,7 +34,7 @@ func TestRetry(t *testing.T) {
 		},
 		{
 			name: "test",
-			handler: func(context.Context, *jet.Client, string, any) (any, error) {
+			handler: func(context.Context, string, string, any) (any, error) {
 				return nil, customError
 			},
 			want: func(t *testing.T, err error) {
@@ -45,7 +43,7 @@ func TestRetry(t *testing.T) {
 		},
 		{
 			name: "test",
-			handler: func(context.Context, *jet.Client, string, any) (any, error) {
+			handler: func(context.Context, string, string, any) (any, error) {
 				return nil, nil
 			},
 			want: func(t *testing.T, err error) {
@@ -56,7 +54,7 @@ func TestRetry(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := retry(tt.handler)(context.Background(), nil, "test", nil)
+			_, err := retry(tt.handler)(context.Background(), "service", "test", nil)
 			tt.want(t, err)
 		})
 	}

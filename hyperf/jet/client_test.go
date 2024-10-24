@@ -69,10 +69,10 @@ func TestClient_Invoke(t *testing.T) {
 		WithFormatter(formatter),
 		WithPacker(packer),
 		WithMiddleware(func(next Handler) Handler {
-			return func(ctx context.Context, client *Client, name string, request any) (response any, err error) {
-				assert.Equal(t, "balance", name)
+			return func(ctx context.Context, service, method string, request any) (response any, err error) {
+				assert.Equal(t, "balance", method)
 				assert.Equal(t, testParams, request)
-				return next(ctx, client, name, request)
+				return next(ctx, service, method, request)
 			}
 		}),
 	)
@@ -85,10 +85,10 @@ func TestClient_Invoke(t *testing.T) {
 	assert.Equal(t, packer, client.GetPacker())
 
 	client.Use(func(next Handler) Handler {
-		return func(ctx context.Context, client *Client, name string, request any) (response any, err error) {
-			assert.Equal(t, "balance", name)
+		return func(ctx context.Context, service, method string, request any) (response any, err error) {
+			assert.Equal(t, "balance", method)
 			assert.Equal(t, testParams, request)
-			return next(ctx, client, name, request)
+			return next(ctx, service, method, request)
 		}
 	})
 
