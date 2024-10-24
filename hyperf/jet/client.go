@@ -100,8 +100,8 @@ func NewClient(opts ...Option) (*Client, error) {
 }
 
 func (c *Client) Invoke(ctx context.Context, method string, request any, response any, middlewares ...Middleware) (err error) { // nolint:lll
-	handler := func(ctx context.Context, service, method string, request any) (any, error) {
-		err = c.invoke(ctx, method, request, response)
+	handler := func(ctx context.Context, service string, method string, request any) (any, error) {
+		err = c.invoke(ctx, service, method, request, response)
 		return response, err
 	}
 
@@ -111,7 +111,7 @@ func (c *Client) Invoke(ctx context.Context, method string, request any, respons
 	return
 }
 
-func (c *Client) invoke(ctx context.Context, method string, request any, response any) error {
+func (c *Client) invoke(ctx context.Context, service, method string, request any, response any) error {
 	params, err := c.packer.Pack(request)
 	if err != nil {
 		return err
@@ -119,7 +119,7 @@ func (c *Client) invoke(ctx context.Context, method string, request any, respons
 
 	req, err := c.formatter.FormatRequest(&RPCRequest{
 		ID:     c.idGenerator.Generate(),
-		Path:   c.pathGenerator.Generate(c.service, method),
+		Path:   c.pathGenerator.Generate(service, method),
 		Params: params,
 	})
 	if err != nil {

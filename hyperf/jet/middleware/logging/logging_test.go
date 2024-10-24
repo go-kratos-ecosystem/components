@@ -7,8 +7,6 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/stretchr/testify/assert"
-
-	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
 )
 
 type mockLogger struct {
@@ -59,14 +57,16 @@ func TestLogging(t *testing.T) {
 	)
 
 	// no error
-	_, _ = logging(func(_ context.Context, _ *jet.Client, name string, _ any) (response any, err error) {
-		assert.Equal(t, "no-error", name)
+	_, _ = logging(func(_ context.Context, service, method string, _ any) (response any, err error) {
+		assert.Equal(t, "service", service)
+		assert.Equal(t, "no-error", method)
 		return "response", nil
-	})(context.Background(), nil, "no-error", nil)
+	})(context.Background(), "service", "no-error", nil)
 
 	// with error
-	_, _ = logging(func(_ context.Context, _ *jet.Client, name string, _ any) (response any, err error) {
-		assert.Equal(t, "with-error", name)
+	_, _ = logging(func(_ context.Context, service, method string, _ any) (response any, err error) {
+		assert.Equal(t, "service", service)
+		assert.Equal(t, "with-error", method)
 		return nil, assert.AnError
-	})(context.Background(), nil, "with-error", nil)
+	})(context.Background(), "service", "with-error", nil)
 }
