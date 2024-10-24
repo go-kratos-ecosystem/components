@@ -6,27 +6,27 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
 )
 
 func TestRecovery(t *testing.T) {
-	testName := "test"
+	testService := "service"
+	testMethod := "method"
 	testRequest := "request"
 	testError := "error"
 
 	recovery := New(
-		Handler(func(_ context.Context, _ *jet.Client, name string, request any, err any) error {
-			assert.Equal(t, testName, name)
+		Handler(func(_ context.Context, service string, method string, request any, err any) error {
+			assert.Equal(t, testService, service)
+			assert.Equal(t, testMethod, method)
 			assert.Equal(t, testRequest, request)
 			assert.Equal(t, testError, err)
-			return fmt.Errorf("name: %s, request: %v, error: %v", name, request, err)
+			return fmt.Errorf("method: %s, request: %v, error: %v", method, request, err)
 		}),
 	)
 
-	response, err := recovery(func(context.Context, *jet.Client, string, any) (response any, err error) {
+	response, err := recovery(func(context.Context, string, string, any) (response any, err error) {
 		panic(testError)
-	})(context.Background(), nil, testName, testRequest)
+	})(context.Background(), testService, testMethod, testRequest)
 	assert.Error(t, err)
 	assert.Nil(t, response)
 }
@@ -34,9 +34,9 @@ func TestRecovery(t *testing.T) {
 func TestRecovery_DefaultHandler(t *testing.T) {
 	recovery := New()
 
-	response, err := recovery(func(context.Context, *jet.Client, string, any) (response any, err error) {
+	response, err := recovery(func(context.Context, string, string, any) (response any, err error) {
 		panic("error")
-	})(context.Background(), nil, "test", "request")
+	})(context.Background(), "service", "method", "request")
 	assert.Error(t, err)
 	assert.Nil(t, response)
 }

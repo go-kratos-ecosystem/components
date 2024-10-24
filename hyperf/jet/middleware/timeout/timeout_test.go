@@ -6,8 +6,6 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-
-	"github.com/go-kratos-ecosystem/components/v2/hyperf/jet"
 )
 
 func TestTimeout(t *testing.T) {
@@ -41,11 +39,14 @@ func TestTimeout(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			handler := New(
 				Timeout(tt.timeout),
-			)(func(context.Context, *jet.Client, string, any) (any, error) {
+			)(func(_ context.Context, service, method string, req any) (any, error) {
+				assert.Equal(t, "service", service)
+				assert.Equal(t, "test", method)
+				assert.Equal(t, "request", req)
 				time.Sleep(tt.sleep)
 				return "test", nil
 			})
-			response, err := handler(context.Background(), nil, "test", "request")
+			response, err := handler(context.Background(), "service", "test", "request")
 			tt.want(t, response, err)
 		})
 	}

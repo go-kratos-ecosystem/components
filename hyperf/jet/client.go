@@ -99,19 +99,19 @@ func NewClient(opts ...Option) (*Client, error) {
 	return client, nil
 }
 
-func (c *Client) Invoke(ctx context.Context, name string, request any, response any, middlewares ...Middleware) (err error) { // nolint:lll
-	handler := func(ctx context.Context, _ *Client, name string, request any) (any, error) {
-		err = c.invoke(ctx, name, request, response)
+func (c *Client) Invoke(ctx context.Context, method string, request any, response any, middlewares ...Middleware) (err error) { // nolint:lll
+	handler := func(ctx context.Context, service string, method string, request any) (any, error) {
+		err = c.invoke(ctx, service, method, request, response)
 		return response, err
 	}
 
 	handler = Chain(append(c.middlewares, middlewares...)...)(handler)
 
-	response, err = handler(ctx, c, name, request)
+	response, err = handler(ctx, c.service, method, request)
 	return
 }
 
-func (c *Client) invoke(ctx context.Context, name string, request any, response any) error {
+func (c *Client) invoke(ctx context.Context, service, method string, request any, response any) error {
 	params, err := c.packer.Pack(request)
 	if err != nil {
 		return err
@@ -119,7 +119,7 @@ func (c *Client) invoke(ctx context.Context, name string, request any, response 
 
 	req, err := c.formatter.FormatRequest(&RPCRequest{
 		ID:     c.idGenerator.Generate(),
-		Path:   c.pathGenerator.Generate(c.service, name),
+		Path:   c.pathGenerator.Generate(service, method),
 		Params: params,
 	})
 	if err != nil {
