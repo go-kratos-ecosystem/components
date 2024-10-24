@@ -25,8 +25,8 @@ func (m *mockLogger) Log(level log.Level, keyvals ...any) error {
 	assert.Equal(m.t, "kind", keyvals[0])
 	assert.Equal(m.t, "jet", keyvals[1])
 	assert.Equal(m.t, "service", keyvals[2])
-	assert.Equal(m.t, "unknown", keyvals[3])
-	assert.Equal(m.t, "name", keyvals[4])
+	assert.Equal(m.t, "service", keyvals[3])
+	assert.Equal(m.t, "method", keyvals[4])
 
 	if keyvals[5] == "no-error" {
 		assert.Equal(m.t, log.LevelInfo, level)
