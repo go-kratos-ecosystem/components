@@ -1,6 +1,6 @@
 # Parallel
 
-`parallel` provides small, context-aware helpers for concurrent batch work.
+`parallel` provides small, context-aware helpers for concurrent batch and stream work.
 It propagates errors and cancellation, supports explicit concurrency limits,
 and provides an optional fixed-worker pool for intermittent background work.
 
@@ -83,6 +83,94 @@ activeUsers, err := parallel.Filter(ctx, 8, users,
 	},
 )
 ```
+
+## Process streaming inputs
+
+Use `MapStream` when inputs arrive over time or results should be consumed as
+they become available. It starts a fixed number of workers and returns a stream
+of indexed, per-item results:
+
+```go
+input := make(chan int64)
+stream, err := parallel.MapStream(ctx, 8, input,
+	func(ctx context.Context, id int64) (Profile, error) {
+		return loadProfile(ctx, id)
+	},
+)
+if err != nil {
+	return err
+}
+defer stream.Close()
+
+go func() {
+	defer close(input)
+	for _, id := range userIDs {
+		select {
+		case input <- id:
+		case <-stream.Context().Done():
+			return
+		}
+	}
+}()
+
+for result := range stream.Results() {
+	if result.Err != nil {
+		log.Printf("input %d failed: %v", result.Index, result.Err)
+		continue
+	}
+	useProfile(result.Value)
+}
+
+if err := stream.Wait(ctx); err != nil {
+	return err
+}
+```
+
+Results are delivered as workers make them available, without input-order
+sorting. `Index` is the zero-based input receive position. A slow earlier input
+does not hold back a ready result from another worker. Concurrently ready
+results have no deterministic ordering.
+
+Each worker receives another input only after handing off its previous result.
+The result channel is unbuffered and there is no internal prefetch queue, so a
+slow consumer slows input consumption. At most the concurrency limit's worth of
+items are being received, processed, or delivered inside the stream. Producer
+buffers and data retained by callbacks or consumers are additional.
+
+Callback errors are included in individual results, alongside any returned
+value, and other inputs continue processing. `Wait` returns nil after normal
+completion even if some callbacks failed. Parent cancellation or an early
+`Close` is reported as the stream's cancellation cause. An already canceled
+parent context, a non-positive limit, a nil input, or a nil callback causes
+construction to fail before any worker starts.
+
+### Stop consumption early
+
+When enough results have arrived, call `Close`, or return from a function with
+`defer stream.Close()` registered. Breaking out of the result loop alone does
+not cancel the stream.
+
+`Close` cancels the shared stream context and waits for internal workers. It
+unblocks input reception and result delivery, but running callbacks still need
+to observe their context and return. Callbacks must not synchronously call
+`Close` or `Wait` on their own stream. Panics follow normal Go semantics and are
+not recovered.
+
+Producers should select on `stream.Context().Done()` while sending, as shown
+above. The caller owns the input channel and any producer goroutines: the stream
+neither closes that channel nor waits for those goroutines. Join the producer
+separately when its resource cleanup must finish before returning.
+
+On cancellation, received inputs may have no delivered result; the stream does
+not synthesize results for unread inputs. Already delivered results remain
+usable. Inputs and results are not deep-copied, so referenced data requires
+appropriate synchronization if mutated.
+
+`Wait` observes completion and does not drain results. Consume results or cancel
+the stream before waiting indefinitely. Its context controls only that wait;
+canceling it does not cancel processing. The shared stream context is also
+canceled on normal completion, so use `Wait` with an independent context to
+obtain the terminal status. Repeated waits return the same terminal result.
 
 ## Reuse fixed workers
 
