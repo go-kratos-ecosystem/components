@@ -8,6 +8,9 @@ module-sets:
       - github.com/go-fries/fries/constraints/v4
       - github.com/go-fries/fries/capability/v4
 
+      # Batcher
+      - github.com/go-fries/fries/batcher/v4
+
       # Cache
       - github.com/go-fries/fries/cache/v4
       - github.com/go-fries/fries/cache/redis/v4
