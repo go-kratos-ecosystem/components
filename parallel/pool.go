@@ -96,9 +96,9 @@ type poolTask struct {
 // long-lived workers and a bounded queue.
 //
 // A Pool must be shut down when it is no longer needed. Task lifetimes are
-// controlled by the contexts passed to Submit and Execute. Pool values must be
-// created by NewPool and must not be copied after first use; the zero value is
-// not valid.
+// controlled by the contexts passed to [Pool.Submit], [Pool.TrySubmit], and
+// [Pool.Execute]. Pool values must be created by [NewPool] and must not be copied
+// after first use; the zero value is not valid.
 type Pool struct {
 	tasks   chan poolTask
 	closing chan struct{}
@@ -141,6 +141,10 @@ func NewPool(workers int, options ...PoolOption) *Pool {
 // until a worker accepts the task, ctx is canceled, or the pool is shut down.
 // The same ctx is passed to task, so asynchronous callers must provide a
 // context whose lifetime is long enough for the task.
+//
+// Submit returns [ErrNilTask] if task is nil, [context.Cause] of ctx if submission
+// is canceled, or [ErrPoolClosed] if the pool stops accepting tasks. No future is
+// returned when submission fails.
 func (p *Pool) Submit(ctx context.Context, task Task) (*Future, error) {
 	if task == nil {
 		return nil, ErrNilTask
@@ -169,6 +173,38 @@ func (p *Pool) Submit(ctx context.Context, task Task) (*Future, error) {
 		return nil, ErrPoolClosed
 	case <-ctx.Done():
 		return nil, context.Cause(ctx)
+	}
+}
+
+// TrySubmit adds task to the pool without waiting for queue capacity.
+//
+// TrySubmit returns [ErrPoolFull] if the task cannot be accepted immediately.
+// With an unbuffered queue, a worker must be ready to receive the task.
+// Rejected tasks never run, and no future is returned for them.
+//
+// TrySubmit returns [ErrNilTask] if task is nil, [context.Cause] of ctx if ctx is
+// already canceled, or [ErrPoolClosed] if the pool is closed. As with [Pool.Submit],
+// ctx controls the accepted task's lifetime.
+func (p *Pool) TrySubmit(ctx context.Context, task Task) (*Future, error) {
+	if task == nil {
+		return nil, ErrNilTask
+	}
+	if err := context.Cause(ctx); err != nil {
+		return nil, err
+	}
+
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	if p.closed {
+		return nil, ErrPoolClosed
+	}
+
+	future := newFuture()
+	select {
+	case p.tasks <- poolTask{ctx: ctx, task: task, future: future}:
+		return future, nil
+	default:
+		return nil, ErrPoolFull
 	}
 }
 

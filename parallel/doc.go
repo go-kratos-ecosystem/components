@@ -4,5 +4,6 @@
 // order-preserving concurrent mapping and filtering. Fail-fast helpers cancel
 // sibling work through context.Context, while MapResults supports best-effort
 // processing with one outcome per input value. Pool provides fixed long-lived
-// workers and bounded queueing for intermittent background work.
+// workers and bounded queueing for intermittent background work. [Pool.TrySubmit]
+// supports immediate rejection when busy, and [SubmitValue] provides typed futures.
 package parallel

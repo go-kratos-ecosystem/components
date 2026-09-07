@@ -3,6 +3,7 @@ package parallel_test
 import (
 	"context"
 	"errors"
+	"strconv"
 	"sync"
 	"sync/atomic"
 	"testing"
@@ -347,6 +348,91 @@ func TestPoolConcurrentSubmitAndShutdown(t *testing.T) {
 
 		require.NoError(t, result.future.Wait(t.Context()))
 	}
+}
+
+func TestPoolTrySubmitCapacity(t *testing.T) {
+	for _, size := range []int{0, 1} {
+		t.Run(strconv.Itoa(size), func(t *testing.T) {
+			pool := requirePool(t, 1, parallel.WithQueueSize(size))
+			release := make(chan struct{})
+			started := make(chan struct{})
+			var releaseOnce sync.Once
+			unblock := func() { releaseOnce.Do(func() { close(release) }) }
+			t.Cleanup(func() {
+				unblock()
+				require.NoError(t, pool.Shutdown(context.WithoutCancel(t.Context())))
+			})
+			_, err := pool.Submit(t.Context(), func(context.Context) error {
+				close(started)
+				<-release
+
+				return nil
+			})
+			require.NoError(t, err)
+			<-started
+
+			wantErr := errors.New("accepted task failed")
+			var accepted *parallel.Future
+			if size > 0 {
+				accepted, err = pool.TrySubmit(t.Context(), func(context.Context) error { return wantErr })
+				require.NoError(t, err)
+			}
+
+			var called atomic.Bool
+			future, err := pool.TrySubmit(t.Context(), func(context.Context) error {
+				called.Store(true)
+
+				return nil
+			})
+			require.ErrorIs(t, err, parallel.ErrPoolFull)
+			assert.Nil(t, future)
+			unblock()
+			require.NoError(t, pool.Shutdown(t.Context()))
+			assert.False(t, called.Load())
+			if accepted != nil {
+				require.ErrorIs(t, accepted.Wait(t.Context()), wantErr)
+			}
+		})
+	}
+}
+
+func TestPoolTrySubmitValidation(t *testing.T) {
+	pool := requirePool(t, 1)
+	task := func(context.Context) error { return nil }
+	future, err := pool.TrySubmit(t.Context(), nil)
+	require.ErrorIs(t, err, parallel.ErrNilTask)
+	assert.Nil(t, future)
+	ctx, cancel := context.WithCancelCause(t.Context())
+	wantErr := errors.New("stopped")
+	cancel(wantErr)
+	future, err = pool.TrySubmit(ctx, task)
+	require.ErrorIs(t, err, wantErr)
+	assert.Nil(t, future)
+	require.NoError(t, pool.Shutdown(t.Context()))
+	future, err = pool.TrySubmit(t.Context(), task)
+	require.ErrorIs(t, err, parallel.ErrPoolClosed)
+	assert.Nil(t, future)
+}
+
+func TestPoolConcurrentTrySubmitAndShutdown(t *testing.T) {
+	pool := requirePool(t, 4)
+	start := make(chan struct{})
+	var submitters sync.WaitGroup
+	for range 100 {
+		submitters.Go(func() {
+			<-start
+			future, err := pool.TrySubmit(t.Context(), func(context.Context) error { return nil })
+			if err != nil {
+				assert.True(t, errors.Is(err, parallel.ErrPoolClosed) || errors.Is(err, parallel.ErrPoolFull))
+
+				return
+			}
+			assert.NoError(t, future.Wait(t.Context()))
+		})
+	}
+	close(start)
+	require.NoError(t, pool.Shutdown(t.Context()))
+	submitters.Wait()
 }
 
 func requirePool(t *testing.T, workers int, options ...parallel.PoolOption) *parallel.Pool {

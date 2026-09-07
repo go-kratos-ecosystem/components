@@ -114,6 +114,56 @@ must outlive a request, create an explicit task context, such as one derived
 with `context.WithoutCancel`, instead of using the request context directly.
 Task panics follow normal Go semantics and are not recovered by the pool.
 
+### Skip work when the pool is busy
+
+`TrySubmit` returns immediately with `ErrPoolFull` when the task cannot be
+accepted. Rejected tasks never run. With an unbuffered queue, submission succeeds
+only when a worker is ready to receive the task.
+
+```go
+_, err := pool.TrySubmit(taskContext, func(ctx context.Context) error {
+	return refreshCache(ctx, cacheKey)
+})
+if errors.Is(err, parallel.ErrPoolFull) {
+	return nil // Skip this optional refresh while the pool is busy.
+}
+if err != nil {
+	return err
+}
+```
+
+### Retrieve a typed result
+
+`SubmitValue` uses the same queue and backpressure as `Submit`, returning a
+`ValueFuture[T]` that carries the callback's value and error:
+
+```go
+future, err := parallel.SubmitValue(taskContext, pool,
+	func(ctx context.Context) (Profile, error) {
+		return loadProfile(ctx, userID)
+	},
+)
+if err != nil {
+	return err
+}
+
+// Other work can run before waiting for the result.
+profile, err := future.Wait(ctx)
+if err != nil {
+	return err
+}
+useProfile(profile)
+```
+
+Multiple callers can wait on the same future. A completed future preserves both
+the value and error, including values returned alongside an error. Canceling a
+wait returns the zero value and cancellation cause without canceling the task.
+If cancellation prevents the task from starting, its result is the zero value
+and the task context's cancellation cause. Referenced result data is shared;
+callers must synchronize mutations.
+
+### Shut down the pool
+
 Shut the pool down when its owner stops:
 
 ```go
