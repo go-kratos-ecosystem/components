@@ -21,6 +21,7 @@ ignore:
 
 fixes:
   - github.com/go-fries/fries/v4::./
+  - github.com/go-fries/fries/batcher/v4::batcher/
   - github.com/go-fries/fries/cache/v4::cache/
   - github.com/go-fries/fries/cache/redis/v4::cache/redis/
   - github.com/go-fries/fries/chi/v4::chi/
