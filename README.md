@@ -30,7 +30,7 @@ and internal development tools are not included.
 
 | Family | Modules | Description |
 | --- | --- | --- |
-| Core | [`fries`](https://pkg.go.dev/github.com/go-fries/fries/v4)<br>[`errors`](https://pkg.go.dev/github.com/go-fries/fries/errors/v4)<br>[`parallel`](https://pkg.go.dev/github.com/go-fries/fries/parallel/v4)<br>[`constraints`](https://pkg.go.dev/github.com/go-fries/fries/constraints/v4)<br>[`capability`](https://pkg.go.dev/github.com/go-fries/fries/capability/v4) | Release metadata, shared error helpers, parallel processing utilities, generic constraints, and capability contracts. |
+| Core | [`fries`](https://pkg.go.dev/github.com/go-fries/fries/v4)<br>[`errors`](https://pkg.go.dev/github.com/go-fries/fries/errors/v4)<br>[`parallel`](https://pkg.go.dev/github.com/go-fries/fries/parallel/v4)<br>[`constraints`](https://pkg.go.dev/github.com/go-fries/fries/constraints/v4)<br>[`capability`](https://pkg.go.dev/github.com/go-fries/fries/capability/v4) | Release metadata, shared error helpers, parallel batch and stream processing, generic constraints, and capability contracts. |
 | Batcher | [`batcher`](https://pkg.go.dev/github.com/go-fries/fries/batcher/v4) | Size- and time-triggered batching with a bounded queue, serial processing, explicit flushing, and graceful shutdown. |
 | Cache | [`cache`](https://pkg.go.dev/github.com/go-fries/fries/cache/v4)<br>[`cache/redis`](https://pkg.go.dev/github.com/go-fries/fries/cache/redis/v4) | Cache abstractions and a Redis-backed store. |
 | Crontab | [`crontab`](https://pkg.go.dev/github.com/go-fries/fries/crontab/v4) | Adapts go-cron schedulers to the Kratos server lifecycle. |
