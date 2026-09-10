@@ -39,6 +39,7 @@ fixes:
   - github.com/go-fries/fries/capability/v4::capability/
   - github.com/go-fries/fries/parallel/v4::parallel/
   - github.com/go-fries/fries/crontab/v4::crontab/
+  - github.com/go-fries/fries/debounce/v4::debounce/
   - github.com/go-fries/fries/encrypter/v4::encrypter/
   - github.com/go-fries/fries/ent/v4::ent/
   - github.com/go-fries/fries/ent/multidriver/v4::ent/multidriver/

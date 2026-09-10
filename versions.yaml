@@ -37,6 +37,9 @@ module-sets:
       - github.com/go-fries/fries/cloudevents/protocol/amqp091/v4
       - github.com/go-fries/fries/cloudevents/eventdispatcher/v4
 
+      # Debounce
+      - github.com/go-fries/fries/debounce/v4
+
       # Env
       - github.com/go-fries/fries/env/v4
 

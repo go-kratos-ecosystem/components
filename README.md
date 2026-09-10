@@ -38,6 +38,7 @@ and internal development tools are not included.
 | Config | [`config`](https://pkg.go.dev/github.com/go-fries/fries/config/v4) | Type-safe configuration propagation through `context.Context`. |
 | Chi | [`chi`](https://pkg.go.dev/github.com/go-fries/fries/chi/v4) | A Chi-based HTTP server adapter. |
 | CloudEvents | [`cloudevents/protocol/amqp091`](https://pkg.go.dev/github.com/go-fries/fries/cloudevents/protocol/amqp091/v4)<br>[`cloudevents/eventdispatcher`](https://pkg.go.dev/github.com/go-fries/fries/cloudevents/eventdispatcher/v4) | AMQP 0.9.1 transport and event dispatching for CloudEvents. |
+| Debounce | [`debounce`](https://pkg.go.dev/github.com/go-fries/fries/debounce/v4) | Trailing-edge debouncing with latest-value replacement, serial handlers, explicit flushing, and cancellation. |
 | Env | [`env`](https://pkg.go.dev/github.com/go-fries/fries/env/v4) | Utilities for representing and propagating application environments. |
 | Encrypter | [`encrypter`](https://pkg.go.dev/github.com/go-fries/fries/encrypter/v4) | AES-CTR string encryption and decryption helpers. |
 | Ent | [`ent`](https://pkg.go.dev/github.com/go-fries/fries/ent/v4)<br>[`ent/multidriver`](https://pkg.go.dev/github.com/go-fries/fries/ent/multidriver/v4) | Ent integrations for logging and routing operations across multiple drivers. |
