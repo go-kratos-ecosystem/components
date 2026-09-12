@@ -10,7 +10,7 @@ not overlap. Merging them produces 09:00–11:00.
 ## Installation
 
 ```bash
-go get github.com/go-fries/fries/period/v4
+go get github.com/go-fries/fries/time/period/v4
 ```
 
 The module uses only the Go standard library at runtime.
@@ -26,7 +26,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-fries/fries/period/v4"
+	"github.com/go-fries/fries/time/period/v4"
 )
 
 func main() {

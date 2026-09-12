@@ -1,4 +1,4 @@
-module github.com/go-fries/fries/period/v4
+module github.com/go-fries/fries/time/period/v4
 
 go 1.26.0
 

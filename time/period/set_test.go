@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-fries/fries/period/v4"
+	"github.com/go-fries/fries/time/period/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

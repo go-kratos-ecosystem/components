@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-fries/fries/period/v4"
+	"github.com/go-fries/fries/time/period/v4"
 )
 
 func Example() {
