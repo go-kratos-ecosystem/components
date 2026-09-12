@@ -138,6 +138,9 @@ module-sets:
       # Otel
       - github.com/go-fries/fries/otel/otlp/v4
 
+      # Period
+      - github.com/go-fries/fries/period/v4
+
       # Poll
       - github.com/go-fries/fries/poll/v4
 

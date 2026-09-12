@@ -91,6 +91,7 @@ fixes:
   - github.com/go-fries/fries/mysql/canal/positioner/redis/v4::mysql/canal/positioner/redis/
   - github.com/go-fries/fries/mysql/canal/server/v4::mysql/canal/server/
   - github.com/go-fries/fries/otel/otlp/v4::otel/otlp/
+  - github.com/go-fries/fries/period/v4::period/
   - github.com/go-fries/fries/poll/v4::poll/
   - github.com/go-fries/fries/ptr/v4::ptr/
   - github.com/go-fries/fries/recovery/v4::recovery/

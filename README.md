@@ -61,6 +61,7 @@ and internal development tools are not included.
 | Rate Limit | [`ratelimit`](https://pkg.go.dev/github.com/go-fries/fries/ratelimit/v4)<br>[`ratelimit/memory`](https://pkg.go.dev/github.com/go-fries/fries/ratelimit/memory/v4)<br>[`ratelimit/redis`](https://pkg.go.dev/github.com/go-fries/fries/ratelimit/redis/v4) | Key-based GCRA rate limiting with memory and Redis stores. |
 | MySQL | [`mysql/canal`](https://pkg.go.dev/github.com/go-fries/fries/mysql/canal/v4)<br>[`mysql/canal/positioner/redis`](https://pkg.go.dev/github.com/go-fries/fries/mysql/canal/positioner/redis/v4)<br>[`mysql/canal/server`](https://pkg.go.dev/github.com/go-fries/fries/mysql/canal/server/v4) | MySQL binlog processing with Redis position storage and server lifecycle integration. |
 | OpenTelemetry | [`otel/otlp`](https://pkg.go.dev/github.com/go-fries/fries/otel/otlp/v4) | Global OpenTelemetry provider configuration using OTLP exporters. |
+| Period | [`period`](https://pkg.go.dev/github.com/go-fries/fries/period/v4) | Immutable half-open time intervals with intersection, subtraction, merging, and gap detection. |
 | Poll | [`poll`](https://pkg.go.dev/github.com/go-fries/fries/poll/v4) | Context-aware condition polling for eventually consistent state and asynchronous work. |
 | Ptr | [`ptr`](https://pkg.go.dev/github.com/go-fries/fries/ptr/v4) | Generic pointer helpers. |
 | Recovery | [`recovery`](https://pkg.go.dev/github.com/go-fries/fries/recovery/v4) | Shared panic recovery utilities. |
