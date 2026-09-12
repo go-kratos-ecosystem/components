@@ -68,6 +68,7 @@ and internal development tools are not included.
 | Slices | [`slices`](https://pkg.go.dev/github.com/go-fries/fries/slices/v4) | Generic slice helpers. |
 | Strings | [`strings`](https://pkg.go.dev/github.com/go-fries/fries/strings/v4) | String helpers for common application code. |
 | Support | [`support`](https://pkg.go.dev/github.com/go-fries/fries/support/v4) | General-purpose helper types and value utilities. |
+| Time | [`time/period`](https://pkg.go.dev/github.com/go-fries/fries/time/period/v4) | Immutable half-open time intervals with intersection, subtraction, merging, and gap detection. |
 | Timezone | [`timezone`](https://pkg.go.dev/github.com/go-fries/fries/timezone/v4) | Time zone propagation through application contexts. |
 | UDP | [`udp`](https://pkg.go.dev/github.com/go-fries/fries/udp/v4) | A lifecycle-aware UDP server. |
 | Webhook | [`webhook`](https://pkg.go.dev/github.com/go-fries/fries/webhook/v4)<br>[`webhook/sender`](https://pkg.go.dev/github.com/go-fries/fries/webhook/sender/v4) | Standard Webhooks signing, verification, secret rotation, and single-attempt HTTP delivery. |

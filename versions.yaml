@@ -162,6 +162,9 @@ module-sets:
       # Support
       - github.com/go-fries/fries/support/v4
 
+      # Time
+      - github.com/go-fries/fries/time/period/v4
+
       # Timezone
       - github.com/go-fries/fries/timezone/v4
 

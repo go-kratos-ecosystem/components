@@ -97,6 +97,7 @@ fixes:
   - github.com/go-fries/fries/retry/v4::retry/
   - github.com/go-fries/fries/signal/v4::signal/
   - github.com/go-fries/fries/support/v4::support/
+  - github.com/go-fries/fries/time/period/v4::time/period/
   - github.com/go-fries/fries/timezone/v4::timezone/
   - github.com/go-fries/fries/udp/v4::udp/
   - github.com/go-fries/fries/webhook/v4::webhook/
